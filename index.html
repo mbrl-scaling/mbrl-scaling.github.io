@@ -10,11 +10,11 @@
   <meta property="og:image" content="https://mbrl-scaling.github.io/assets/hero-rollouts-36.webp">
   <link rel="icon" href="assets/seed-mark.webp" type="image/webp">
   <link rel="stylesheet" href="style.css?v=3">
-  <link rel="stylesheet" href="environment.css?v=2">
+  <link rel="stylesheet" href="environment.css?v=3">
   <script src="app.js?v=3" defer></script>
   <script src="scaling.js" defer></script>
   <script src="method.js?v=2" defer></script>
-  <script src="environment.js?v=2" defer></script>
+  <script src="environment.js?v=3" defer></script>
   <script src="agent.js" defer></script>
   <title>Scaling Reinforcement Learning in World Models | Project Page</title>
 </head>
@@ -63,30 +63,124 @@
           <h3 id="env-method-heading">Agent-driven environment construction</h3>
           <p>From recorded robot demonstrations to a pool of training environments.</p>
         </div>
-        <figure class="env-story" data-env-story data-phase="0" aria-labelledby="env-method-heading" aria-describedby="env-caption">
-          <div class="env-flow">
-            <canvas class="env-route-ink" aria-hidden="true"></canvas>
-            <div class="env-sample" aria-hidden="true">
-              <div class="env-sample-image">
-                <img data-env-base src="assets/method-source-head.webp" alt="" width="640" height="360" loading="lazy">
-                <img data-env-overlay alt="" width="640" height="360" hidden>
-                <video data-env-preview src="assets/env-candidate-sequence.mp4" poster="assets/env-candidate-poster.webp" muted playsinline preload="none"></video>
-                <i class="env-contact"></i>
-              </div>
-              <span data-env-media-label>Recorded robot videos</span>
+        <figure class="env-story" data-env-story aria-labelledby="env-method-heading" aria-describedby="env-caption">
+          <div class="env-figure" role="table" aria-label="Parallel environment construction for four robot tasks">
+            <div class="env-grid env-head" role="row">
+              <span class="env-task-head" role="columnheader">Task</span>
+              <div role="columnheader"><strong>Select a frame</strong><span>Recorded video</span></div>
+              <div role="columnheader"><strong>Write PE + rubric</strong><span>Task and success criteria</span></div>
+              <div role="columnheader"><strong>Image editing</strong><span>Edited initial state</span></div>
+              <div role="columnheader"><strong>Review</strong><span>Sampled rollout</span></div>
+              <div class="env-pool-head" role="columnheader"><strong><span class="env-pool-full">Environment pool</span><span class="env-pool-short">Pool</span></strong><span>Observation + PE + rubric</span></div>
             </div>
-            <ol class="env-route" aria-label="Environment construction workflow">
-              <li><button type="button" data-env-step aria-current="step"><i aria-hidden="true"></i><strong>Select a frame</strong><span>Recorded videos</span></button></li>
-              <li><button type="button" data-env-step><i aria-hidden="true"></i><strong>Write PE &amp; rubric</strong><span>Instruction + success criteria</span></button></li>
-              <li><button type="button" data-env-step><i aria-hidden="true"></i><strong>Edit the scene</strong><span>Image editing</span></button></li>
-              <li><button type="button" data-env-step><i aria-hidden="true"></i><strong>Review</strong><span>Scene + rollout</span></button></li>
-              <li><button type="button" data-env-step><i aria-hidden="true"></i><strong>Environment pool</strong><span>Reviewed environments</span></button></li>
-            </ol>
+            <div class="env-grid env-lane env-basket" data-env-lane role="row">
+              <span class="env-lane-ink" aria-hidden="true"><i></i></span>
+              <div class="env-task" role="rowheader"><i aria-hidden="true"></i><strong>Basket rim</strong></div>
+              <div class="env-cell env-reset" role="cell">
+                <div class="env-photo"><img src="assets/method-source-head.webp" alt="Basket rim in the recorded head-camera frame" width="640" height="360" loading="lazy"></div>
+                <span>Selected frame</span>
+              </div>
+              <div class="env-cell env-text-cell" role="cell">
+                <div class="env-pe"><b>PE</b><span>Left gripper · long rim midpoint</span></div>
+                <div class="env-rubric"><b>Rubric</b><span>Grip holds that rim</span></div>
+              </div>
+              <div class="env-cell env-edit" role="cell">
+                <div class="env-photo"><img src="assets/method-position-head.webp" alt="Edited initial state for Basket rim" width="640" height="360" loading="lazy"></div>
+                <span>Scene variant</span>
+              </div>
+              <div class="env-cell env-review" role="cell">
+                <div class="env-photo">
+                  <img src="assets/method-rollout-048-head.webp" alt="Sampled world-model rollout for Basket rim" width="640" height="360" loading="lazy">
+                  <img src="assets/method-rollout-016-head.webp" alt="" width="640" height="360" loading="lazy" class="env-earlier" aria-hidden="true">
+                </div>
+                <span class="">Rim held</span>
+              </div>
+              <div class="env-cell env-pool" role="cell">
+                <div class="env-packet"><img src="assets/method-position-head.webp" alt="" width="640" height="360" loading="lazy" aria-hidden="true"><span>Frame + PE + rubric</span></div>
+              </div>
+            </div>
+            <div class="env-grid env-lane env-cloth" data-env-lane role="row">
+              <span class="env-lane-ink" aria-hidden="true"><i></i></span>
+              <div class="env-task" role="rowheader"><i aria-hidden="true"></i><strong>Cloth edge</strong></div>
+              <div class="env-cell env-reset" role="cell">
+                <div class="env-photo"><img src="assets/method-cloth-source.webp" alt="Cloth edge in the recorded head-camera frame" width="640" height="360" loading="lazy"></div>
+                <span>Selected frame</span>
+              </div>
+              <div class="env-cell env-text-cell" role="cell">
+                <div class="env-pe"><b>PE</b><span>Left gripper · exposed fabric edge</span></div>
+                <div class="env-rubric"><b>Rubric</b><span>Fabric edge held</span></div>
+              </div>
+              <div class="env-cell env-edit" role="cell">
+                <div class="env-photo"><img src="assets/method-cloth-step-0.webp" alt="Edited initial state for Cloth edge" width="640" height="360" loading="lazy"></div>
+                <span>Scene variant</span>
+              </div>
+              <div class="env-cell env-review" role="cell">
+                <div class="env-photo">
+                  <img src="assets/method-cloth-step-3.webp" alt="Sampled world-model rollout for Cloth edge" width="640" height="360" loading="lazy">
+                  <img src="assets/method-cloth-step-1.webp" alt="" width="640" height="360" loading="lazy" class="env-earlier" aria-hidden="true">
+                </div>
+                <span class="">Edge held</span>
+              </div>
+              <div class="env-cell env-pool" role="cell">
+                <div class="env-packet"><img src="assets/method-cloth-step-0.webp" alt="" width="640" height="360" loading="lazy" aria-hidden="true"><span>Frame + PE + rubric</span></div>
+              </div>
+            </div>
+            <div class="env-grid env-lane env-scissors" data-env-lane role="row">
+              <span class="env-lane-ink" aria-hidden="true"><i></i></span>
+              <div class="env-task" role="rowheader"><i aria-hidden="true"></i><strong>Scissor handles</strong></div>
+              <div class="env-cell env-reset" role="cell">
+                <div class="env-photo"><img src="assets/method-scissors-source.webp" alt="Scissor handles in the recorded head-camera frame" width="640" height="360" loading="lazy"></div>
+                <span>Selected frame</span>
+              </div>
+              <div class="env-cell env-text-cell" role="cell">
+                <div class="env-pe"><b>PE</b><span>Left gripper · outer handle edges</span></div>
+                <div class="env-rubric"><b>Rubric</b><span>Both outer edges held</span></div>
+              </div>
+              <div class="env-cell env-edit" role="cell">
+                <div class="env-photo"><img src="assets/method-scissors-step-0.webp" alt="Edited initial state for Scissor handles" width="640" height="360" loading="lazy"></div>
+                <span>Scene variant</span>
+              </div>
+              <div class="env-cell env-review" role="cell">
+                <div class="env-photo">
+                  <img src="assets/method-scissors-step-3.webp" alt="Sampled world-model rollout for Scissor handles" width="640" height="360" loading="lazy">
+                  <img src="assets/method-scissors-step-1.webp" alt="" width="640" height="360" loading="lazy" class="env-earlier" aria-hidden="true">
+                </div>
+                <span class="env-unconfirmed">Grip unconfirmed</span>
+              </div>
+              <div class="env-cell env-pool" role="cell">
+                <div class="env-packet"><img src="assets/method-scissors-step-0.webp" alt="" width="640" height="360" loading="lazy" aria-hidden="true"><span>Frame + PE + rubric</span></div>
+              </div>
+            </div>
+            <div class="env-grid env-lane env-straw" data-env-lane role="row">
+              <span class="env-lane-ink" aria-hidden="true"><i></i></span>
+              <div class="env-task" role="rowheader"><i aria-hidden="true"></i><strong>Thin straw</strong></div>
+              <div class="env-cell env-reset" role="cell">
+                <div class="env-photo"><img src="assets/method-straw-source.webp" alt="Thin straw in the recorded head-camera frame" width="640" height="360" loading="lazy"></div>
+                <span>Selected frame</span>
+              </div>
+              <div class="env-cell env-text-cell" role="cell">
+                <div class="env-pe"><b>PE</b><span>Right gripper · shaft near one end</span></div>
+                <div class="env-rubric"><b>Rubric</b><span>Target segment held</span></div>
+              </div>
+              <div class="env-cell env-edit" role="cell">
+                <div class="env-photo"><img src="assets/method-straw-step-0.webp" alt="Edited initial state for Thin straw" width="640" height="360" loading="lazy"></div>
+                <span>Scene variant</span>
+              </div>
+              <div class="env-cell env-review" role="cell">
+                <div class="env-photo">
+                  <img src="assets/method-straw-step-3.webp" alt="Sampled world-model rollout for Thin straw" width="640" height="360" loading="lazy">
+                  <img src="assets/method-straw-step-1.webp" alt="" width="640" height="360" loading="lazy" class="env-earlier" aria-hidden="true">
+                </div>
+                <span class="">Shaft held</span>
+              </div>
+              <div class="env-cell env-pool" role="cell">
+                <div class="env-packet"><img src="assets/method-straw-step-0.webp" alt="" width="640" height="360" loading="lazy" aria-hidden="true"><span>Frame + PE + rubric</span></div>
+              </div>
+            </div>
           </div>
           <figcaption class="env-footer">
-            <p id="env-caption" data-env-caption>The construction agent selects a usable starting observation from recorded robot videos.</p>
+            <p id="env-caption">Four tasks follow the same construction workflow. Sampled rollout frames illustrate the review evidence. The pool column shows how candidate environments are packaged for admission.</p>
             <button class="motion-button env-play" type="button" data-env-play hidden><i aria-hidden="true"></i><span>Play</span></button>
-            <span class="sr-only" data-env-status role="status"></span>
           </figcaption>
         </figure>
       </section>
