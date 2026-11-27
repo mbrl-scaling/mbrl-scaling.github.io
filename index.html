@@ -1,0 +1,424 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#11131a">
+  <meta name="description" content="Train robot policies in a video world model and evaluate them on 242 unseen real-robot tasks. Explore the rollouts, animated methods, and scaling results.">
+  <meta property="og:title" content="Scaling Reinforcement Learning in World Models for Generalist Embodied Agents">
+  <meta property="og:description" content="World-model reinforcement learning at scale, evaluated on 242 unseen real-robot tasks.">
+  <meta property="og:image" content="https://mbrl-scaling.github.io/assets/hero-rollouts-36.webp">
+  <link rel="icon" href="assets/seed-mark.webp" type="image/webp">
+  <link rel="stylesheet" href="style.css">
+  <script src="app.js" defer></script>
+  <script src="scaling.js" defer></script>
+  <script src="method.js" defer></script>
+  <script src="agent.js" defer></script>
+  <title>Scaling Reinforcement Learning in World Models | Project Page</title>
+</head>
+<body>
+  <a href="#main" class="skip-link">Skip to content</a>
+  <header class="site-header" data-on-hero>
+    <div class="shell header-inner">
+      <a class="brand" href="#top"><img src="assets/seed-logo.webp" alt="ByteDance Seed" width="181" height="20"></a>
+      <nav aria-label="Project sections">
+        <a href="#method">Method</a><a href="#results">Scaling</a><a href="#demos">Policy videos</a><a href="#agent">Agentic</a>
+      </nav>
+      <a class="header-paper" href="#citation">Cite <span aria-hidden="true">↓</span></a>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="hero" id="top" aria-labelledby="title">
+      <div class="hero-screen">
+        <video id="hero-video" muted loop playsinline preload="none" poster="assets/hero-rollouts-36.webp" data-mobile-poster="assets/hero-rollouts-36-mobile.webp" data-mobile-source="assets/hero-rollouts-36-mobile.mp4" aria-label="36 world-model rollouts shown together. Each starts at a recorded head-camera observation and continues through eight prediction steps.">
+          <source src="assets/hero-rollouts-36.mp4" type="video/mp4">
+        </video>
+        <canvas id="hero-carousel" aria-hidden="true" hidden></canvas>
+      </div>
+      <div class="cover-copy shell">
+        <p class="eyebrow">Technical report <span aria-hidden="true">/</span> <time datetime="2026-11">November 2026</time></p>
+        <h1 id="title">Scaling Reinforcement Learning in <em>World Models</em> <span>for Generalist Embodied Agents</span></h1>
+        <div class="hero-actions">
+          <a class="button primary" href="assets/paper.pdf" target="_blank" rel="noopener">Read technical report <span aria-hidden="true">↗</span></a>
+          <a class="button" href="#overview">Explore the research <span aria-hidden="true">↓</span></a>
+        </div>
+      </div>
+      <div class="hero-caption shell">
+        <div><strong>36 world-model rollouts</strong><span>Head-camera predictions from recorded robot actions</span></div>
+        <div class="hero-scrubber" hidden>
+          <output for="hero-step" id="hero-step-label">Prediction 4 of 8</output>
+          <input id="hero-step" type="range" min="0" max="8" value="4" step="1" aria-label="Rollout prediction step" aria-valuetext="Prediction 4 of 8">
+        </div>
+        <div class="hero-controls">
+          <button class="hero-fullscreen" type="button" aria-label="View rollouts full screen" hidden><span aria-hidden="true">⛶</span></button>
+          <button class="hero-toggle" type="button" aria-label="Play the rollouts"><span aria-hidden="true"></span></button>
+        </div>
+      </div>
+    </section>
+
+    <div class="shell paper-meta" id="overview">
+      <p class="authors">Zhilong Zhang<sup>*</sup>, Yihao Sun<sup>*</sup>, Longfei Li, Hao Luo, Guanghao Li, Heyuan Yao, Yucheng Wang, Haiqin Cui, Juncheng Mu, Chengyu Bai, Youliang Zhang, Chenxiao Zhang, Junpeng Ma, Yang Yu, Ceyuan Yang<sup>†</sup>, Qian Wang<sup>†</sup></p>
+      <p class="affiliations"><span>* Equal contribution</span><span>† Corresponding authors</span></p>
+    </div>
+
+    <section class="shell section method-section" id="method" aria-labelledby="method-heading">
+      <div class="section-heading">
+        <div><p class="eyebrow">Method</p><h2 id="method-heading">From recorded scenes to policy updates</h2></div>
+        <p>Construct environments, predict how they respond to actions, then use those interactions to train a policy.</p>
+      </div>
+      <article class="method-player" data-method aria-label="Animated method walkthrough">
+        <div class="method-player-nav">
+          <div class="method-chapters" role="group" aria-label="Method chapters" hidden>
+            <button type="button" data-method-chapter>Build environments</button>
+            <button type="button" id="world-model" data-method-chapter>World model</button>
+            <button type="button" id="ppo" data-method-chapter>PPO training</button>
+          </div>
+          <button class="motion-button" type="button" data-method-play hidden><i aria-hidden="true"></i><span>Play walkthrough</span></button>
+        </div>
+        <section class="method-panel" data-method-panel data-timing="3600 3700 3400 3600 5200" aria-labelledby="env-method-heading">
+          <h3 id="env-method-heading">Build training environments</h3>
+          <div class="method-track " role="group" aria-label="Environment construction steps" hidden>
+            <button type="button" data-method-step><strong>Select scene</strong></button>
+            <button type="button" data-method-step><strong>Define task</strong></button>
+            <button type="button" data-method-step><strong>Edit scene</strong></button>
+            <button type="button" data-method-step><strong>Align inputs</strong></button>
+            <button type="button" data-method-step><strong>Review rollout</strong></button>
+          </div>
+          <div class="method-strip">
+            <figure>
+              <div class="method-shot"><img src="assets/method-source-head.webp" width="960" height="540" loading="lazy" decoding="async" alt="Open basket across the method stages" data-method-frames="source-head|source-head|position-head|position-head|position-head rollout-016-head rollout-048-head"></div>
+              <figcaption><strong>Open basket</strong><span>Left gripper · middle of the long rim</span></figcaption>
+            </figure>
+            <figure>
+              <div class="method-shot"><img src="assets/method-cloth-source.webp" width="960" height="540" loading="lazy" decoding="async" alt="Deformable cloth across the method stages" data-method-frames="cloth-source|cloth-source|cloth-step-0|cloth-step-0|cloth-step-0 cloth-step-1 cloth-step-2 cloth-step-3"></div>
+              <figcaption><strong>Deformable cloth</strong><span>Left gripper · exposed fabric edge</span></figcaption>
+            </figure>
+            <figure>
+              <div class="method-shot"><img src="assets/method-scissors-source.webp" width="960" height="540" loading="lazy" decoding="async" alt="Scissor handles across the method stages" data-method-frames="scissors-source|scissors-source|scissors-step-0|scissors-step-0|scissors-step-0 scissors-step-1 scissors-step-2 scissors-step-3"></div>
+              <figcaption><strong>Scissor handles</strong><span>Left gripper · opposing handle edges</span></figcaption>
+            </figure>
+            <figure>
+              <div class="method-shot"><img src="assets/method-straw-source.webp" width="960" height="540" loading="lazy" decoding="async" alt="Thin straw across the method stages" data-method-frames="straw-source|straw-source|straw-step-0|straw-step-0|straw-step-0 straw-step-1 straw-step-2 straw-step-3"></div>
+              <figcaption><strong>Thin straw</strong><span>Right gripper · shaft near one end</span></figcaption>
+            </figure>
+          </div>
+          <div class="method-narration">
+            <p data-method-caption>Start from recorded head-camera observations. The agent identifies a usable reset frame and a candidate interaction.</p>
+            <p data-method-caption>Write the instruction and success rubric together. Each specifies the acting gripper, the target and the contact region.</p>
+            <p data-method-caption>The agent proposes changes to the background, object appearance or placement while preserving the intended behavior.</p>
+            <p data-method-caption>Generate consistent auxiliary views and update the instruction and rubric to match the edited initial scene.</p>
+            <p data-method-caption>Review the sampled predictions for physical consistency and score task completion separately. A candidate can be admitted, revised or rejected.</p>
+          </div>
+        </section>
+        <section class="method-panel" data-method-panel data-timing="4200 4700 6100" aria-labelledby="wm-method-heading">
+          <h3 id="wm-method-heading">World-model architecture and inference</h3>
+          <div class="method-track method-pipeline" role="group" aria-label="World-model inference steps" hidden>
+            <button type="button" data-method-step><strong>Encode inputs</strong><span>Text · views · actions</span><span class="method-wire" aria-hidden="true"><i></i></span></button>
+            <button type="button" data-method-step><strong>Predict observation</strong><span>Omni · multimodal MoE</span><span class="method-wire" aria-hidden="true"><i></i></span></button>
+            <button type="button" data-method-step><strong>Append and repeat</strong><span>Closed-loop inference</span><span class="method-wire" aria-hidden="true"><i></i></span></button>
+          </div>
+          <ol class="method-history" aria-label="Illustrative interleaved observation and action history">
+            <li data-reveal-phase="0">Initial view <b>o₀</b></li><li data-reveal-phase="0">Action <b>a₀</b></li>
+            <li data-reveal-phase="1">Prediction <b>ô₁</b></li><li data-reveal-phase="2">Action <b>a₁</b></li><li data-reveal-phase="2">Prediction <b>ô₂</b></li>
+          </ol>
+          <div class="method-strip">
+            <figure>
+              <div class="method-shot"><img src="assets/method-wm-insert-initial.webp" width="960" height="540" loading="lazy" decoding="async" alt="Insert a pen across the method stages" data-method-frames="wm-insert-initial|wm-insert-early|wm-insert-early wm-insert-middle wm-insert-late"></div>
+              <figcaption><strong>Insert a pen</strong><span>Recorded action sequence</span></figcaption>
+            </figure>
+            <figure>
+              <div class="method-shot"><img src="assets/method-wm-unzip-initial.webp" width="960" height="540" loading="lazy" decoding="async" alt="Unzip a pouch across the method stages" data-method-frames="wm-unzip-initial|wm-unzip-early|wm-unzip-early wm-unzip-middle wm-unzip-late"></div>
+              <figcaption><strong>Unzip a pouch</strong><span>Recorded action sequence</span></figcaption>
+            </figure>
+            <figure>
+              <div class="method-shot"><img src="assets/method-wm-handover-initial.webp" width="960" height="540" loading="lazy" decoding="async" alt="Hand over a towel across the method stages" data-method-frames="wm-handover-initial|wm-handover-early|wm-handover-early wm-handover-middle wm-handover-late"></div>
+              <figcaption><strong>Hand over a towel</strong><span>Recorded action sequence</span></figcaption>
+            </figure>
+          </div>
+          <div class="method-narration">
+            <p data-method-caption>Recent observations and task context condition the model. End-effector pose increments and gripper states are quantized into action tokens.</p>
+            <p data-method-caption>The fine-tuned Omni backbone integrates a latent flow to predict one joint camera canvas. The examples below show its head-camera output.</p>
+            <p data-method-caption>Return the predicted views to the policy. Append the action and prediction to the bounded history, then use the policy’s next action chunk to predict again.</p>
+          </div>
+        </section>
+        <section class="method-panel" data-method-panel data-timing="4000 4600 4900 4400 5200" aria-labelledby="ppo-method-heading">
+          <h3 id="ppo-method-heading">Train the policy with PPO</h3>
+          <div class="method-track method-pipeline" role="group" aria-label="PPO training steps" hidden>
+            <button type="button" data-method-step><strong>Sample</strong><span>Environment pool</span><span class="method-wire" aria-hidden="true"><i></i></span></button>
+            <button type="button" data-method-step><strong>Roll out</strong><span>Policy ↔ frozen world model</span><span class="method-wire" aria-hidden="true"><i></i></span></button>
+            <button type="button" data-method-step><strong>Score</strong><span>Rubric reward + value</span><span class="method-wire" aria-hidden="true"><i></i></span></button>
+            <button type="button" data-method-step><strong>Estimate</strong><span>GAE and return targets</span><span class="method-wire" aria-hidden="true"><i></i></span></button>
+            <button type="button" data-method-step><strong>Update</strong><span>Clipped PPO + value loss</span><span class="method-wire" aria-hidden="true"><i></i></span></button>
+          </div>
+          <div class="ppo-cycle" aria-label="One training round">
+            <div class="ppo-lane"><span>Collect trajectories</span><strong>VLA policy π<sub>old</sub> <span aria-hidden="true">↔</span> Frozen world model</strong></div>
+            <div class="ppo-lane"><span>Assign learning signals</span><strong>Rubric reward + value estimates <span aria-hidden="true">→</span> GAE</strong></div>
+            <div class="ppo-lane"><span>Begin the next round</span><strong>Updated policy π<sub>θ</sub> <span aria-hidden="true">↺</span></strong></div>
+          </div>
+          <div class="method-narration">
+            <p data-method-caption>Initialize the VLA policy from the SFT checkpoint. Each round samples tasks and initial scenes, with a curriculum that prioritizes partially mastered tasks while covering every task.</p>
+            <p data-method-caption>Collect parallel trajectories with the pre-update policy. Each interaction executes a four-action chunk, feeds the resulting predicted views back to the policy and repeats up to 16 interactions.</p>
+            <p data-method-caption>An independent VLM judges task completion against the rubric. A separately trained value model estimates expected return from the current observation and instruction.</p>
+            <p data-method-caption>Combine the sparse outcome rewards and value estimates with generalized advantage estimation. The resulting returns supervise the value model.</p>
+            <p data-method-caption>Update the policy on executed action tokens using clipped PPO. Train the value model with its own objective and optimizer, then sample the next round.</p>
+          </div>
+        </section>
+        <div class="method-player-footer">
+          <a class="text-link" href="assets/paper.pdf#page=3" data-method-paper target="_blank" rel="noopener">Method in the paper <span aria-hidden="true">↗</span></a>
+          <span class="sr-only" data-method-status role="status"></span>
+        </div>
+      </article>
+
+      <details class="framework-details">
+        <summary>View the full training framework</summary>
+        <figure class="framework">
+          <a class="zoom-link" href="assets/framework.webp" target="_blank" rel="noopener" data-zoom="Training framework overview" aria-label="Enlarge the training framework figure">
+            <img src="assets/framework-preview.webp" width="1800" height="900" loading="lazy" decoding="async" alt="Train an action-conditioned world model, construct training environments, and optimize a policy with world-model rollouts and rubric-based rewards.">
+            <span>Enlarge figure <span aria-hidden="true">↗</span></span>
+          </a>
+        </figure>
+      </details>
+    </section>
+
+    <section class="results-section" id="results" aria-labelledby="results-heading">
+      <div class="shell section">
+        <div class="section-heading">
+          <div><p class="eyebrow">Scaling results</p><h2 id="results-heading">Real-robot success across training scales</h2></div>
+          <p>From 38.02% before RL to 62.23% at the largest scale. Each policy faces the same 242 unseen real-robot tasks, with five trials per task.</p>
+        </div>
+        <div class="results-grid">
+          <figure class="chart">
+            <div class="chart-heading">
+              <h3>Success on unseen real-robot tasks</h3>
+              <button type="button" class="chart-replay" aria-label="Replay animation" hidden>Replay <span aria-hidden="true">↻</span></button>
+            </div>
+            <canvas id="scaling-curve" role="img" aria-label="Success rates: pre-RL SFT 38.02%; 16 RL training tasks 45.70%; 64 tasks 53.72%; 256 tasks 62.23%. Shading shows the 95% bootstrap confidence interval for each RL point." hidden></canvas>
+            <img id="scaling-still" src="assets/scaling-curve.png" alt="Success rates rise from 38.02% for SFT to 45.70%, 53.72%, and 62.23% at 16, 64, and 256 RL training tasks." width="1584" height="720" loading="lazy">
+            <p class="chart-note">Training task count and rollout budget scale together. The 16-, 64-, and 256-task pools use 256, 1,024, and 4,096 rollouts per training round, respectively.</p>
+            <figcaption><span><i></i> 95% bootstrap confidence interval</span><a href="assets/scaling-curve.gif" download>Download GIF <span aria-hidden="true">↓</span></a></figcaption>
+          </figure>
+          <div class="result-notes">
+            <div><strong>16 of 17</strong><span>skill categories with a higher success rate than SFT at the largest training scale.</span></div>
+            <div><strong>12.78 s <span aria-hidden="true">→</span> 7.54 s</strong><span>mean duration of each policy’s successful trials.</span></div>
+            <a class="text-link" href="assets/paper.pdf#page=10" target="_blank" rel="noopener">Evaluation protocol and results <span aria-hidden="true">↗</span></a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="shell section policy-section" id="demos" aria-labelledby="demos-heading">
+      <div class="section-heading">
+        <div><p class="eyebrow">Real-robot evaluation</p><h2 id="demos-heading">Before and after world-model RL</h2></div>
+        <p>Five matched instructions, each shown as two independent autonomous trials at their recorded speed. Both sides use the head camera.</p>
+      </div>
+      <div class="policy-grid">
+        <article class="policy-case">
+          <header class="policy-case-heading"><h3>Fold the blue towel</h3><p>Fold the near half over the far half.</p></header>
+          <div class="policy-labels" aria-hidden="true"><span>Pre-RL · SFT</span><span>Post-RL · 256 tasks</span></div>
+          <video controls playsinline preload="none" width="1920" height="540" poster="assets/policy-head-fold.webp" aria-label="Fold the blue towel, left pre-RL SFT and right post-RL 256-task policy">
+            <source src="assets/policy-head-fold.mp4" type="video/mp4">
+          </video>
+          <div class="policy-transport" data-policy-transport hidden>
+            <button class="policy-play" type="button" aria-label="Play comparison"><span aria-hidden="true"></span></button>
+            <input type="range" min="0" max="0" value="0" step="0.01" aria-label="Comparison playback position" disabled>
+            <output>0:00</output>
+            <button class="policy-fullscreen" type="button" aria-label="View comparison full screen" hidden><span aria-hidden="true">⛶</span></button>
+            <a class="media-download" href="assets/policy-head-fold.mp4" download aria-label="Download HD comparison MP4">MP4 <span aria-hidden="true">↓</span></a>
+          </div>
+        </article>
+        <article class="policy-case">
+          <header class="policy-case-heading"><h3>Wipe the plate</h3><p>Hold the plate with the left gripper and wipe with the right.</p></header>
+          <div class="policy-labels" aria-hidden="true"><span>Pre-RL · SFT</span><span>Post-RL · 256 tasks</span></div>
+          <video controls playsinline preload="none" width="1920" height="540" poster="assets/policy-head-wipe.webp" aria-label="Wipe the plate, left pre-RL SFT and right post-RL 256-task policy">
+            <source src="assets/policy-head-wipe.mp4" type="video/mp4">
+          </video>
+          <div class="policy-transport" data-policy-transport hidden>
+            <button class="policy-play" type="button" aria-label="Play comparison"><span aria-hidden="true"></span></button>
+            <input type="range" min="0" max="0" value="0" step="0.01" aria-label="Comparison playback position" disabled>
+            <output>0:00</output>
+            <button class="policy-fullscreen" type="button" aria-label="View comparison full screen" hidden><span aria-hidden="true">⛶</span></button>
+            <a class="media-download" href="assets/policy-head-wipe.mp4" download aria-label="Download HD comparison MP4">MP4 <span aria-hidden="true">↓</span></a>
+          </div>
+        </article>
+        <article class="policy-case">
+          <header class="policy-case-heading"><h3>Drag the pencil case</h3><p>Move it to the front-left of the coaster.</p></header>
+          <div class="policy-labels" aria-hidden="true"><span>Pre-RL · SFT</span><span>Post-RL · 256 tasks</span></div>
+          <video controls playsinline preload="none" width="1920" height="540" poster="assets/policy-head-drag.webp" aria-label="Drag the pencil case, left pre-RL SFT and right post-RL 256-task policy">
+            <source src="assets/policy-head-drag.mp4" type="video/mp4">
+          </video>
+          <div class="policy-transport" data-policy-transport hidden>
+            <button class="policy-play" type="button" aria-label="Play comparison"><span aria-hidden="true"></span></button>
+            <input type="range" min="0" max="0" value="0" step="0.01" aria-label="Comparison playback position" disabled>
+            <output>0:00</output>
+            <button class="policy-fullscreen" type="button" aria-label="View comparison full screen" hidden><span aria-hidden="true">⛶</span></button>
+            <a class="media-download" href="assets/policy-head-drag.mp4" download aria-label="Download HD comparison MP4">MP4 <span aria-hidden="true">↓</span></a>
+          </div>
+        </article>
+        <article class="policy-case">
+          <header class="policy-case-heading"><h3>Rotate the fork</h3><p>Align it with the table edge, prongs toward the bananas.</p></header>
+          <div class="policy-labels" aria-hidden="true"><span>Pre-RL · SFT</span><span>Post-RL · 256 tasks</span></div>
+          <video controls playsinline preload="none" width="1920" height="540" poster="assets/policy-head-rotate.webp" aria-label="Rotate the fork, left pre-RL SFT and right post-RL 256-task policy">
+            <source src="assets/policy-head-rotate.mp4" type="video/mp4">
+          </video>
+          <div class="policy-transport" data-policy-transport hidden>
+            <button class="policy-play" type="button" aria-label="Play comparison"><span aria-hidden="true"></span></button>
+            <input type="range" min="0" max="0" value="0" step="0.01" aria-label="Comparison playback position" disabled>
+            <output>0:00</output>
+            <button class="policy-fullscreen" type="button" aria-label="View comparison full screen" hidden><span aria-hidden="true">⛶</span></button>
+            <a class="media-download" href="assets/policy-head-rotate.mp4" download aria-label="Download HD comparison MP4">MP4 <span aria-hidden="true">↓</span></a>
+          </div>
+        </article>
+        <article class="policy-case">
+          <header class="policy-case-heading"><h3>Flip the box</h3><p>Turn the printed box over with the right gripper.</p></header>
+          <div class="policy-labels" aria-hidden="true"><span>Pre-RL · SFT</span><span>Post-RL · 256 tasks</span></div>
+          <video controls playsinline preload="none" width="1920" height="540" poster="assets/policy-head-flip.webp" aria-label="Flip the box, left pre-RL SFT and right post-RL 256-task policy">
+            <source src="assets/policy-head-flip.mp4" type="video/mp4">
+          </video>
+          <div class="policy-transport" data-policy-transport hidden>
+            <button class="policy-play" type="button" aria-label="Play comparison"><span aria-hidden="true"></span></button>
+            <input type="range" min="0" max="0" value="0" step="0.01" aria-label="Comparison playback position" disabled>
+            <output>0:00</output>
+            <button class="policy-fullscreen" type="button" aria-label="View comparison full screen" hidden><span aria-hidden="true">⛶</span></button>
+            <a class="media-download" href="assets/policy-head-flip.mp4" download aria-label="Download HD comparison MP4">MP4 <span aria-hidden="true">↓</span></a>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="shell section" id="agent" aria-labelledby="agent-heading">
+      <div class="section-heading">
+        <div><p class="eyebrow">Agentic experiment</p><h2 id="agent-heading">Planning and execution on real robots</h2></div>
+        <p>GPT-Astra chooses a manipulation, the RL-trained policy executes it, and the planner uses the returned observations to continue, retry or revise.</p>
+      </div>
+      <article class="agent-player" data-agent aria-label="Real-robot agent trajectory replay">
+        <div class="agent-player-nav">
+          <div class="agent-tasks" role="group" aria-label="Agentic tasks">
+            <button type="button" data-agent-task>Cup exchange</button>
+            <button type="button" data-agent-task>Tabletop organization</button>
+            <button type="button" data-agent-task>Shirt folding</button>
+            <button type="button" data-agent-task>Cooking</button>
+          </div>
+          <button type="button" class="motion-button" data-agent-play hidden><i aria-hidden="true"></i><span>Play keyframes</span></button>
+        </div>
+        <div class="agent-screen">
+          <a class="agent-picture" href="assets/agent-swap-000000.webp" target="_blank" rel="noopener" data-zoom="Cup exchange">
+            <img src="assets/agent-swap-000000.webp" data-agent-image alt="Initial head-camera observation for cup exchange" width="1280" height="720" loading="lazy">
+          </a>
+          <div class="agent-overlay">
+            <p class="agent-meta" data-agent-time>Head camera · 0:00 elapsed</p>
+            <h3 data-agent-action>Locate both cups</h3>
+            <p data-agent-note>Move the yellow cup to the blue tray, then move the green cup to the orange tray.</p>
+          </div>
+        </div>
+        <div class="agent-keyframes" data-agent-track data-outcome="Trial complete" role="group" aria-label="Cup exchange keyframes">
+          <button type="button" data-agent-frame data-time="0:00" data-action="Locate both cups" data-note="Move the yellow cup to the blue tray, then move the green cup to the orange tray.">
+            <img src="assets/agent-swap-000000.webp" alt="" width="1280" height="720" loading="lazy"><span>Locate both cups</span>
+          </button>
+          <button type="button" data-agent-frame data-time="3:09" data-action="Place the yellow cup" data-note="The planner proceeds after the yellow cup is held securely. Put it upright on the blue tray.">
+            <img src="assets/agent-swap-000208.webp" alt="" width="1280" height="720" loading="lazy"><span>Place the yellow cup</span>
+          </button>
+          <button type="button" data-agent-frame data-time="3:38" data-action="Grasp the green cup" data-note="The yellow cup is on the blue tray. Grip the green cup without disturbing it.">
+            <img src="assets/agent-swap-000240.webp" alt="" width="1280" height="720" loading="lazy"><span>Grasp the green cup</span>
+          </button>
+          <button type="button" data-agent-frame data-time="4:00" data-action="Place the green cup" data-note="Carry the green cup back to the orange tray and release it upright.">
+            <img src="assets/agent-swap-000272.webp" alt="" width="1280" height="720" loading="lazy"><span>Place the green cup</span>
+          </button>
+          <button type="button" data-agent-frame data-time="4:36" data-action="Check both placements" data-note="The trace later verifies both cups are upright on their destination trays.">
+            <img src="assets/agent-swap-000320.webp" alt="" width="1280" height="720" loading="lazy"><span>Check both placements</span>
+          </button>
+        </div>
+        <div class="agent-keyframes" data-agent-track data-outcome="Final state unverified" role="group" aria-label="Tabletop organization keyframes" hidden>
+          <button type="button" data-agent-frame data-time="0:00" data-action="Upright the striped cup" data-note="Grasp and right the fallen cup before placing either block.">
+            <img src="assets/agent-cup_b-000000.webp" alt="" width="1280" height="720" loading="lazy"><span>Upright the striped cup</span>
+          </button>
+          <button type="button" data-agent-frame data-time="0:47" data-action="Prepare to load the cup" data-note="Continue from the upright cup and pick up the red block.">
+            <img src="assets/agent-cup_b-000048.webp" alt="" width="1280" height="720" loading="lazy"><span>Prepare to load the cup</span>
+          </button>
+          <button type="button" data-agent-frame data-time="1:35" data-action="Seat the red block" data-note="The first block is placed inside. The next instruction targets the blue block.">
+            <img src="assets/agent-cup_b-000112.webp" alt="" width="1280" height="720" loading="lazy"><span>Seat the red block</span>
+          </button>
+          <button type="button" data-agent-frame data-time="2:25" data-action="Load the second block" data-note="The robot works to place the blue block into the same cup.">
+            <img src="assets/agent-cup_b-000176.webp" alt="" width="1280" height="720" loading="lazy"><span>Load the second block</span>
+          </button>
+          <button type="button" data-agent-frame data-time="3:13" data-action="Stack the loaded cup" data-note="The cup is stacked in the mug. The verifier could not confirm both blocks inside from its final view.">
+            <img src="assets/agent-cup_b-000224.webp" alt="" width="1280" height="720" loading="lazy"><span>Stack the loaded cup</span>
+          </button>
+        </div>
+        <div class="agent-keyframes" data-agent-track data-outcome="Trial complete" role="group" aria-label="Shirt folding keyframes" hidden>
+          <button type="button" data-agent-frame data-time="0:00" data-action="Grasp the left cuff" data-note="GPT-Astra requests a grasp near the cuff before attempting the first fold.">
+            <img src="assets/agent-fold-000000.webp" alt="" width="1280" height="720" loading="lazy"><span>Grasp the left cuff</span>
+          </button>
+          <button type="button" data-agent-frame data-time="0:16" data-action="Fold the left sleeve" data-note="The left cuff is held. Fold the sleeve across the body and release it.">
+            <img src="assets/agent-fold-000032.webp" alt="" width="1280" height="720" loading="lazy"><span>Fold the left sleeve</span>
+          </button>
+          <button type="button" data-agent-frame data-time="1:26" data-action="Fold the right sleeve" data-note="With the left sleeve folded and the right cuff held, fold the right sleeve across the body.">
+            <img src="assets/agent-fold-000112.webp" alt="" width="1280" height="720" loading="lazy"><span>Fold the right sleeve</span>
+          </button>
+          <button type="button" data-agent-frame data-time="2:24" data-action="Grasp both lower corners" data-note="Hold both corners before folding upward. The trace records retries when a grip is lost.">
+            <img src="assets/agent-fold-000192.webp" alt="" width="1280" height="720" loading="lazy"><span>Grasp both lower corners</span>
+          </button>
+          <button type="button" data-agent-frame data-time="4:49" data-action="Fold toward the collar" data-note="After recovering the two-corner grasp, fold the lower half toward the collar and release.">
+            <img src="assets/agent-fold-000384.webp" alt="" width="1280" height="720" loading="lazy"><span>Fold toward the collar</span>
+          </button>
+          <button type="button" data-agent-frame data-time="5:20" data-action="Verify the finished fold" data-note="The verifier confirms the sleeves and body are folded and supported on the table.">
+            <img src="assets/agent-fold-000416.webp" alt="" width="1280" height="720" loading="lazy"><span>Verify the finished fold</span>
+          </button>
+        </div>
+        <div class="agent-keyframes" data-agent-track data-outcome="Recording interrupted" role="group" aria-label="Cooking keyframes" hidden>
+          <button type="button" data-agent-frame data-time="0:00" data-action="Grasp the sponge" data-note="Start by picking up the sponge to wipe the plate.">
+            <img src="assets/agent-plate-000000.webp" alt="" width="1280" height="720" loading="lazy"><span>Grasp the sponge</span>
+          </button>
+          <button type="button" data-agent-frame data-time="0:52" data-action="Wipe the plate" data-note="The executor moves the sponge across the plate before handling the food.">
+            <img src="assets/agent-plate-000076.webp" alt="" width="1280" height="720" loading="lazy"><span>Wipe the plate</span>
+          </button>
+          <button type="button" data-agent-frame data-time="2:21" data-action="Place food on the plate" data-note="The planner directs the robot to transfer the food to the cleaned plate.">
+            <img src="assets/agent-plate-000192.webp" alt="" width="1280" height="720" loading="lazy"><span>Place food on the plate</span>
+          </button>
+          <button type="button" data-agent-frame data-time="5:35" data-action="Lift the loaded plate" data-note="The robot grips the plate and prepares to transfer it to the open oven.">
+            <img src="assets/agent-plate-000448.webp" alt="" width="1280" height="720" loading="lazy"><span>Lift the loaded plate</span>
+          </button>
+          <button type="button" data-agent-frame data-time="6:10" data-action="Transfer toward the oven" data-note="The trace ends after a disconnection during this trial.">
+            <img src="assets/agent-plate-000480.webp" alt="" width="1280" height="720" loading="lazy"><span>Transfer toward the oven</span>
+          </button>
+        </div>
+        <div class="agent-player-footer"><span>Recorded keyframes with summaries of the planner's instructions</span><strong data-agent-outcome>Trial complete</strong></div>
+      </article>
+      <div class="agent-results">
+        <div class="agent-result-summary"><strong>10 / 20</strong><p>complete trials with GPT-Astra and the RL-trained policy. The same planner with the pre-RL policy completed 0 of 20.</p></div>
+        <dl class="agent-task-counts">
+          <div><dt>Cup exchange</dt><dd>2 / 5</dd></div>
+          <div><dt>Tabletop organization</dt><dd>2 / 5</dd></div>
+          <div><dt>Shirt folding</dt><dd>2 / 5</dd></div>
+          <div><dt>Cooking</dt><dd>4 / 5</dd></div>
+        </dl>
+      </div>
+    </section>
+
+    <section class="citation-section" id="citation" aria-labelledby="cite-heading">
+      <div class="shell citation-grid">
+        <div><h2 id="cite-heading">Citation</h2><p>ByteDance Seed · November 2026</p></div>
+        <div class="bibtex"><div class="bibtex-head"><span>BibTeX</span><button type="button" id="copy-citation">Copy BibTeX</button></div>
+          <pre id="citation-text">@techreport{zhang2026scaling,
+  title = {Scaling Reinforcement Learning in World Models for Generalist Embodied Agents},
+  author = {Zhilong Zhang and Yihao Sun and Longfei Li and Hao Luo and
+            Guanghao Li and Heyuan Yao and Yucheng Wang and Haiqin Cui and
+            Juncheng Mu and Chengyu Bai and Youliang Zhang and Chenxiao Zhang and
+            Junpeng Ma and Yang Yu and Ceyuan Yang and Qian Wang},
+  institution = {ByteDance Seed},
+  year = {2026},
+  month = nov
+}</pre><span class="sr-only" id="copy-status" role="status"></span>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="shell footer"><span>ByteDance Seed</span><a href="#top">Back to top <span aria-hidden="true">↑</span></a></footer>
+
+  <dialog id="figure-dialog" aria-labelledby="figure-title">
+    <div class="dialog-head"><strong id="figure-title">Paper figure</strong><button type="button" aria-label="Close figure">×</button></div>
+    <img alt="">
+  </dialog>
+</body>
+</html>
