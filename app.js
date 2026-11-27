@@ -244,23 +244,3 @@ dialog.addEventListener("click", event => {
   if (event.target === dialog) dialog.close();
 });
 dialog.addEventListener("close", () => figureTrigger?.focus());
-
-const copyButton = document.querySelector("#copy-citation");
-const citation = document.querySelector("#citation-text");
-const copyStatus = document.querySelector("#copy-status");
-let copyTimer;
-
-copyButton.addEventListener("click", async () => {
-  try {
-    await navigator.clipboard.writeText(citation.textContent);
-    copyButton.textContent = "Copied";
-    copyStatus.textContent = "BibTeX copied to the clipboard.";
-  } catch {
-    const selection = window.getSelection();
-    selection.selectAllChildren(citation);
-    copyButton.textContent = "Selected";
-    copyStatus.textContent = "BibTeX selected. Use your copy shortcut.";
-  }
-  clearTimeout(copyTimer);
-  copyTimer = setTimeout(() => { copyButton.textContent = "Copy BibTeX"; }, 3000);
-});

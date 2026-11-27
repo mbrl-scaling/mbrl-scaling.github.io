@@ -9,11 +9,11 @@
   <meta property="og:description" content="World-model reinforcement learning at scale, evaluated on 242 unseen real-robot tasks.">
   <meta property="og:image" content="https://mbrl-scaling.github.io/assets/hero-rollouts-36.webp">
   <link rel="icon" href="assets/seed-mark.webp" type="image/webp">
-  <link rel="stylesheet" href="style.css?v=12">
+  <link rel="stylesheet" href="style.css?v=13">
   <link rel="stylesheet" href="environment.css?v=10">
   <link rel="stylesheet" href="world-model.css?v=4">
   <link rel="stylesheet" href="ppo.css?v=4">
-  <script src="app.js?v=6" defer></script>
+  <script src="app.js?v=7" defer></script>
   <script src="scaling.js?v=2" defer></script>
   <script src="environment.js?v=8" defer></script>
   <script src="world-model.js?v=1" defer></script>
@@ -29,7 +29,6 @@
       <nav aria-label="Project sections">
         <a href="#method">Method</a><a href="#results">Scaling</a><a href="#demos">Policy videos</a><a href="#agent">Agentic</a>
       </nav>
-      <a class="header-paper" href="#citation">Cite <span aria-hidden="true">↓</span></a>
     </div>
   </header>
 
@@ -46,15 +45,10 @@
         <h1 id="title">Scaling Reinforcement Learning in <em>World Models</em> <span>for Generalist Embodied Agents</span></h1>
         <div class="hero-actions">
           <span class="button paper-status">Paper · Upcoming</span>
-          <a class="button primary" href="#overview">Explore the research <span aria-hidden="true">↓</span></a>
+          <a class="button primary" href="#method">Explore the research <span aria-hidden="true">↓</span></a>
         </div>
       </div>
     </section>
-
-    <div class="shell paper-meta" id="overview">
-      <p class="authors">Zhilong Zhang<sup>*</sup>, Yihao Sun<sup>*</sup>, Longfei Li, Hao Luo, Guanghao Li, Heyuan Yao, Yucheng Wang, Haiqin Cui, Juncheng Mu, Chengyu Bai, Youliang Zhang, Chenxiao Zhang, Junpeng Ma, Yang Yu, Ceyuan Yang<sup>†</sup>, Qian Wang<sup>†</sup></p>
-      <p class="affiliations"><span>* Equal contribution</span><span>† Corresponding authors</span></p>
-    </div>
 
     <section class="shell section method-section" id="method" aria-labelledby="method-heading">
       <h2 class="sr-only" id="method-heading">Method</h2>
@@ -434,7 +428,6 @@
     <section class="shell section policy-section" id="demos" aria-labelledby="demos-heading">
       <div class="section-heading">
         <div><p class="eyebrow">Real-robot evaluation</p><h2 id="demos-heading">Before and after world-model RL</h2></div>
-        <p>12 matched tasks across 12 skills. Head-camera trials play at their recorded speed.</p>
       </div>
       <div class="policy-board">
         <div class="policy-board-bar">
@@ -536,10 +529,10 @@
               </div>
             </div>
           </article>
-          <article class="policy-case" aria-labelledby="compare-mug-grasp">
+          <article class="policy-case" aria-labelledby="compare-basin-flip">
             <header class="policy-case-heading">
-              <p class="policy-skill">Grasp</p>
-              <h3 id="compare-mug-grasp">Grasp the blue mug by its handle</h3>
+              <p class="policy-skill">Flip</p>
+              <h3 id="compare-basin-flip">Flip the basin onto the mat</h3>
             </header>
             <div class="policy-player">
               <div class="policy-labels" aria-hidden="true">
@@ -547,8 +540,8 @@
                 <span>Post-RL</span>
               </div>
               <div class="policy-screen">
-                <video controls controlslist="nodownload" playsinline muted preload="none" width="1920" height="540" poster="assets/policy-compare-mug-grasp.webp" aria-label="Grasp the blue mug by its handle. Pre-RL on the left, post-RL on the right." aria-description="Grasp the middle of the blue mug&#x27;s outer handle arc with the left hand.">
-                  <source src="assets/policy-compare-mug-grasp.mp4" type="video/mp4">
+                <video controls controlslist="nodownload" playsinline muted preload="none" width="1920" height="540" poster="assets/policy-compare-basin-flip.webp" aria-label="Flip the basin onto the mat. Pre-RL on the left, post-RL on the right." aria-description="Grasp the basin, turn it upside down, and place it on the gray mat.">
+                  <source src="assets/policy-compare-basin-flip.mp4" type="video/mp4">
                 </video>
               </div>
               <div class="policy-transport" data-policy-transport hidden>
@@ -628,10 +621,10 @@
               </div>
             </div>
           </article>
-          <article class="policy-case" aria-labelledby="compare-plate-press">
+          <article class="policy-case" aria-labelledby="compare-vase-handover">
             <header class="policy-case-heading">
-              <p class="policy-skill">Press</p>
-              <h3 id="compare-plate-press">Press the rim of the green plate</h3>
+              <p class="policy-skill">Handover</p>
+              <h3 id="compare-vase-handover">Pass the vase from left to right</h3>
             </header>
             <div class="policy-player">
               <div class="policy-labels" aria-hidden="true">
@@ -639,8 +632,8 @@
                 <span>Post-RL</span>
               </div>
               <div class="policy-screen">
-                <video controls controlslist="nodownload" playsinline muted preload="none" width="1920" height="540" poster="assets/policy-compare-plate-press.webp" aria-label="Press the rim of the green plate. Pre-RL on the left, post-RL on the right." aria-description="Press the side wall of the shallow green plastic plate inward.">
-                  <source src="assets/policy-compare-plate-press.mp4" type="video/mp4">
+                <video controls controlslist="nodownload" playsinline muted preload="none" width="1920" height="540" poster="assets/policy-compare-vase-handover.webp" aria-label="Pass the vase from left to right. Pre-RL on the left, post-RL on the right." aria-description="Grasp the vase and pass it from left to right.">
+                  <source src="assets/policy-compare-vase-handover.mp4" type="video/mp4">
                 </video>
               </div>
               <div class="policy-transport" data-policy-transport hidden>
@@ -697,10 +690,10 @@
               </div>
             </div>
           </article>
-          <article class="policy-case" aria-labelledby="compare-visual-placement">
+          <article class="policy-case" aria-labelledby="compare-towel-fold">
             <header class="policy-case-heading">
-              <p class="policy-skill">Visual prompt</p>
-              <h3 id="compare-visual-placement">Place using visual cues</h3>
+              <p class="policy-skill">Fold</p>
+              <h3 id="compare-towel-fold">Fold the blue towel</h3>
             </header>
             <div class="policy-player">
               <div class="policy-labels" aria-hidden="true">
@@ -708,8 +701,8 @@
                 <span>Post-RL</span>
               </div>
               <div class="policy-screen">
-                <video controls controlslist="nodownload" playsinline muted preload="none" width="1920" height="540" poster="assets/policy-compare-visual-placement.webp" aria-label="Place using visual cues. Pre-RL on the left, post-RL on the right." aria-description="Grasp the yellow-box target and place it in the cyan-box region with the left hand.">
-                  <source src="assets/policy-compare-visual-placement.mp4" type="video/mp4">
+                <video controls controlslist="nodownload" playsinline muted preload="none" width="1920" height="540" poster="assets/policy-compare-towel-fold.webp" aria-label="Fold the blue towel. Pre-RL on the left, post-RL on the right." aria-description="Grasp the near towel corners and fold the towel away from the robot using both hands.">
+                  <source src="assets/policy-compare-towel-fold.mp4" type="video/mp4">
                 </video>
               </div>
               <div class="policy-transport" data-policy-transport hidden>
@@ -830,24 +823,6 @@
           <div><dt>Shirt folding</dt><dd>2 / 5</dd></div>
           <div><dt>Cooking</dt><dd>4 / 5</dd></div>
         </dl>
-      </div>
-    </section>
-
-    <section class="citation-section" id="citation" aria-labelledby="cite-heading">
-      <div class="shell citation-grid">
-        <div><h2 id="cite-heading">Citation</h2><p>ByteDance Seed · November 2026</p></div>
-        <div class="bibtex"><div class="bibtex-head"><span>BibTeX</span><button type="button" id="copy-citation">Copy BibTeX</button></div>
-          <pre id="citation-text">@techreport{zhang2026scaling,
-  title = {Scaling Reinforcement Learning in World Models for Generalist Embodied Agents},
-  author = {Zhilong Zhang and Yihao Sun and Longfei Li and Hao Luo and
-            Guanghao Li and Heyuan Yao and Yucheng Wang and Haiqin Cui and
-            Juncheng Mu and Chengyu Bai and Youliang Zhang and Chenxiao Zhang and
-            Junpeng Ma and Yang Yu and Ceyuan Yang and Qian Wang},
-  institution = {ByteDance Seed},
-  year = {2026},
-  month = nov
-}</pre><span class="sr-only" id="copy-status" role="status"></span>
-        </div>
       </div>
     </section>
   </main>
