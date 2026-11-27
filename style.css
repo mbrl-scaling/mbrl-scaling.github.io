@@ -226,13 +226,6 @@ figure, h1, h2, h3, p { margin: 0; }
 .motion-button i { border-block: 5px solid transparent; border-left: 8px solid currentColor; }
 .motion-button[data-playing] i { width: 8px; height: 10px; border-block: 0; border-inline: 2px solid currentColor; }
 
-.framework-details { margin-top: 19px; }
-.framework-details summary { width: fit-content; font-size: 14px; color: var(--accent); font-weight: 650; cursor: pointer; }
-.framework { margin-top: 13px; }
-.framework .zoom-link { display: block; position: relative; padding: 12px; background: var(--white); border: 1px solid var(--line); border-radius: 12px; }
-.framework img { width: 100%; height: auto; }
-.framework .zoom-link > span { position: absolute; right: 16px; bottom: 15px; border: 1px solid var(--line); background: #fffffff2; color: var(--accent); font-size: 11px; font-weight: 650; padding: 7px 8px; }
-
 .agent-player { overflow: hidden; border: 1px solid #d7e0eb; border-radius: 18px; background: var(--white); }
 .agent-player-nav, .agent-player-footer { display: flex; align-items: center; justify-content: space-between; gap: 9px 15px; padding: 12px clamp(12px, 2vw, 25px); background: #f1f5fa; }
 .agent-tasks { display: flex; flex-wrap: wrap; gap: 3px; }
@@ -321,8 +314,6 @@ dialog img { max-width: 100%; margin-inline: auto; }
   .policy-grid { grid-template-columns: 1fr; row-gap: 23px; }
   .policy-case-heading { min-height: auto; }
   .policy-labels span { padding: 8px; font-size: 11px; }
-  .framework .zoom-link { padding: 4px 4px 30px; }
-  .framework .zoom-link > span { bottom: 3px; right: 7px; padding-block: 4px; }
   .agent-player-nav, .agent-player-footer { flex-wrap: wrap; }
   .agent-tasks { display: grid; grid-template-columns: 1fr 1fr; width: 100%; }
   .agent-tasks button { font-size: 12px; padding: 0 4px; }

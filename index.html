@@ -9,10 +9,10 @@
   <meta property="og:description" content="World-model reinforcement learning at scale, evaluated on 242 unseen real-robot tasks.">
   <meta property="og:image" content="https://mbrl-scaling.github.io/assets/hero-rollouts-36.webp">
   <link rel="icon" href="assets/seed-mark.webp" type="image/webp">
-  <link rel="stylesheet" href="style.css?v=5">
+  <link rel="stylesheet" href="style.css?v=6">
   <link rel="stylesheet" href="environment.css?v=8">
   <link rel="stylesheet" href="world-model.css?v=2">
-  <link rel="stylesheet" href="ppo.css?v=2">
+  <link rel="stylesheet" href="ppo.css?v=3">
   <script src="app.js?v=3" defer></script>
   <script src="scaling.js" defer></script>
   <script src="environment.js?v=7" defer></script>
@@ -306,7 +306,7 @@
                 <img src="assets/eval242-pool-handover.webp" width="384" height="216" alt="" loading="lazy">
                 <img src="assets/eval242-pool-push.webp" width="384" height="216" alt="" loading="lazy">
                 <img src="assets/eval242-pool-rotate.webp" width="384" height="216" alt="" loading="lazy">
-                <img src="assets/eval242-flip-0.webp" width="960" height="540" alt="" loading="lazy" data-ppo-pick="flip">
+                <img src="assets/eval242-rotate-0.webp" width="960" height="540" alt="" loading="lazy" data-ppo-pick="rotate">
                 <img src="assets/eval242-pool-close.webp" width="384" height="216" alt="" loading="lazy">
                 <img src="assets/eval242-pool-topple.webp" width="384" height="216" alt="" loading="lazy">
               </div>
@@ -335,13 +335,13 @@
                     <img src="assets/eval242-drag-3.webp" width="960" height="540" alt="Pencil case in front of and to the left of the coaster" loading="lazy">
                   </div>
                 </div>
-                <div class="ppo-track" data-ppo-track="flip">
-                  <h5>Flip the paper box</h5>
+                <div class="ppo-track" data-ppo-track="rotate">
+                  <h5>Rotate the fork</h5>
                   <div class="ppo-frames">
-                    <img src="assets/eval242-flip-0.webp" width="960" height="540" alt="Printed paper box before flipping" loading="lazy">
-                    <img src="assets/eval242-flip-1.webp" width="960" height="540" alt="Gripper grasping the paper box" loading="lazy">
-                    <img src="assets/eval242-flip-2.webp" width="960" height="540" alt="Robot turning the paper box over" loading="lazy">
-                    <img src="assets/eval242-flip-3.webp" width="960" height="540" alt="Paper box resting on its opposite broad face" loading="lazy">
+                    <img src="assets/eval242-rotate-0.webp" width="960" height="540" alt="Fork on the table before rotation" loading="lazy">
+                    <img src="assets/eval242-rotate-1.webp" width="960" height="540" alt="Gripper approaching the fork handle" loading="lazy">
+                    <img src="assets/eval242-rotate-2.webp" width="960" height="540" alt="Robot turning the fork" loading="lazy">
+                    <img src="assets/eval242-rotate-3.webp" width="960" height="540" alt="Fork with its tines pointing toward the bananas" loading="lazy">
                   </div>
                 </div>
               </div>
@@ -354,7 +354,7 @@
               <div class="ppo-scores">
                 <div class="ppo-score" data-ppo-score="wipe"><span>Plate wipe</span><b aria-label="Plate wiping rollout reward"><span>r<sub>1</sub></span></b></div>
                 <div class="ppo-score" data-ppo-score="drag"><span>Pencil case</span><b aria-label="Pencil case dragging rollout reward"><span>r<sub>2</sub></span></b></div>
-                <div class="ppo-score" data-ppo-score="flip"><span>Box flip</span><b aria-label="Box flipping rollout reward"><span>r<sub>3</sub></span></b></div>
+                <div class="ppo-score" data-ppo-score="rotate"><span>Fork rotation</span><b aria-label="Fork rotation rollout reward"><span>r<sub>3</sub></span></b></div>
               </div>
             </section>
             <section class="ppo-optimization" aria-labelledby="ppo-update-heading">
@@ -386,15 +386,6 @@
         </figure>
       </section>
 
-      <details class="framework-details">
-        <summary>View the full training framework</summary>
-        <figure class="framework">
-          <a class="zoom-link" href="assets/framework.webp" target="_blank" rel="noopener" data-zoom="Training framework overview" aria-label="Enlarge the training framework figure">
-            <img src="assets/framework-preview.webp" width="1800" height="900" loading="lazy" decoding="async" alt="Train an action-conditioned world model, construct training environments, and optimize a policy with world-model rollouts and rubric-based rewards.">
-            <span>Enlarge figure <span aria-hidden="true">↗</span></span>
-          </a>
-        </figure>
-      </details>
     </section>
 
     <section class="results-section" id="results" aria-labelledby="results-heading">
