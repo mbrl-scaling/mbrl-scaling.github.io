@@ -104,8 +104,8 @@
   border-radius: 3px;
 }
 .ppo-story[data-ppo-enhanced] .ppo-frames img {
-  opacity: calc(.16 + var(--ppo-reveal, 0) * .84);
-  filter: saturate(calc(.35 + .65 * var(--ppo-reveal, 0)));
+  opacity: calc(.34 + var(--ppo-reveal, 0) * .66);
+  filter: saturate(calc(.58 + .42 * var(--ppo-reveal, 0)));
 }
 
 .ppo-score {

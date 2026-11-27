@@ -5,6 +5,7 @@
   const $ = selector => figure.querySelector(selector);
   const all = selector => [...figure.querySelectorAll(selector)];
   const stage = $("[data-wm-layout]");
+  const prepareMedia = prepareMethodMedia(figure, stage);
   const canvas = $("[data-wm-paths]");
   const pen = canvas.getContext("2d");
   const sources = all("[data-wm-source]").map(source => ({
@@ -37,6 +38,7 @@
   let previous;
   let request;
   let playing = false;
+  let visible = false;
   let allowAutoplay = !navigator.connection?.saveData;
 
   const progress = (value, start, span) => Math.min(1, Math.max(0, (value - start) / span));
@@ -176,7 +178,8 @@
       showImage(image, index === currentObservation ? 1 : index === currentObservation + 1 ? append : 0);
     });
     outputImages.forEach((image, index) => {
-      const opacity = index === currentPrediction ? predict : index === currentPrediction - 1 ? 1 : 0;
+      const firstPreview = currentPrediction === 0 ? .28 : 0;
+      const opacity = index === currentPrediction ? mix(firstPreview, 1, predict) : index === currentPrediction - 1 ? 1 : 0;
       showImage(image, opacity);
     });
 
@@ -249,8 +252,9 @@
     }
   }
 
-  function play() {
+  async function play(manual = false) {
     if (playing || motion.matches) return;
+    if (!await prepareMedia() || playing || motion.matches || (!manual && (!visible || !allowAutoplay))) return;
     if (elapsed >= duration) elapsed = 0;
     playing = true;
     render();
@@ -269,7 +273,7 @@
     if (top < 0 && stage.getBoundingClientRect().bottom < innerHeight * .5) {
       figure.scrollIntoView({ block: "start", behavior: "smooth" });
     }
-    play();
+    play(true);
   });
 
   motion.addEventListener("change", () => {
@@ -285,7 +289,8 @@
   new ResizeObserver(measure).observe(stage);
   document.fonts?.ready.then(measure);
   new IntersectionObserver(([entry]) => {
-    if (entry.intersectionRatio >= .30) {
+    visible = entry.intersectionRatio >= .30;
+    if (visible) {
       if (allowAutoplay) play();
     } else if (playing) {
       pause();

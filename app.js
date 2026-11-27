@@ -1,19 +1,18 @@
 const hero = document.querySelector("#hero-video");
 const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
 const compactHero = matchMedia("(max-aspect-ratio: 4/5)");
-const heroSource = hero.querySelector("source");
 const heroScreen = hero.parentElement;
+const heroPoster = heroScreen.querySelector(".hero-poster img");
 const carousel = document.querySelector("#hero-carousel");
 const carouselContext = carousel.getContext("2d", { alpha: false });
-const carouselPoster = new Image();
 const carouselFrame = document.createElement("canvas");
 const carouselFrameContext = carouselFrame.getContext("2d", { alpha: false });
-const desktopHero = { poster: hero.getAttribute("poster"), video: heroSource.getAttribute("src") };
 const heroFrameRate = 12;
 // Row bounds in the two encoded 36-rollout videos, including caption strips.
 const landscapeRows = { width: 3840, height: 2376, count: 6, top: 16, inset: 12, rowHeight: 384, pitch: 392, speed: 32 };
 const portraitRows = { width: 1440, height: 3464, count: 12, top: 12, inset: 6, rowHeight: 283, pitch: 287, speed: 19 };
 let heroVisible = false;
+let heroPosterReady = false;
 let cachedCarouselFrame;
 let carouselAnimation = 0;
 let carouselTime = 0;
@@ -35,12 +34,11 @@ function paintCarousel() {
   }
   const hasVideoFrame = !hero.seeking && hero.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA;
   // Keep the last painted frame while the video seeks back to the start.
-  if (hasVideoFrame || cachedCarouselFrame === undefined) {
-    const sourceWidth = hasVideoFrame ? hero.videoWidth : carouselPoster.naturalWidth;
-    if (sourceWidth !== rows.width) return;
-    const frameKey = hasVideoFrame ? Math.floor(hero.currentTime * heroFrameRate) : carouselPoster.src;
+  if (!hasVideoFrame && cachedCarouselFrame === undefined) return;
+  if (hasVideoFrame) {
+    const frameKey = Math.floor(hero.currentTime * heroFrameRate);
     if (frameKey !== cachedCarouselFrame) {
-      carouselFrameContext.drawImage(hasVideoFrame ? hero : carouselPoster, 0, 0, pixelWidth, pixelHeight);
+      carouselFrameContext.drawImage(hero, 0, 0, pixelWidth, pixelHeight);
       cachedCarouselFrame = frameKey;
     }
   }
@@ -88,24 +86,18 @@ function stopCarousel() {
 }
 
 function syncHeroPlayback() {
-  if (heroVisible && !reducedMotion.matches && !navigator.connection?.saveData) {
+  if (heroPosterReady && heroVisible && !reducedMotion.matches && !navigator.connection?.saveData) {
+    const source = compactHero.matches ? hero.dataset.mobileSource : hero.dataset.desktopSource;
+    if (hero.getAttribute("src") !== source) {
+      carousel.hidden = true;
+      cachedCarouselFrame = undefined;
+      heroScreen.removeAttribute("data-video-ready");
+      hero.src = source;
+    }
     hero.play().catch(() => {});
   } else {
     hero.pause();
   }
-}
-
-function syncHeroMedia() {
-  const poster = compactHero.matches ? hero.dataset.mobilePoster : desktopHero.poster;
-  const video = compactHero.matches ? hero.dataset.mobileSource : desktopHero.video;
-  if (video === heroSource.getAttribute("src")) return;
-  carousel.hidden = true;
-  cachedCarouselFrame = undefined;
-  hero.poster = poster;
-  carouselPoster.src = poster;
-  heroSource.src = video;
-  hero.load();
-  syncHeroPlayback();
 }
 
 hero.addEventListener("playing", startCarousel);
@@ -113,12 +105,19 @@ hero.addEventListener("pause", () => {
   stopCarousel();
   paintCarousel();
 });
-["loadeddata", "seeked"].forEach(event => hero.addEventListener(event, paintCarousel));
-carouselPoster.addEventListener("load", paintCarousel);
+hero.addEventListener("loadeddata", () => {
+  heroScreen.setAttribute("data-video-ready", "");
+  paintCarousel();
+});
+hero.addEventListener("seeked", paintCarousel);
 new ResizeObserver(paintCarousel).observe(heroScreen);
-compactHero.addEventListener("change", syncHeroMedia);
-syncHeroMedia();
-if (!carouselPoster.src) carouselPoster.src = hero.poster;
+compactHero.addEventListener("change", syncHeroPlayback);
+heroPoster.decode().catch(() => {}).then(() => {
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    heroPosterReady = true;
+    syncHeroPlayback();
+  }));
+});
 
 const header = document.querySelector(".site-header");
 new IntersectionObserver(([entry]) => {
@@ -132,10 +131,61 @@ new IntersectionObserver(([entry]) => {
   syncHeroPlayback();
 }, { threshold: .25 }).observe(heroScreen);
 
+function prepareMethodMedia(figure, stage) {
+  const preview = stage.querySelector(".method-preview");
+  const images = [...stage.querySelectorAll("img[src]")].filter(image => !preview.contains(image));
+  const reel = stage.querySelector("video[data-poster]");
+  let loading;
+  preview.hidden = false;
+  figure.setAttribute("data-media-pending", "");
+
+  function prepare() {
+    if (loading) return loading;
+    near.disconnect();
+    const frames = images.map(image => {
+      image.loading = "eager";
+      return image.decode();
+    });
+    if (reel) {
+      const poster = new Image();
+      poster.src = reel.dataset.poster;
+      frames.push(poster.decode().then(() => { reel.poster = poster.src; }));
+    }
+    loading = Promise.all(frames).then(() => {
+      preview.hidden = true;
+      figure.removeAttribute("data-media-pending");
+      return true;
+    }, () => {
+      loading = undefined;
+      return false;
+    });
+    return loading;
+  }
+
+  const near = new IntersectionObserver(([entry]) => {
+    if (entry.isIntersecting) prepare();
+  }, { rootMargin: "320px 0px" });
+  near.observe(stage);
+  return prepare;
+}
+
 const policyBatch = document.querySelector("[data-policy-all]");
 const policyVideos = [...document.querySelectorAll(".policy-case video")];
 
+function showPolicyPoster(video) {
+  if (!video.poster) video.poster = video.dataset.poster;
+}
+
+const policyPosterObserver = new IntersectionObserver(entries => {
+  for (const entry of entries) {
+    if (!entry.isIntersecting) continue;
+    showPolicyPoster(entry.target);
+    policyPosterObserver.unobserve(entry.target);
+  }
+}, { rootMargin: "360px 0px" });
+
 function playPolicyVideo(video) {
+  showPolicyPoster(video);
   return video.play().catch(() => {});
 }
 
@@ -218,6 +268,7 @@ document.querySelectorAll(".policy-case").forEach(card => {
   }
   video.controls = false;
   transport.hidden = false;
+  policyPosterObserver.observe(video);
   policyObserver.observe(video);
 });
 

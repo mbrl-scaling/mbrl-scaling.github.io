@@ -4,6 +4,7 @@
 
   const find = selector => figure.querySelector(selector);
   const board = find("[data-ppo-board]");
+  const prepareMedia = prepareMethodMedia(figure, board);
   const canvas = find("[data-ppo-paths]");
   const ink = canvas.getContext("2d");
   const flights = find("[data-ppo-flights]");
@@ -19,7 +20,6 @@
     const name = track.dataset.ppoTrack;
     const source = find(`[data-ppo-pick="${name}"]`);
     const frame = document.createElement("img");
-    frame.src = source.getAttribute("src");
     frame.alt = "";
     frame.decoding = "async";
     frame.hidden = true;
@@ -37,6 +37,7 @@
   let frame;
   let last;
   let playing = false;
+  let visible = false;
   let autoplay = !navigator.connection?.saveData;
 
   const between = (time, start, span) => Math.max(0, Math.min(1, (time - start) / span));
@@ -155,6 +156,7 @@
       trace(row.sampling, row.color, pick);
       row.frame.hidden = !(pick > 0 && pick < 1);
       if (!row.frame.hidden) {
+        if (!row.frame.hasAttribute("src")) row.frame.src = row.source.src;
         const t = ease(pick);
         const { x, y } = position(row.flight, t);
         const scale = mix(row.width.from, row.width.to, t) / 100;
@@ -206,8 +208,9 @@
     }
   }
 
-  function play() {
+  async function play(manual = false) {
     if (playing || motion.matches) return;
+    if (!await prepareMedia() || playing || motion.matches || (!manual && (!visible || !autoplay))) return;
     if (elapsed === duration) elapsed = 0;
     playing = true;
     updateButton();
@@ -222,7 +225,7 @@
       if (figure.getBoundingClientRect().top < document.querySelector(".site-header").offsetHeight) {
         figure.scrollIntoView({ block: "start", behavior: "smooth" });
       }
-      play();
+      play(true);
     }
   });
   motion.addEventListener("change", () => {
@@ -236,7 +239,8 @@
   new ResizeObserver(measure).observe(board);
   document.fonts?.ready.then(measure);
   new IntersectionObserver(([entry]) => {
-    if (entry.intersectionRatio >= .27 && autoplay) play();
-    else if (entry.intersectionRatio < .27 && playing) pause();
+    visible = entry.intersectionRatio >= .27;
+    if (visible && autoplay) play();
+    else if (!visible && playing) pause();
   }, { threshold: .27 }).observe(board);
 })();

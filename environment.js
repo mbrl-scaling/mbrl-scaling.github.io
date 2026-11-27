@@ -13,6 +13,7 @@ const envWell = envStory.querySelector("[data-env-well]");
 const envPlay = envStory.querySelector("[data-env-play]");
 const envOverview = envStory.querySelector("[data-env-overview]");
 const envMotion = matchMedia("(prefers-reduced-motion: reduce)");
+const prepareEnvMedia = prepareMethodMedia(envStory, envScroll);
 const envDuration = 12400;
 const envLanes = [...envStory.querySelectorAll("[data-env-lane]")].map(lane => ({
   lane,
@@ -29,6 +30,7 @@ let envTime = 0;
 let envLast;
 let envFrame;
 let envPlaying = false;
+let envVisible = false;
 let envAutoplay = !envMotion.matches && !navigator.connection?.saveData;
 let envFollow = true;
 let envWide = false;
@@ -61,7 +63,7 @@ function writeEnvDraft({ line, ink, text }, progress) {
 
 function makeEnvFlight(frame) {
   const flight = new Image();
-  flight.src = frame.querySelector("img").getAttribute("src");
+  flight.dataset.src = frame.querySelector("img").getAttribute("src");
   flight.alt = "";
   flight.decoding = "async";
   flight.hidden = true;
@@ -123,6 +125,7 @@ function flyEnv(flight, from, to, progress, arc, rotation, via) {
   const active = progress > 0 && progress < 1;
   if (flight.hidden === active) flight.hidden = !active;
   if (!active) return;
+  if (!flight.hasAttribute("src")) flight.src = flight.dataset.src;
   const eased = envEase(progress);
   const width = envMix(from.width, to.width, eased);
   const fromCenter = from.x + from.width / 2;
@@ -249,8 +252,9 @@ function stepEnv(now) {
   }
 }
 
-function startEnv() {
+async function startEnv(manual = false) {
   if (envPlaying || envMotion.matches) return;
+  if (!await prepareEnvMedia() || envPlaying || envMotion.matches || (!manual && (!envVisible || !envAutoplay))) return;
   if (envTime >= envDuration) {
     envTime = 0;
     if (envRecordings.readyState) envRecordings.currentTime = 0;
@@ -275,7 +279,7 @@ envPlay.addEventListener("click", () => {
   } else {
     envFollow = true;
     showEnvBoard();
-    startEnv();
+    startEnv(true);
   }
 });
 envOverview.addEventListener("click", () => {
@@ -307,7 +311,8 @@ updateEnvPlay();
 new ResizeObserver(measureEnv).observe(envBoard);
 new ResizeObserver(measureEnv).observe(envScroll);
 new IntersectionObserver(([entry]) => {
-  if (entry.intersectionRatio >= .26) {
+  envVisible = entry.intersectionRatio >= .26;
+  if (envVisible) {
     if (envAutoplay) startEnv();
   } else if (envPlaying) {
     pauseEnv();

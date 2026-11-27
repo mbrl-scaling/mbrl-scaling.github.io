@@ -15,12 +15,24 @@ const agentMotion = matchMedia("(prefers-reduced-motion: reduce)");
 let agentTaskIndex = 0;
 let agentFrameIndex = 0;
 let agentTimer;
+let agentFrameRequest = 0;
 
-function showAgentFrame(index) {
+async function showAgentFrame(index) {
   agentFrameIndex = index;
+  const request = ++agentFrameRequest;
   const { frames } = agentTracks[agentTaskIndex];
   const button = frames[index];
-  const url = button.querySelector("img").getAttribute("src");
+  const thumbnail = button.querySelector("img");
+  const url = thumbnail.getAttribute("src");
+  if (agentImage.getAttribute("src") !== url) {
+    thumbnail.loading = "eager";
+    try {
+      await thumbnail.decode();
+    } catch {
+      return;
+    }
+    if (request !== agentFrameRequest) return;
+  }
   frames.forEach((frame, i) => frame.setAttribute("aria-pressed", String(i === index)));
   if (agentImage.getAttribute("src") !== url) {
     agentImage.src = url;

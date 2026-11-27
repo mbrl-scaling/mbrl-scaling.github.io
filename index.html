@@ -7,18 +7,18 @@
   <meta name="description" content="Train robot policies in a video world model and evaluate them on 242 unseen real-robot tasks. Explore the rollouts, animated methods, and scaling results.">
   <meta property="og:title" content="Scaling Reinforcement Learning in World Models for Generalist Embodied Agents">
   <meta property="og:description" content="World-model reinforcement learning at scale, evaluated on 242 unseen real-robot tasks.">
-  <meta property="og:image" content="https://mbrl-scaling.github.io/assets/hero-rollouts-36.webp">
+  <meta property="og:image" content="https://mbrl-scaling.github.io/assets/hero-rollouts-36.webp?v=3">
   <link rel="icon" href="assets/seed-mark.webp" type="image/webp">
-  <link rel="stylesheet" href="style.css?v=13">
+  <link rel="stylesheet" href="style.css?v=14">
   <link rel="stylesheet" href="environment.css?v=10">
   <link rel="stylesheet" href="world-model.css?v=4">
-  <link rel="stylesheet" href="ppo.css?v=4">
-  <script src="app.js?v=7" defer></script>
+  <link rel="stylesheet" href="ppo.css?v=5">
+  <script src="app.js?v=8" defer></script>
   <script src="scaling.js?v=2" defer></script>
-  <script src="environment.js?v=8" defer></script>
-  <script src="world-model.js?v=1" defer></script>
-  <script src="ppo.js?v=1" defer></script>
-  <script src="agent.js" defer></script>
+  <script src="environment.js?v=9" defer></script>
+  <script src="world-model.js?v=2" defer></script>
+  <script src="ppo.js?v=2" defer></script>
+  <script src="agent.js?v=2" defer></script>
   <title>Scaling Reinforcement Learning in World Models | Project Page</title>
 </head>
 <body>
@@ -35,9 +35,11 @@
   <main id="main">
     <section class="hero" id="top" aria-labelledby="title">
       <div class="hero-screen">
-        <video id="hero-video" muted loop playsinline preload="none" poster="assets/hero-rollouts-36.webp" data-mobile-poster="assets/hero-rollouts-36-mobile.webp" data-mobile-source="assets/hero-rollouts-36-mobile.mp4?v=2" aria-label="36 world-model rollouts shown together. Each starts at a recorded head-camera observation and continues through eight prediction steps.">
-          <source src="assets/hero-rollouts-36.mp4?v=2" type="video/mp4">
-        </video>
+        <picture class="hero-poster">
+          <source media="(max-aspect-ratio: 4/5)" srcset="assets/hero-rollouts-36-mobile.webp?v=3">
+          <img src="assets/hero-rollouts-36.webp?v=3" width="1600" height="990" fetchpriority="high" alt="">
+        </picture>
+        <video id="hero-video" muted loop playsinline preload="none" data-desktop-source="assets/hero-rollouts-36.mp4?v=3" data-mobile-source="assets/hero-rollouts-36-mobile.mp4?v=3" aria-label="36 world-model rollouts shown together. Each starts at a recorded head-camera observation and continues through eight prediction steps."></video>
         <canvas id="hero-carousel" aria-hidden="true" hidden></canvas>
       </div>
       <div class="cover-copy shell">
@@ -58,7 +60,7 @@
           <p>From recorded robot demonstrations to a pool of training environments.</p>
         </div>
         <figure class="env-story" data-env-story aria-labelledby="env-method-heading">
-          <div class="env-scroll" data-env-scroll tabindex="0" aria-label="Environment construction diagram">
+          <div class="env-scroll method-media-stage" data-env-scroll tabindex="0" aria-label="Environment construction diagram">
             <div class="env-board" data-env-board>
               <div class="env-head">
                 <div>Recorded frames <span>Head-camera clips</span></div>
@@ -72,7 +74,7 @@
               <div class="env-flow">
                 <div class="env-deck" role="group" aria-label="Head-camera clips from recorded robot trajectories">
                   <div class="env-archive" aria-hidden="true">
-                    <video class="env-archive-video" data-env-recordings muted playsinline preload="none" width="456" height="1380" poster="assets/env-recorded-clean-archive.webp">
+                    <video class="env-archive-video" data-env-recordings muted playsinline preload="none" width="456" height="1380" data-poster="assets/env-recorded-clean-archive.webp">
                       <source src="assets/env-recorded-clean-archive.mp4" type="video/mp4">
                     </video>
                     <div class="env-archive-scan"></div>
@@ -176,6 +178,10 @@
               </div>
               <div class="env-flight-layer" data-env-flight-layer aria-hidden="true"></div>
             </div>
+            <picture class="method-preview" aria-hidden="true" hidden>
+              <source media="(max-width: 640px)" srcset="assets/env-still-mobile.webp">
+              <img src="assets/env-still.webp" loading="lazy" decoding="async" alt="">
+            </picture>
           </div>
           <div class="method-controls">
             <button class="motion-button" type="button" data-env-overview hidden>Overview</button>
@@ -190,7 +196,7 @@
           <p>Fine-tune Omni on three sources of manipulation data, then predict robot observations autoregressively.</p>
         </div>
         <figure class="wm-motion" data-wm-motion aria-labelledby="wm-method-heading">
-          <div class="wm-layout" data-wm-layout>
+          <div class="wm-layout method-media-stage" data-wm-layout>
             <canvas class="wm-paths" data-wm-paths aria-hidden="true"></canvas>
             <div class="wm-training">
               <h4>Fine-tuning data</h4>
@@ -261,8 +267,12 @@
               </div>
             </div>
             <div class="wm-flight-layer" aria-hidden="true">
-              <img src="assets/eval242-fold-1.webp" width="960" height="540" decoding="async" alt="" data-wm-flight hidden>
+              <img width="960" height="540" decoding="async" alt="" data-wm-flight hidden>
             </div>
+            <picture class="method-preview" aria-hidden="true" hidden>
+              <source media="(max-width: 760px)" srcset="assets/wm-still-mobile.webp">
+              <img src="assets/wm-still.webp" loading="lazy" decoding="async" alt="">
+            </picture>
           </div>
           <div class="method-controls">
             <button class="motion-button" type="button" aria-label="Play world model animation" data-wm-play hidden><i aria-hidden="true"></i><span>Play</span></button>
@@ -276,7 +286,7 @@
           <p>PPO trains on world-model rollouts with rubric rewards. The example clips come from the 242-task real-robot evaluation.</p>
         </div>
         <figure class="ppo-story" data-ppo-story aria-labelledby="ppo-method-heading">
-          <div class="ppo-board" data-ppo-board>
+          <div class="ppo-board method-media-stage" data-ppo-board>
             <canvas class="ppo-paths" data-ppo-paths aria-hidden="true"></canvas>
             <section class="ppo-sampling" aria-labelledby="ppo-sample-heading">
               <header class="ppo-head">
@@ -374,6 +384,10 @@
             </section>
             <div class="ppo-loop" data-ppo-loop>Updated policy for the next round</div>
             <div class="ppo-flight-layer" data-ppo-flights aria-hidden="true"></div>
+            <picture class="method-preview" aria-hidden="true" hidden>
+              <source media="(max-width: 820px)" srcset="assets/ppo-still-mobile.webp">
+              <img src="assets/ppo-still.webp" loading="lazy" decoding="async" alt="">
+            </picture>
           </div>
           <div class="method-controls">
             <button class="motion-button" type="button" data-ppo-play aria-label="Play PPO training animation" hidden><i aria-hidden="true"></i><span>Play</span></button>
@@ -448,7 +462,7 @@
                 <span>Post-RL</span>
               </div>
               <div class="policy-screen">
-                <video controls controlslist="nodownload" playsinline muted preload="none" width="1920" height="540" poster="assets/policy-compare-block-stack.webp" aria-label="Stack the green block. Pre-RL on the left, post-RL on the right." aria-description="Grasp the block and stack it on the die with the left hand, then release it.">
+                <video controls controlslist="nodownload" playsinline muted preload="none" width="1920" height="540" data-poster="assets/policy-compare-block-stack.webp" aria-label="Stack the green block. Pre-RL on the left, post-RL on the right." aria-description="Grasp the block and stack it on the die with the left hand, then release it.">
                   <source src="assets/policy-compare-block-stack.mp4" type="video/mp4">
                 </video>
               </div>
@@ -471,7 +485,7 @@
                 <span>Post-RL</span>
               </div>
               <div class="policy-screen">
-                <video controls controlslist="nodownload" playsinline muted preload="none" width="1920" height="540" poster="assets/policy-compare-bottle-placement.webp" aria-label="Place the narrow-spout bottle. Pre-RL on the left, post-RL on the right." aria-description="Select the narrow-spout bottle among distractors and place it on the blue plate.">
+                <video controls controlslist="nodownload" playsinline muted preload="none" width="1920" height="540" data-poster="assets/policy-compare-bottle-placement.webp" aria-label="Place the narrow-spout bottle. Pre-RL on the left, post-RL on the right." aria-description="Select the narrow-spout bottle among distractors and place it on the blue plate.">
                   <source src="assets/policy-compare-bottle-placement.mp4" type="video/mp4">
                 </video>
               </div>
@@ -494,7 +508,7 @@
                 <span>Post-RL</span>
               </div>
               <div class="policy-screen">
-                <video controls controlslist="nodownload" playsinline muted preload="none" width="1920" height="540" poster="assets/policy-compare-pencil-case-drag.webp" aria-label="Drag the pencil case. Pre-RL on the left, post-RL on the right." aria-description="Grasp and drag the pencil case to the front-left of the round coaster with the right hand.">
+                <video controls controlslist="nodownload" playsinline muted preload="none" width="1920" height="540" data-poster="assets/policy-compare-pencil-case-drag.webp" aria-label="Drag the pencil case. Pre-RL on the left, post-RL on the right." aria-description="Grasp and drag the pencil case to the front-left of the round coaster with the right hand.">
                   <source src="assets/policy-compare-pencil-case-drag.mp4" type="video/mp4">
                 </video>
               </div>
@@ -517,7 +531,7 @@
                 <span>Post-RL</span>
               </div>
               <div class="policy-screen">
-                <video controls controlslist="nodownload" playsinline muted preload="none" width="1920" height="540" poster="assets/policy-compare-board-wipe.webp" aria-label="Wipe the wooden board. Pre-RL on the left, post-RL on the right." aria-description="Grasp the striped towel and wipe both stains from the wooden board with the right hand.">
+                <video controls controlslist="nodownload" playsinline muted preload="none" width="1920" height="540" data-poster="assets/policy-compare-board-wipe.webp" aria-label="Wipe the wooden board. Pre-RL on the left, post-RL on the right." aria-description="Grasp the striped towel and wipe both stains from the wooden board with the right hand.">
                   <source src="assets/policy-compare-board-wipe.mp4" type="video/mp4">
                 </video>
               </div>
@@ -540,7 +554,7 @@
                 <span>Post-RL</span>
               </div>
               <div class="policy-screen">
-                <video controls controlslist="nodownload" playsinline muted preload="none" width="1920" height="540" poster="assets/policy-compare-basin-flip.webp" aria-label="Flip the basin onto the mat. Pre-RL on the left, post-RL on the right." aria-description="Grasp the basin, turn it upside down, and place it on the gray mat.">
+                <video controls controlslist="nodownload" playsinline muted preload="none" width="1920" height="540" data-poster="assets/policy-compare-basin-flip.webp" aria-label="Flip the basin onto the mat. Pre-RL on the left, post-RL on the right." aria-description="Grasp the basin, turn it upside down, and place it on the gray mat.">
                   <source src="assets/policy-compare-basin-flip.mp4" type="video/mp4">
                 </video>
               </div>
@@ -563,7 +577,7 @@
                 <span>Post-RL</span>
               </div>
               <div class="policy-screen">
-                <video controls controlslist="nodownload" playsinline muted preload="none" width="1920" height="540" poster="assets/policy-compare-spoon-insertion.webp" aria-label="Insert the spoon into the holder. Pre-RL on the left, post-RL on the right." aria-description="Grasp the wooden-handled spoon and insert it into the mesh pen holder with the right hand.">
+                <video controls controlslist="nodownload" playsinline muted preload="none" width="1920" height="540" data-poster="assets/policy-compare-spoon-insertion.webp" aria-label="Insert the spoon into the holder. Pre-RL on the left, post-RL on the right." aria-description="Grasp the wooden-handled spoon and insert it into the mesh pen holder with the right hand.">
                   <source src="assets/policy-compare-spoon-insertion.mp4" type="video/mp4">
                 </video>
               </div>
@@ -586,7 +600,7 @@
                 <span>Post-RL</span>
               </div>
               <div class="policy-screen">
-                <video controls controlslist="nodownload" playsinline muted preload="none" width="1920" height="540" poster="assets/policy-compare-fork-rotation.webp" aria-label="Rotate the fork. Pre-RL on the left, post-RL on the right." aria-description="Grasp the fork and rotate it parallel to the long table edge, tines toward the banana, with the right hand.">
+                <video controls controlslist="nodownload" playsinline muted preload="none" width="1920" height="540" data-poster="assets/policy-compare-fork-rotation.webp" aria-label="Rotate the fork. Pre-RL on the left, post-RL on the right." aria-description="Grasp the fork and rotate it parallel to the long table edge, tines toward the banana, with the right hand.">
                   <source src="assets/policy-compare-fork-rotation.mp4" type="video/mp4">
                 </video>
               </div>
@@ -609,7 +623,7 @@
                 <span>Post-RL</span>
               </div>
               <div class="policy-screen">
-                <video controls controlslist="nodownload" playsinline muted preload="none" width="1920" height="540" poster="assets/policy-compare-cup-upright.webp" aria-label="Stand the blue cup upright. Pre-RL on the left, post-RL on the right." aria-description="Grasp and upright the fallen handled cup with the right hand.">
+                <video controls controlslist="nodownload" playsinline muted preload="none" width="1920" height="540" data-poster="assets/policy-compare-cup-upright.webp" aria-label="Stand the blue cup upright. Pre-RL on the left, post-RL on the right." aria-description="Grasp and upright the fallen handled cup with the right hand.">
                   <source src="assets/policy-compare-cup-upright.mp4" type="video/mp4">
                 </video>
               </div>
@@ -632,7 +646,7 @@
                 <span>Post-RL</span>
               </div>
               <div class="policy-screen">
-                <video controls controlslist="nodownload" playsinline muted preload="none" width="1920" height="540" poster="assets/policy-compare-vase-handover.webp" aria-label="Pass the vase from left to right. Pre-RL on the left, post-RL on the right." aria-description="Grasp the vase and pass it from left to right.">
+                <video controls controlslist="nodownload" playsinline muted preload="none" width="1920" height="540" data-poster="assets/policy-compare-vase-handover.webp" aria-label="Pass the vase from left to right. Pre-RL on the left, post-RL on the right." aria-description="Grasp the vase and pass it from left to right.">
                   <source src="assets/policy-compare-vase-handover.mp4" type="video/mp4">
                 </video>
               </div>
@@ -655,7 +669,7 @@
                 <span>Post-RL</span>
               </div>
               <div class="policy-screen">
-                <video controls controlslist="nodownload" playsinline muted preload="none" width="1920" height="540" poster="assets/policy-compare-soap-push.webp" aria-label="Push the soap past the plate. Pre-RL on the left, post-RL on the right." aria-description="Push the soap by its near long side to the right of the round plate with the left hand.">
+                <video controls controlslist="nodownload" playsinline muted preload="none" width="1920" height="540" data-poster="assets/policy-compare-soap-push.webp" aria-label="Push the soap past the plate. Pre-RL on the left, post-RL on the right." aria-description="Push the soap by its near long side to the right of the round plate with the left hand.">
                   <source src="assets/policy-compare-soap-push.mp4" type="video/mp4">
                 </video>
               </div>
@@ -678,7 +692,7 @@
                 <span>Post-RL</span>
               </div>
               <div class="policy-screen">
-                <video controls controlslist="nodownload" playsinline muted preload="none" width="1920" height="540" poster="assets/policy-compare-cup-topple.webp" aria-label="Topple the amber cup. Pre-RL on the left, post-RL on the right." aria-description="Topple the upright transparent amber cup using either hand.">
+                <video controls controlslist="nodownload" playsinline muted preload="none" width="1920" height="540" data-poster="assets/policy-compare-cup-topple.webp" aria-label="Topple the amber cup. Pre-RL on the left, post-RL on the right." aria-description="Topple the upright transparent amber cup using either hand.">
                   <source src="assets/policy-compare-cup-topple.mp4" type="video/mp4">
                 </video>
               </div>
@@ -701,7 +715,7 @@
                 <span>Post-RL</span>
               </div>
               <div class="policy-screen">
-                <video controls controlslist="nodownload" playsinline muted preload="none" width="1920" height="540" poster="assets/policy-compare-towel-fold.webp" aria-label="Fold the blue towel. Pre-RL on the left, post-RL on the right." aria-description="Grasp the near towel corners and fold the towel away from the robot using both hands.">
+                <video controls controlslist="nodownload" playsinline muted preload="none" width="1920" height="540" data-poster="assets/policy-compare-towel-fold.webp" aria-label="Fold the blue towel. Pre-RL on the left, post-RL on the right." aria-description="Grasp the near towel corners and fold the towel away from the robot using both hands.">
                   <source src="assets/policy-compare-towel-fold.mp4" type="video/mp4">
                 </video>
               </div>
