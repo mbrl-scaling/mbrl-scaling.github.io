@@ -9,8 +9,7 @@ const carouselPoster = new Image();
 const carouselFrame = document.createElement("canvas");
 const carouselFrameContext = carouselFrame.getContext("2d", { alpha: false });
 const desktopHero = { poster: hero.getAttribute("poster"), video: heroSource.getAttribute("src") };
-// Frame starts in the 12 fps composite, including the initial observation.
-const heroFrameStarts = [0, 10, 17, 24, 31, 38, 45, 52, 59];
+const heroFrameRate = 12;
 // Row bounds in the two encoded 36-rollout videos, including caption strips.
 const landscapeRows = { width: 3840, height: 2376, count: 6, top: 16, inset: 12, rowHeight: 384, pitch: 392, speed: 32 };
 const portraitRows = { width: 1440, height: 3464, count: 12, top: 12, inset: 6, rowHeight: 283, pitch: 287, speed: 19 };
@@ -20,19 +19,11 @@ let carouselAnimation = 0;
 let carouselTime = 0;
 let previousCarouselTick;
 
-function getCarouselFrame() {
-  const frame = Math.floor(hero.currentTime * 12);
-  return heroFrameStarts.reduce((step, start, index) => frame >= start ? index : step, 0);
-}
-
 function paintCarousel() {
   if (!carouselContext || !carouselFrameContext) return;
-  const hasVideoFrame = !hero.seeking && hero.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA;
-  const frame = hasVideoFrame ? hero : carouselPoster;
-  const sourceWidth = hasVideoFrame ? hero.videoWidth : carouselPoster.naturalWidth;
   const rows = compactHero.matches ? portraitRows : landscapeRows;
   const { width, height } = hero.getBoundingClientRect();
-  if (sourceWidth !== rows.width || !width || !height) return;
+  if (!width || !height) return;
 
   const density = Math.min(devicePixelRatio, 2, 2560 / width, 1800 / height);
   const pixelWidth = Math.round(width * density);
@@ -42,10 +33,16 @@ function paintCarousel() {
     carousel.height = carouselFrame.height = pixelHeight;
     cachedCarouselFrame = undefined;
   }
-  const frameKey = hasVideoFrame ? getCarouselFrame() : carouselPoster.src;
-  if (frameKey !== cachedCarouselFrame) {
-    carouselFrameContext.drawImage(frame, 0, 0, pixelWidth, pixelHeight);
-    cachedCarouselFrame = frameKey;
+  const hasVideoFrame = !hero.seeking && hero.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA;
+  // Keep the last painted frame while the video seeks back to the start.
+  if (hasVideoFrame || cachedCarouselFrame === undefined) {
+    const sourceWidth = hasVideoFrame ? hero.videoWidth : carouselPoster.naturalWidth;
+    if (sourceWidth !== rows.width) return;
+    const frameKey = hasVideoFrame ? Math.floor(hero.currentTime * heroFrameRate) : carouselPoster.src;
+    if (frameKey !== cachedCarouselFrame) {
+      carouselFrameContext.drawImage(hasVideoFrame ? hero : carouselPoster, 0, 0, pixelWidth, pixelHeight);
+      cachedCarouselFrame = frameKey;
+    }
   }
 
   carouselContext.fillStyle = "#0d1017";
@@ -103,6 +100,7 @@ function syncHeroMedia() {
   const video = compactHero.matches ? hero.dataset.mobileSource : desktopHero.video;
   if (video === heroSource.getAttribute("src")) return;
   carousel.hidden = true;
+  cachedCarouselFrame = undefined;
   hero.poster = poster;
   carouselPoster.src = poster;
   heroSource.src = video;
@@ -115,10 +113,7 @@ hero.addEventListener("pause", () => {
   stopCarousel();
   paintCarousel();
 });
-["loadeddata", "seeked"].forEach(event => hero.addEventListener(event, () => {
-  cachedCarouselFrame = undefined;
-  paintCarousel();
-}));
+["loadeddata", "seeked"].forEach(event => hero.addEventListener(event, paintCarousel));
 carouselPoster.addEventListener("load", paintCarousel);
 new ResizeObserver(paintCarousel).observe(heroScreen);
 compactHero.addEventListener("change", syncHeroMedia);
