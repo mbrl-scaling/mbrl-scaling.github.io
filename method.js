@@ -2,7 +2,6 @@ const methodPlayer = document.querySelector("[data-method]");
 const methodChapters = [...methodPlayer.querySelectorAll("[data-method-chapter]")];
 const methodToggle = methodPlayer.querySelector("[data-method-play]");
 const methodStatus = methodPlayer.querySelector("[data-method-status]");
-const methodPaper = methodPlayer.querySelector("[data-method-paper]");
 const methodMotion = matchMedia("(prefers-reduced-motion: reduce)");
 const methodPanels = [...methodPlayer.querySelectorAll("[data-method-panel]")].map(panel => ({
   panel,
@@ -67,7 +66,6 @@ function showMethod(chapter, phase, announce = false) {
   history.forEach(item => item.toggleAttribute("data-revealed", Number(item.dataset.revealPhase) <= phase));
   const activeLane = phase < 2 ? 0 : phase < 4 ? 1 : 2;
   lanes.forEach((lane, index) => lane.toggleAttribute("data-active", index === activeLane));
-  methodPaper.href = `assets/paper.pdf#page=${[3, 6, 8][chapter]}`;
   renderMethod(methodPlaying ? 0 : 1);
   if (chapterChanged && !methodMotion.matches) {
     panel.animate([{ opacity: .35, transform: "translateY(9px)" }, { opacity: 1, transform: "translateY(0)" }],
