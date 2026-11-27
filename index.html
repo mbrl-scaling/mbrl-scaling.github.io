@@ -9,11 +9,11 @@
   <meta property="og:description" content="World-model reinforcement learning at scale, evaluated on 242 unseen real-robot tasks.">
   <meta property="og:image" content="https://mbrl-scaling.github.io/assets/hero-rollouts-36.webp">
   <link rel="icon" href="assets/seed-mark.webp" type="image/webp">
-  <link rel="stylesheet" href="style.css?v=8">
+  <link rel="stylesheet" href="style.css?v=11">
   <link rel="stylesheet" href="environment.css?v=10">
   <link rel="stylesheet" href="world-model.css?v=4">
   <link rel="stylesheet" href="ppo.css?v=4">
-  <script src="app.js?v=3" defer></script>
+  <script src="app.js?v=6" defer></script>
   <script src="scaling.js?v=2" defer></script>
   <script src="environment.js?v=8" defer></script>
   <script src="world-model.js?v=1" defer></script>
@@ -434,79 +434,305 @@
     <section class="shell section policy-section" id="demos" aria-labelledby="demos-heading">
       <div class="section-heading">
         <div><p class="eyebrow">Real-robot evaluation</p><h2 id="demos-heading">Before and after world-model RL</h2></div>
-        <p>Five matched instructions, each shown as two independent autonomous trials at their recorded speed. Both sides use the head camera.</p>
+        <p>12 matched tasks across 12 skills. Head-camera trials play at their recorded speed.</p>
       </div>
-      <div class="policy-grid">
-        <article class="policy-case">
-          <header class="policy-case-heading"><h3>Fold the blue towel</h3><p>Fold the near half over the far half.</p></header>
-          <div class="policy-labels" aria-hidden="true"><span>Pre-RL · SFT</span><span>Post-RL · 256 tasks</span></div>
-          <video controls playsinline preload="none" width="1920" height="540" poster="assets/policy-head-fold.webp" aria-label="Fold the blue towel, left pre-RL SFT and right post-RL 256-task policy">
-            <source src="assets/policy-head-fold.mp4" type="video/mp4">
-          </video>
-          <div class="policy-transport" data-policy-transport hidden>
-            <button class="policy-play" type="button" aria-label="Play comparison"><span aria-hidden="true"></span></button>
-            <input type="range" min="0" max="0" value="0" step="0.01" aria-label="Comparison playback position" disabled>
-            <output>0:00</output>
-            <button class="policy-fullscreen" type="button" aria-label="View comparison full screen" hidden><span aria-hidden="true">⛶</span></button>
-            <a class="media-download" href="assets/policy-head-fold.mp4" download aria-label="Download HD comparison MP4">MP4 <span aria-hidden="true">↓</span></a>
+      <div class="policy-board">
+        <div class="policy-board-bar">
+          <div class="policy-legend">
+            <span>Pre-RL <strong>SFT</strong></span><span>Post-RL <strong>256-task policy</strong></span>
           </div>
-        </article>
-        <article class="policy-case">
-          <header class="policy-case-heading"><h3>Wipe the plate</h3><p>Hold the plate with the left gripper and wipe with the right.</p></header>
-          <div class="policy-labels" aria-hidden="true"><span>Pre-RL · SFT</span><span>Post-RL · 256 tasks</span></div>
-          <video controls playsinline preload="none" width="1920" height="540" poster="assets/policy-head-wipe.webp" aria-label="Wipe the plate, left pre-RL SFT and right post-RL 256-task policy">
-            <source src="assets/policy-head-wipe.mp4" type="video/mp4">
-          </video>
-          <div class="policy-transport" data-policy-transport hidden>
-            <button class="policy-play" type="button" aria-label="Play comparison"><span aria-hidden="true"></span></button>
-            <input type="range" min="0" max="0" value="0" step="0.01" aria-label="Comparison playback position" disabled>
-            <output>0:00</output>
-            <button class="policy-fullscreen" type="button" aria-label="View comparison full screen" hidden><span aria-hidden="true">⛶</span></button>
-            <a class="media-download" href="assets/policy-head-wipe.mp4" download aria-label="Download HD comparison MP4">MP4 <span aria-hidden="true">↓</span></a>
-          </div>
-        </article>
-        <article class="policy-case">
-          <header class="policy-case-heading"><h3>Drag the pencil case</h3><p>Move it to the front-left of the coaster.</p></header>
-          <div class="policy-labels" aria-hidden="true"><span>Pre-RL · SFT</span><span>Post-RL · 256 tasks</span></div>
-          <video controls playsinline preload="none" width="1920" height="540" poster="assets/policy-head-drag.webp" aria-label="Drag the pencil case, left pre-RL SFT and right post-RL 256-task policy">
-            <source src="assets/policy-head-drag.mp4" type="video/mp4">
-          </video>
-          <div class="policy-transport" data-policy-transport hidden>
-            <button class="policy-play" type="button" aria-label="Play comparison"><span aria-hidden="true"></span></button>
-            <input type="range" min="0" max="0" value="0" step="0.01" aria-label="Comparison playback position" disabled>
-            <output>0:00</output>
-            <button class="policy-fullscreen" type="button" aria-label="View comparison full screen" hidden><span aria-hidden="true">⛶</span></button>
-            <a class="media-download" href="assets/policy-head-drag.mp4" download aria-label="Download HD comparison MP4">MP4 <span aria-hidden="true">↓</span></a>
-          </div>
-        </article>
-        <article class="policy-case">
-          <header class="policy-case-heading"><h3>Rotate the fork</h3><p>Align it with the table edge, prongs toward the bananas.</p></header>
-          <div class="policy-labels" aria-hidden="true"><span>Pre-RL · SFT</span><span>Post-RL · 256 tasks</span></div>
-          <video controls playsinline preload="none" width="1920" height="540" poster="assets/policy-head-rotate.webp" aria-label="Rotate the fork, left pre-RL SFT and right post-RL 256-task policy">
-            <source src="assets/policy-head-rotate.mp4" type="video/mp4">
-          </video>
-          <div class="policy-transport" data-policy-transport hidden>
-            <button class="policy-play" type="button" aria-label="Play comparison"><span aria-hidden="true"></span></button>
-            <input type="range" min="0" max="0" value="0" step="0.01" aria-label="Comparison playback position" disabled>
-            <output>0:00</output>
-            <button class="policy-fullscreen" type="button" aria-label="View comparison full screen" hidden><span aria-hidden="true">⛶</span></button>
-            <a class="media-download" href="assets/policy-head-rotate.mp4" download aria-label="Download HD comparison MP4">MP4 <span aria-hidden="true">↓</span></a>
-          </div>
-        </article>
-        <article class="policy-case">
-          <header class="policy-case-heading"><h3>Flip the box</h3><p>Turn the printed box over with the right gripper.</p></header>
-          <div class="policy-labels" aria-hidden="true"><span>Pre-RL · SFT</span><span>Post-RL · 256 tasks</span></div>
-          <video controls playsinline preload="none" width="1920" height="540" poster="assets/policy-head-flip.webp" aria-label="Flip the box, left pre-RL SFT and right post-RL 256-task policy">
-            <source src="assets/policy-head-flip.mp4" type="video/mp4">
-          </video>
-          <div class="policy-transport" data-policy-transport hidden>
-            <button class="policy-play" type="button" aria-label="Play comparison"><span aria-hidden="true"></span></button>
-            <input type="range" min="0" max="0" value="0" step="0.01" aria-label="Comparison playback position" disabled>
-            <output>0:00</output>
-            <button class="policy-fullscreen" type="button" aria-label="View comparison full screen" hidden><span aria-hidden="true">⛶</span></button>
-            <a class="media-download" href="assets/policy-head-flip.mp4" download aria-label="Download HD comparison MP4">MP4 <span aria-hidden="true">↓</span></a>
-          </div>
-        </article>
+          <button type="button" class="motion-button" data-policy-all hidden><i aria-hidden="true"></i><span>Play all</span></button>
+        </div>
+        <div class="policy-gallery">
+          <article class="policy-case" aria-labelledby="compare-block-stack">
+            <header class="policy-case-heading">
+              <p class="policy-skill">Stack</p>
+              <h3 id="compare-block-stack">Stack the green block</h3>
+            </header>
+            <div class="policy-player">
+              <div class="policy-labels" aria-hidden="true">
+                <span>Pre-RL</span>
+                <span>Post-RL</span>
+              </div>
+              <div class="policy-screen">
+                <video controls playsinline muted preload="none" width="1920" height="540" poster="assets/policy-compare-block-stack.webp" aria-label="Stack the green block. Pre-RL on the left, post-RL on the right." aria-description="Grasp the block and stack it on the die with the left hand, then release it.">
+                  <source src="assets/policy-compare-block-stack.mp4" type="video/mp4">
+                </video>
+              </div>
+              <div class="policy-transport" data-policy-transport hidden>
+                <button class="policy-play" type="button" aria-label="Play comparison"><span aria-hidden="true"></span></button>
+                <input type="range" min="0" max="0" value="0" step="0.01" aria-label="Comparison playback position" disabled>
+                <output aria-live="off">0:00</output>
+                <button class="policy-fullscreen" type="button" aria-label="View comparison full screen" hidden><span aria-hidden="true">⛶</span></button>
+                <a class="media-download" href="assets/policy-compare-block-stack.mp4" download aria-label="Download HD comparison MP4">MP4 <span aria-hidden="true">↓</span></a>
+              </div>
+            </div>
+          </article>
+          <article class="policy-case" aria-labelledby="compare-bottle-placement">
+            <header class="policy-case-heading">
+              <p class="policy-skill">Place</p>
+              <h3 id="compare-bottle-placement">Place the narrow-spout bottle</h3>
+            </header>
+            <div class="policy-player">
+              <div class="policy-labels" aria-hidden="true">
+                <span>Pre-RL</span>
+                <span>Post-RL</span>
+              </div>
+              <div class="policy-screen">
+                <video controls playsinline muted preload="none" width="1920" height="540" poster="assets/policy-compare-bottle-placement.webp" aria-label="Place the narrow-spout bottle. Pre-RL on the left, post-RL on the right." aria-description="Select the narrow-spout bottle among distractors and place it on the blue plate.">
+                  <source src="assets/policy-compare-bottle-placement.mp4" type="video/mp4">
+                </video>
+              </div>
+              <div class="policy-transport" data-policy-transport hidden>
+                <button class="policy-play" type="button" aria-label="Play comparison"><span aria-hidden="true"></span></button>
+                <input type="range" min="0" max="0" value="0" step="0.01" aria-label="Comparison playback position" disabled>
+                <output aria-live="off">0:00</output>
+                <button class="policy-fullscreen" type="button" aria-label="View comparison full screen" hidden><span aria-hidden="true">⛶</span></button>
+                <a class="media-download" href="assets/policy-compare-bottle-placement.mp4" download aria-label="Download HD comparison MP4">MP4 <span aria-hidden="true">↓</span></a>
+              </div>
+            </div>
+          </article>
+          <article class="policy-case" aria-labelledby="compare-pencil-case-drag">
+            <header class="policy-case-heading">
+              <p class="policy-skill">Pull</p>
+              <h3 id="compare-pencil-case-drag">Drag the pencil case</h3>
+            </header>
+            <div class="policy-player">
+              <div class="policy-labels" aria-hidden="true">
+                <span>Pre-RL</span>
+                <span>Post-RL</span>
+              </div>
+              <div class="policy-screen">
+                <video controls playsinline muted preload="none" width="1920" height="540" poster="assets/policy-compare-pencil-case-drag.webp" aria-label="Drag the pencil case. Pre-RL on the left, post-RL on the right." aria-description="Grasp and drag the pencil case to the front-left of the round coaster with the right hand.">
+                  <source src="assets/policy-compare-pencil-case-drag.mp4" type="video/mp4">
+                </video>
+              </div>
+              <div class="policy-transport" data-policy-transport hidden>
+                <button class="policy-play" type="button" aria-label="Play comparison"><span aria-hidden="true"></span></button>
+                <input type="range" min="0" max="0" value="0" step="0.01" aria-label="Comparison playback position" disabled>
+                <output aria-live="off">0:00</output>
+                <button class="policy-fullscreen" type="button" aria-label="View comparison full screen" hidden><span aria-hidden="true">⛶</span></button>
+                <a class="media-download" href="assets/policy-compare-pencil-case-drag.mp4" download aria-label="Download HD comparison MP4">MP4 <span aria-hidden="true">↓</span></a>
+              </div>
+            </div>
+          </article>
+          <article class="policy-case" aria-labelledby="compare-board-wipe">
+            <header class="policy-case-heading">
+              <p class="policy-skill">Wipe</p>
+              <h3 id="compare-board-wipe">Wipe the wooden board</h3>
+            </header>
+            <div class="policy-player">
+              <div class="policy-labels" aria-hidden="true">
+                <span>Pre-RL</span>
+                <span>Post-RL</span>
+              </div>
+              <div class="policy-screen">
+                <video controls playsinline muted preload="none" width="1920" height="540" poster="assets/policy-compare-board-wipe.webp" aria-label="Wipe the wooden board. Pre-RL on the left, post-RL on the right." aria-description="Grasp the striped towel and wipe both stains from the wooden board with the right hand.">
+                  <source src="assets/policy-compare-board-wipe.mp4" type="video/mp4">
+                </video>
+              </div>
+              <div class="policy-transport" data-policy-transport hidden>
+                <button class="policy-play" type="button" aria-label="Play comparison"><span aria-hidden="true"></span></button>
+                <input type="range" min="0" max="0" value="0" step="0.01" aria-label="Comparison playback position" disabled>
+                <output aria-live="off">0:00</output>
+                <button class="policy-fullscreen" type="button" aria-label="View comparison full screen" hidden><span aria-hidden="true">⛶</span></button>
+                <a class="media-download" href="assets/policy-compare-board-wipe.mp4" download aria-label="Download HD comparison MP4">MP4 <span aria-hidden="true">↓</span></a>
+              </div>
+            </div>
+          </article>
+          <article class="policy-case" aria-labelledby="compare-mug-grasp">
+            <header class="policy-case-heading">
+              <p class="policy-skill">Grasp</p>
+              <h3 id="compare-mug-grasp">Grasp the blue mug by its handle</h3>
+            </header>
+            <div class="policy-player">
+              <div class="policy-labels" aria-hidden="true">
+                <span>Pre-RL</span>
+                <span>Post-RL</span>
+              </div>
+              <div class="policy-screen">
+                <video controls playsinline muted preload="none" width="1920" height="540" poster="assets/policy-compare-mug-grasp.webp" aria-label="Grasp the blue mug by its handle. Pre-RL on the left, post-RL on the right." aria-description="Grasp the middle of the blue mug&#x27;s outer handle arc with the left hand.">
+                  <source src="assets/policy-compare-mug-grasp.mp4" type="video/mp4">
+                </video>
+              </div>
+              <div class="policy-transport" data-policy-transport hidden>
+                <button class="policy-play" type="button" aria-label="Play comparison"><span aria-hidden="true"></span></button>
+                <input type="range" min="0" max="0" value="0" step="0.01" aria-label="Comparison playback position" disabled>
+                <output aria-live="off">0:00</output>
+                <button class="policy-fullscreen" type="button" aria-label="View comparison full screen" hidden><span aria-hidden="true">⛶</span></button>
+                <a class="media-download" href="assets/policy-compare-mug-grasp.mp4" download aria-label="Download HD comparison MP4">MP4 <span aria-hidden="true">↓</span></a>
+              </div>
+            </div>
+          </article>
+          <article class="policy-case" aria-labelledby="compare-spoon-insertion">
+            <header class="policy-case-heading">
+              <p class="policy-skill">Insert</p>
+              <h3 id="compare-spoon-insertion">Insert the spoon into the holder</h3>
+            </header>
+            <div class="policy-player">
+              <div class="policy-labels" aria-hidden="true">
+                <span>Pre-RL</span>
+                <span>Post-RL</span>
+              </div>
+              <div class="policy-screen">
+                <video controls playsinline muted preload="none" width="1920" height="540" poster="assets/policy-compare-spoon-insertion.webp" aria-label="Insert the spoon into the holder. Pre-RL on the left, post-RL on the right." aria-description="Grasp the wooden-handled spoon and insert it into the mesh pen holder with the right hand.">
+                  <source src="assets/policy-compare-spoon-insertion.mp4" type="video/mp4">
+                </video>
+              </div>
+              <div class="policy-transport" data-policy-transport hidden>
+                <button class="policy-play" type="button" aria-label="Play comparison"><span aria-hidden="true"></span></button>
+                <input type="range" min="0" max="0" value="0" step="0.01" aria-label="Comparison playback position" disabled>
+                <output aria-live="off">0:00</output>
+                <button class="policy-fullscreen" type="button" aria-label="View comparison full screen" hidden><span aria-hidden="true">⛶</span></button>
+                <a class="media-download" href="assets/policy-compare-spoon-insertion.mp4" download aria-label="Download HD comparison MP4">MP4 <span aria-hidden="true">↓</span></a>
+              </div>
+            </div>
+          </article>
+          <article class="policy-case" aria-labelledby="compare-fork-rotation">
+            <header class="policy-case-heading">
+              <p class="policy-skill">Rotate</p>
+              <h3 id="compare-fork-rotation">Rotate the fork</h3>
+            </header>
+            <div class="policy-player">
+              <div class="policy-labels" aria-hidden="true">
+                <span>Pre-RL</span>
+                <span>Post-RL</span>
+              </div>
+              <div class="policy-screen">
+                <video controls playsinline muted preload="none" width="1920" height="540" poster="assets/policy-compare-fork-rotation.webp" aria-label="Rotate the fork. Pre-RL on the left, post-RL on the right." aria-description="Grasp the fork and rotate it parallel to the long table edge, tines toward the banana, with the right hand.">
+                  <source src="assets/policy-compare-fork-rotation.mp4" type="video/mp4">
+                </video>
+              </div>
+              <div class="policy-transport" data-policy-transport hidden>
+                <button class="policy-play" type="button" aria-label="Play comparison"><span aria-hidden="true"></span></button>
+                <input type="range" min="0" max="0" value="0" step="0.01" aria-label="Comparison playback position" disabled>
+                <output aria-live="off">0:00</output>
+                <button class="policy-fullscreen" type="button" aria-label="View comparison full screen" hidden><span aria-hidden="true">⛶</span></button>
+                <a class="media-download" href="assets/policy-compare-fork-rotation.mp4" download aria-label="Download HD comparison MP4">MP4 <span aria-hidden="true">↓</span></a>
+              </div>
+            </div>
+          </article>
+          <article class="policy-case" aria-labelledby="compare-cup-upright">
+            <header class="policy-case-heading">
+              <p class="policy-skill">Straighten</p>
+              <h3 id="compare-cup-upright">Stand the blue cup upright</h3>
+            </header>
+            <div class="policy-player">
+              <div class="policy-labels" aria-hidden="true">
+                <span>Pre-RL</span>
+                <span>Post-RL</span>
+              </div>
+              <div class="policy-screen">
+                <video controls playsinline muted preload="none" width="1920" height="540" poster="assets/policy-compare-cup-upright.webp" aria-label="Stand the blue cup upright. Pre-RL on the left, post-RL on the right." aria-description="Grasp and upright the fallen handled cup with the right hand.">
+                  <source src="assets/policy-compare-cup-upright.mp4" type="video/mp4">
+                </video>
+              </div>
+              <div class="policy-transport" data-policy-transport hidden>
+                <button class="policy-play" type="button" aria-label="Play comparison"><span aria-hidden="true"></span></button>
+                <input type="range" min="0" max="0" value="0" step="0.01" aria-label="Comparison playback position" disabled>
+                <output aria-live="off">0:00</output>
+                <button class="policy-fullscreen" type="button" aria-label="View comparison full screen" hidden><span aria-hidden="true">⛶</span></button>
+                <a class="media-download" href="assets/policy-compare-cup-upright.mp4" download aria-label="Download HD comparison MP4">MP4 <span aria-hidden="true">↓</span></a>
+              </div>
+            </div>
+          </article>
+          <article class="policy-case" aria-labelledby="compare-plate-press">
+            <header class="policy-case-heading">
+              <p class="policy-skill">Press</p>
+              <h3 id="compare-plate-press">Press the rim of the green plate</h3>
+            </header>
+            <div class="policy-player">
+              <div class="policy-labels" aria-hidden="true">
+                <span>Pre-RL</span>
+                <span>Post-RL</span>
+              </div>
+              <div class="policy-screen">
+                <video controls playsinline muted preload="none" width="1920" height="540" poster="assets/policy-compare-plate-press.webp" aria-label="Press the rim of the green plate. Pre-RL on the left, post-RL on the right." aria-description="Press the side wall of the shallow green plastic plate inward.">
+                  <source src="assets/policy-compare-plate-press.mp4" type="video/mp4">
+                </video>
+              </div>
+              <div class="policy-transport" data-policy-transport hidden>
+                <button class="policy-play" type="button" aria-label="Play comparison"><span aria-hidden="true"></span></button>
+                <input type="range" min="0" max="0" value="0" step="0.01" aria-label="Comparison playback position" disabled>
+                <output aria-live="off">0:00</output>
+                <button class="policy-fullscreen" type="button" aria-label="View comparison full screen" hidden><span aria-hidden="true">⛶</span></button>
+                <a class="media-download" href="assets/policy-compare-plate-press.mp4" download aria-label="Download HD comparison MP4">MP4 <span aria-hidden="true">↓</span></a>
+              </div>
+            </div>
+          </article>
+          <article class="policy-case" aria-labelledby="compare-soap-push">
+            <header class="policy-case-heading">
+              <p class="policy-skill">Push</p>
+              <h3 id="compare-soap-push">Push the soap past the plate</h3>
+            </header>
+            <div class="policy-player">
+              <div class="policy-labels" aria-hidden="true">
+                <span>Pre-RL</span>
+                <span>Post-RL</span>
+              </div>
+              <div class="policy-screen">
+                <video controls playsinline muted preload="none" width="1920" height="540" poster="assets/policy-compare-soap-push.webp" aria-label="Push the soap past the plate. Pre-RL on the left, post-RL on the right." aria-description="Push the soap by its near long side to the right of the round plate with the left hand.">
+                  <source src="assets/policy-compare-soap-push.mp4" type="video/mp4">
+                </video>
+              </div>
+              <div class="policy-transport" data-policy-transport hidden>
+                <button class="policy-play" type="button" aria-label="Play comparison"><span aria-hidden="true"></span></button>
+                <input type="range" min="0" max="0" value="0" step="0.01" aria-label="Comparison playback position" disabled>
+                <output aria-live="off">0:00</output>
+                <button class="policy-fullscreen" type="button" aria-label="View comparison full screen" hidden><span aria-hidden="true">⛶</span></button>
+                <a class="media-download" href="assets/policy-compare-soap-push.mp4" download aria-label="Download HD comparison MP4">MP4 <span aria-hidden="true">↓</span></a>
+              </div>
+            </div>
+          </article>
+          <article class="policy-case" aria-labelledby="compare-cup-topple">
+            <header class="policy-case-heading">
+              <p class="policy-skill">Topple</p>
+              <h3 id="compare-cup-topple">Topple the amber cup</h3>
+            </header>
+            <div class="policy-player">
+              <div class="policy-labels" aria-hidden="true">
+                <span>Pre-RL</span>
+                <span>Post-RL</span>
+              </div>
+              <div class="policy-screen">
+                <video controls playsinline muted preload="none" width="1920" height="540" poster="assets/policy-compare-cup-topple.webp" aria-label="Topple the amber cup. Pre-RL on the left, post-RL on the right." aria-description="Topple the upright transparent amber cup using either hand.">
+                  <source src="assets/policy-compare-cup-topple.mp4" type="video/mp4">
+                </video>
+              </div>
+              <div class="policy-transport" data-policy-transport hidden>
+                <button class="policy-play" type="button" aria-label="Play comparison"><span aria-hidden="true"></span></button>
+                <input type="range" min="0" max="0" value="0" step="0.01" aria-label="Comparison playback position" disabled>
+                <output aria-live="off">0:00</output>
+                <button class="policy-fullscreen" type="button" aria-label="View comparison full screen" hidden><span aria-hidden="true">⛶</span></button>
+                <a class="media-download" href="assets/policy-compare-cup-topple.mp4" download aria-label="Download HD comparison MP4">MP4 <span aria-hidden="true">↓</span></a>
+              </div>
+            </div>
+          </article>
+          <article class="policy-case" aria-labelledby="compare-visual-placement">
+            <header class="policy-case-heading">
+              <p class="policy-skill">Visual prompt</p>
+              <h3 id="compare-visual-placement">Place using visual cues</h3>
+            </header>
+            <div class="policy-player">
+              <div class="policy-labels" aria-hidden="true">
+                <span>Pre-RL</span>
+                <span>Post-RL</span>
+              </div>
+              <div class="policy-screen">
+                <video controls playsinline muted preload="none" width="1920" height="540" poster="assets/policy-compare-visual-placement.webp" aria-label="Place using visual cues. Pre-RL on the left, post-RL on the right." aria-description="Grasp the yellow-box target and place it in the cyan-box region with the left hand.">
+                  <source src="assets/policy-compare-visual-placement.mp4" type="video/mp4">
+                </video>
+              </div>
+              <div class="policy-transport" data-policy-transport hidden>
+                <button class="policy-play" type="button" aria-label="Play comparison"><span aria-hidden="true"></span></button>
+                <input type="range" min="0" max="0" value="0" step="0.01" aria-label="Comparison playback position" disabled>
+                <output aria-live="off">0:00</output>
+                <button class="policy-fullscreen" type="button" aria-label="View comparison full screen" hidden><span aria-hidden="true">⛶</span></button>
+                <a class="media-download" href="assets/policy-compare-visual-placement.mp4" download aria-label="Download HD comparison MP4">MP4 <span aria-hidden="true">↓</span></a>
+              </div>
+            </div>
+          </article>
+        </div>
       </div>
     </section>
 

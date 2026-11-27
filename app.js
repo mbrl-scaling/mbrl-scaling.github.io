@@ -132,6 +132,41 @@ new IntersectionObserver(([entry]) => {
   syncHeroPlayback();
 }, { threshold: .25 }).observe(heroScreen);
 
+const policyBatch = document.querySelector("[data-policy-all]");
+const policyVideos = [...document.querySelectorAll(".policy-case video")];
+
+function playPolicyVideo(video) {
+  return video.play().catch(() => {});
+}
+
+const policyObserver = new IntersectionObserver(entries => {
+  for (const entry of entries) {
+    if (entry.intersectionRatio < .6) continue;
+    const video = entry.target;
+    policyObserver.unobserve(video);
+    if (!reducedMotion.matches && !navigator.connection?.saveData && video.paused && video.currentTime === 0) {
+      playPolicyVideo(video);
+    }
+  }
+}, { threshold: .6 });
+
+function updatePolicyBatch() {
+  const playing = policyVideos.some(video => !video.paused && !video.ended);
+  policyBatch.querySelector("span").textContent = playing ? "Pause all" : "Play all";
+  policyBatch.toggleAttribute("data-playing", playing);
+}
+
+policyBatch.hidden = false;
+policyBatch.addEventListener("click", () => {
+  policyObserver.disconnect();
+  const shouldPlay = !policyBatch.hasAttribute("data-playing");
+  policyVideos.forEach(video => {
+    if (shouldPlay) playPolicyVideo(video);
+    else video.pause();
+  });
+  updatePolicyBatch();
+});
+
 document.querySelectorAll(".policy-case").forEach(card => {
   const video = card.querySelector("video");
   const transport = card.querySelector("[data-policy-transport]");
@@ -141,7 +176,8 @@ document.querySelectorAll(".policy-case").forEach(card => {
   const time = transport.querySelector("output");
 
   function togglePolicyVideo() {
-    if (video.paused) video.play().catch(() => {});
+    policyObserver.unobserve(video);
+    if (video.paused) playPolicyVideo(video);
     else video.pause();
   }
 
@@ -151,13 +187,16 @@ document.querySelectorAll(".policy-case").forEach(card => {
     const seconds = Math.floor(video.currentTime);
     time.textContent = `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}`;
     seek.value = video.currentTime;
+    seek.style.setProperty("--played", `${video.duration ? video.currentTime / video.duration * 100 : 0}%`);
   }
 
   video.addEventListener("loadedmetadata", () => {
     seek.max = video.duration;
     seek.disabled = false;
   });
-  ["play", "pause", "ended", "timeupdate"].forEach(event => video.addEventListener(event, updatePolicyControls));
+  ["play", "pause", "ended", "seeking", "timeupdate"].forEach(event => video.addEventListener(event, updatePolicyControls));
+  ["play", "pause", "ended", "error"].forEach(event => video.addEventListener(event, updatePolicyBatch));
+
   play.addEventListener("click", togglePolicyVideo);
   video.addEventListener("click", () => { if (!video.controls) togglePolicyVideo(); });
   seek.addEventListener("input", () => { video.currentTime = Number(seek.value); });
@@ -179,6 +218,7 @@ document.querySelectorAll(".policy-case").forEach(card => {
   }
   video.controls = false;
   transport.hidden = false;
+  policyObserver.observe(video);
 });
 
 const dialog = document.querySelector("#figure-dialog");
