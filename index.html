@@ -10,7 +10,7 @@
   <meta property="og:image" content="https://mbrl-scaling.github.io/assets/hero-rollouts-36.webp">
   <link rel="icon" href="assets/seed-mark.webp" type="image/webp">
   <link rel="stylesheet" href="style.css?v=7">
-  <link rel="stylesheet" href="environment.css?v=9">
+  <link rel="stylesheet" href="environment.css?v=10">
   <link rel="stylesheet" href="world-model.css?v=4">
   <link rel="stylesheet" href="ppo.css?v=4">
   <script src="app.js?v=3" defer></script>
@@ -78,14 +78,14 @@
               <div class="env-flow">
                 <div class="env-deck" role="group" aria-label="Head-camera clips from recorded robot trajectories">
                   <div class="env-archive" aria-hidden="true">
-                    <video class="env-archive-video" data-env-recordings muted playsinline preload="none" width="456" height="1380" poster="assets/env-recorded-trajectories.webp">
-                      <source src="assets/env-recorded-trajectories.mp4" type="video/mp4">
+                    <video class="env-archive-video" data-env-recordings muted playsinline preload="none" width="456" height="1380" poster="assets/env-recorded-clean-archive.webp">
+                      <source src="assets/env-recorded-clean-archive.mp4" type="video/mp4">
                     </video>
                     <div class="env-archive-scan"></div>
                   </div>
                   <div class="env-stack" aria-hidden="true">
-                    <img src="assets/method-straw-source.webp" alt="" width="640" height="360" loading="lazy" style="--sheet:0" data-env-deck="straw">
-                    <img src="assets/method-scissors-source.webp" alt="" width="640" height="360" loading="lazy" style="--sheet:2" data-env-deck="scissors">
+                    <img src="assets/env-pour-source.webp" alt="" width="640" height="360" loading="lazy" style="--sheet:0" data-env-deck="pour">
+                    <img src="assets/env-press-source.webp" alt="" width="640" height="360" loading="lazy" style="--sheet:2" data-env-deck="press">
                     <img src="assets/method-cloth-source.webp" alt="" width="640" height="360" loading="lazy" style="--sheet:4" data-env-deck="cloth">
                     <img src="assets/method-source-head.webp" alt="" width="640" height="360" loading="lazy" style="--sheet:6" data-env-deck="basket">
                   </div>
@@ -124,38 +124,38 @@
                     <div class="env-frame env-variant" data-env-variant data-env-reveal><img src="assets/method-cloth-step-0.webp" alt="Cloth edge, edited variant 4" width="640" height="360" loading="lazy"></div>
                   </div>
                 </div>
-                <div class="env-lane env-scissors" style="--lane-row:3" data-env-lane="scissors">
+                <div class="env-lane env-press" style="--lane-row:3" data-env-lane="press">
                   <div class="env-initial">
                     <div class="env-frame env-selected" data-env-reveal>
-                      <img src="assets/method-scissors-source.webp" alt="Selected head-camera frame for Scissor handles" width="640" height="360" loading="lazy">
+                      <img src="assets/env-press-source.webp" alt="Selected head-camera frame for Red button press" width="640" height="360" loading="lazy">
                     </div>
                   </div>
                   <div class="env-spec" data-env-reveal>
-                    <div data-env-pe><b>PE</b><span data-env-write>Grasp both outer handle edges with the left gripper.</span></div>
-                    <div data-env-rubric><b>Rubric</b><span data-env-write>The grip holds both outer edges.</span></div>
+                    <div data-env-pe><b>PE</b><span data-env-write>Press the red button between the purple and blue buttons.</span></div>
+                    <div data-env-rubric><b>Rubric</b><span data-env-write>The red button visibly moves down or changes state.</span></div>
                   </div>
-                  <div class="env-variants" aria-label="Four edited starting scenes for Scissor handles">
-                    <div class="env-frame env-variant" data-env-variant data-env-reveal><img src="assets/env-scissors-edit-0.webp" alt="Scissor handles, edited variant 1" width="640" height="360" loading="lazy"></div>
-                    <div class="env-frame env-variant" data-env-variant data-env-reveal><img src="assets/method-scissors-step-0.webp" alt="Scissor handles, edited variant 2" width="640" height="360" loading="lazy"></div>
-                    <div class="env-frame env-variant" data-env-variant data-env-reveal><img src="assets/env-scissors-edit-2.webp" alt="Scissor handles, edited variant 3" width="640" height="360" loading="lazy"></div>
-                    <div class="env-frame env-variant" data-env-variant data-env-reveal><img src="assets/env-scissors-edit-3.webp" alt="Scissor handles, edited variant 4" width="640" height="360" loading="lazy"></div>
+                  <div class="env-variants" aria-label="Four edited starting scenes for Red button press">
+                    <div class="env-frame env-variant" data-env-variant data-env-reveal><img src="assets/env-press-edit-1.webp" alt="Red button press, edited variant 1" width="640" height="360" loading="lazy"></div>
+                    <div class="env-frame env-variant" data-env-variant data-env-reveal><img src="assets/env-press-edit-2.webp" alt="Red button press, edited variant 2" width="640" height="360" loading="lazy"></div>
+                    <div class="env-frame env-variant" data-env-variant data-env-reveal><img src="assets/env-press-edit-3.webp" alt="Red button press, edited variant 3" width="640" height="360" loading="lazy"></div>
+                    <div class="env-frame env-variant" data-env-variant data-env-reveal><img src="assets/env-press-edit-4.webp" alt="Red button press, edited variant 4" width="640" height="360" loading="lazy"></div>
                   </div>
                 </div>
-                <div class="env-lane env-straw" style="--lane-row:4" data-env-lane="straw">
+                <div class="env-lane env-pour" style="--lane-row:4" data-env-lane="pour">
                   <div class="env-initial">
                     <div class="env-frame env-selected" data-env-reveal>
-                      <img src="assets/method-straw-source.webp" alt="Selected head-camera frame for Thin straw" width="640" height="360" loading="lazy">
+                      <img src="assets/env-pour-source.webp" alt="Selected head-camera frame for Pour beads" width="640" height="360" loading="lazy">
                     </div>
                   </div>
                   <div class="env-spec" data-env-reveal>
-                    <div data-env-pe><b>PE</b><span data-env-write>Grasp near one end of the shaft with the right gripper.</span></div>
-                    <div data-env-rubric><b>Rubric</b><span data-env-write>The grip holds the target shaft segment.</span></div>
+                    <div data-env-pe><b>PE</b><span data-env-write>Use the right gripper to pour the beads from the cup into the white bowl.</span></div>
+                    <div data-env-rubric><b>Rubric</b><span data-env-write>All beads land in the bowl, with none left in the cup or spilled.</span></div>
                   </div>
-                  <div class="env-variants" aria-label="Four edited starting scenes for Thin straw">
-                    <div class="env-frame env-variant" data-env-variant data-env-reveal><img src="assets/env-straw-edit-0.webp" alt="Thin straw, edited variant 1" width="640" height="360" loading="lazy"></div>
-                    <div class="env-frame env-variant" data-env-variant data-env-reveal><img src="assets/env-straw-edit-1.webp" alt="Thin straw, edited variant 2" width="640" height="360" loading="lazy"></div>
-                    <div class="env-frame env-variant" data-env-variant data-env-reveal><img src="assets/env-straw-edit-2.webp" alt="Thin straw, edited variant 3" width="640" height="360" loading="lazy"></div>
-                    <div class="env-frame env-variant" data-env-variant data-env-reveal><img src="assets/method-straw-step-0.webp" alt="Thin straw, edited variant 4" width="640" height="360" loading="lazy"></div>
+                  <div class="env-variants" aria-label="Four edited starting scenes for Pour beads">
+                    <div class="env-frame env-variant" data-env-variant data-env-reveal><img src="assets/env-pour-edit-1.webp" alt="Pour beads, edited variant 1" width="640" height="360" loading="lazy"></div>
+                    <div class="env-frame env-variant" data-env-variant data-env-reveal><img src="assets/env-pour-edit-2.webp" alt="Pour beads, edited variant 2" width="640" height="360" loading="lazy"></div>
+                    <div class="env-frame env-variant" data-env-variant data-env-reveal><img src="assets/env-pour-edit-3.webp" alt="Pour beads, edited variant 3" width="640" height="360" loading="lazy"></div>
+                    <div class="env-frame env-variant" data-env-variant data-env-reveal><img src="assets/env-pour-edit-4.webp" alt="Pour beads, edited variant 4" width="640" height="360" loading="lazy"></div>
                   </div>
                 </div>
                 <div class="env-approval" data-env-approval data-env-reveal>
@@ -164,20 +164,20 @@
                 <div class="env-well" data-env-well role="group" aria-label="Shared environment pool">
                   <div class="env-frame env-pool-card" style="--x:28%;--y:10%;--tilt:-9deg" data-env-pool="cloth" data-env-reveal><img src="assets/env-cloth-edit-0.webp" alt="" width="640" height="360" loading="lazy"></div>
                   <div class="env-frame env-pool-card" style="--x:72%;--y:15%;--tilt:7deg" data-env-pool="basket" data-env-reveal><img src="assets/env-basket-edit-0.webp" alt="" width="640" height="360" loading="lazy"></div>
-                  <div class="env-frame env-pool-card" style="--x:29%;--y:23%;--tilt:4deg" data-env-pool="straw" data-env-reveal><img src="assets/env-straw-edit-0.webp" alt="" width="640" height="360" loading="lazy"></div>
-                  <div class="env-frame env-pool-card" style="--x:74%;--y:28%;--tilt:-5deg" data-env-pool="scissors" data-env-reveal><img src="assets/env-scissors-edit-0.webp" alt="" width="640" height="360" loading="lazy"></div>
-                  <div class="env-frame env-pool-card" style="--x:30%;--y:36%;--tilt:-6deg" data-env-pool="scissors" data-env-reveal><img src="assets/method-scissors-step-0.webp" alt="" width="640" height="360" loading="lazy"></div>
-                  <div class="env-frame env-pool-card" style="--x:70%;--y:39%;--tilt:9deg" data-env-pool="straw" data-env-reveal><img src="assets/env-straw-edit-1.webp" alt="" width="640" height="360" loading="lazy"></div>
+                  <div class="env-frame env-pool-card" style="--x:29%;--y:23%;--tilt:4deg" data-env-pool="pour" data-env-reveal><img src="assets/env-pour-edit-1.webp" alt="" width="640" height="360" loading="lazy"></div>
+                  <div class="env-frame env-pool-card" style="--x:74%;--y:28%;--tilt:-5deg" data-env-pool="press" data-env-reveal><img src="assets/env-press-edit-1.webp" alt="" width="640" height="360" loading="lazy"></div>
+                  <div class="env-frame env-pool-card" style="--x:30%;--y:36%;--tilt:-6deg" data-env-pool="press" data-env-reveal><img src="assets/env-press-edit-2.webp" alt="" width="640" height="360" loading="lazy"></div>
+                  <div class="env-frame env-pool-card" style="--x:70%;--y:39%;--tilt:9deg" data-env-pool="pour" data-env-reveal><img src="assets/env-pour-edit-2.webp" alt="" width="640" height="360" loading="lazy"></div>
                   <div class="env-frame env-pool-card" style="--x:27%;--y:47%;--tilt:10deg" data-env-pool="basket" data-env-reveal><img src="assets/env-basket-edit-1.webp" alt="" width="640" height="360" loading="lazy"></div>
                   <div class="env-frame env-pool-card" style="--x:73%;--y:51%;--tilt:-8deg" data-env-pool="cloth" data-env-reveal><img src="assets/env-cloth-edit-1.webp" alt="" width="640" height="360" loading="lazy"></div>
-                  <div class="env-frame env-pool-card" style="--x:29%;--y:58%;--tilt:-6deg" data-env-pool="straw" data-env-reveal><img src="assets/env-straw-edit-2.webp" alt="" width="640" height="360" loading="lazy"></div>
+                  <div class="env-frame env-pool-card" style="--x:29%;--y:58%;--tilt:-6deg" data-env-pool="pour" data-env-reveal><img src="assets/env-pour-edit-3.webp" alt="" width="640" height="360" loading="lazy"></div>
                   <div class="env-frame env-pool-card" style="--x:71%;--y:62%;--tilt:4deg" data-env-pool="cloth" data-env-reveal><img src="assets/env-cloth-edit-2.webp" alt="" width="640" height="360" loading="lazy"></div>
-                  <div class="env-frame env-pool-card" style="--x:29%;--y:69%;--tilt:5deg" data-env-pool="scissors" data-env-reveal><img src="assets/env-scissors-edit-2.webp" alt="" width="640" height="360" loading="lazy"></div>
+                  <div class="env-frame env-pool-card" style="--x:29%;--y:69%;--tilt:5deg" data-env-pool="press" data-env-reveal><img src="assets/env-press-edit-3.webp" alt="" width="640" height="360" loading="lazy"></div>
                   <div class="env-frame env-pool-card" style="--x:73%;--y:74%;--tilt:-8deg" data-env-pool="basket" data-env-reveal><img src="assets/method-position-head.webp" alt="" width="640" height="360" loading="lazy"></div>
                   <div class="env-frame env-pool-card" style="--x:30%;--y:82%;--tilt:-7deg" data-env-pool="basket" data-env-reveal><img src="assets/env-basket-edit-3.webp" alt="" width="640" height="360" loading="lazy"></div>
-                  <div class="env-frame env-pool-card" style="--x:70%;--y:84%;--tilt:7deg" data-env-pool="straw" data-env-reveal><img src="assets/method-straw-step-0.webp" alt="" width="640" height="360" loading="lazy"></div>
+                  <div class="env-frame env-pool-card" style="--x:70%;--y:84%;--tilt:7deg" data-env-pool="pour" data-env-reveal><img src="assets/env-pour-edit-4.webp" alt="" width="640" height="360" loading="lazy"></div>
                   <div class="env-frame env-pool-card" style="--x:30%;--y:92%;--tilt:5deg" data-env-pool="cloth" data-env-reveal><img src="assets/method-cloth-step-0.webp" alt="" width="640" height="360" loading="lazy"></div>
-                  <div class="env-frame env-pool-card" style="--x:73%;--y:93%;--tilt:-4deg" data-env-pool="scissors" data-env-reveal><img src="assets/env-scissors-edit-3.webp" alt="" width="640" height="360" loading="lazy"></div>
+                  <div class="env-frame env-pool-card" style="--x:73%;--y:93%;--tilt:-4deg" data-env-pool="press" data-env-reveal><img src="assets/env-press-edit-4.webp" alt="" width="640" height="360" loading="lazy"></div>
                 </div>
               </div>
               <div class="env-flight-layer" data-env-flight-layer aria-hidden="true"></div>
@@ -291,7 +291,7 @@
               </header>
               <div class="ppo-pool" aria-hidden="true">
                 <img src="assets/eval242-pool-grasp.webp" width="384" height="216" alt="" loading="lazy">
-                <img src="assets/eval242-wipe-0.webp" width="960" height="540" alt="" loading="lazy" data-ppo-pick="wipe">
+                <img src="assets/eval242-stack-die-0.webp" width="960" height="540" alt="" loading="lazy" data-ppo-pick="stack-die">
                 <img src="assets/eval242-pool-insert.webp" width="384" height="216" alt="" loading="lazy">
                 <img src="assets/eval242-pool-place.webp" width="384" height="216" alt="" loading="lazy">
                 <img src="assets/eval242-pool-stack.webp" width="384" height="216" alt="" loading="lazy">
@@ -310,13 +310,13 @@
                 <p>Current policy ↔ frozen world model</p>
               </header>
               <div class="ppo-tracks" data-ppo-tracks>
-                <div class="ppo-track" data-ppo-track="wipe">
-                  <h5>Wipe the plate</h5>
+                <div class="ppo-track" data-ppo-track="stack-die">
+                  <h5>Stack the green block</h5>
                   <div class="ppo-frames">
-                    <img src="assets/eval242-wipe-0.webp" width="960" height="540" alt="Plate before wiping" loading="lazy">
-                    <img src="assets/eval242-wipe-1.webp" width="960" height="540" alt="Robot holding the sponge and stabilizing the plate" loading="lazy">
-                    <img src="assets/eval242-wipe-2.webp" width="960" height="540" alt="Sponge wiping the plate" loading="lazy">
-                    <img src="assets/eval242-wipe-3.webp" width="960" height="540" alt="Cleaned plate at the end of the trial" loading="lazy">
+                    <img src="assets/eval242-stack-die-0.webp" width="960" height="540" alt="Green block and wooden die before stacking" loading="lazy">
+                    <img src="assets/eval242-stack-die-1.webp" width="960" height="540" alt="Left gripper on the green block" loading="lazy">
+                    <img src="assets/eval242-stack-die-2.webp" width="960" height="540" alt="Robot positioning the green block over the die" loading="lazy">
+                    <img src="assets/eval242-stack-die-3.webp" width="960" height="540" alt="Green block resting on top of the die after release" loading="lazy">
                   </div>
                 </div>
                 <div class="ppo-track" data-ppo-track="drag">
@@ -345,9 +345,9 @@
                 <p class="ppo-verdict-key"><span>Yes → success</span><span>No → failure</span></p>
               </header>
               <div class="ppo-scores">
-                <div class="ppo-score" data-ppo-score="wipe">
-                  <span>Ink gone and plate held steady?</span>
-                  <b role="img" aria-label="Outcome reward for wiping"><span>r<sub>1</sub></span></b>
+                <div class="ppo-score" data-ppo-score="stack-die">
+                  <span>Green block stacked on the die and released?</span>
+                  <b role="img" aria-label="Outcome reward for stacking"><span>r<sub>1</sub></span></b>
                 </div>
                 <div class="ppo-score" data-ppo-score="drag">
                   <span>Case dragged to the front left of the coaster?</span>
