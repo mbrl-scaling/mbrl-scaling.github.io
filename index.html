@@ -9,10 +9,12 @@
   <meta property="og:description" content="World-model reinforcement learning at scale, evaluated on 242 unseen real-robot tasks.">
   <meta property="og:image" content="https://mbrl-scaling.github.io/assets/hero-rollouts-36.webp">
   <link rel="icon" href="assets/seed-mark.webp" type="image/webp">
-  <link rel="stylesheet" href="style.css?v=2">
+  <link rel="stylesheet" href="style.css?v=3">
+  <link rel="stylesheet" href="environment.css">
   <script src="app.js?v=3" defer></script>
   <script src="scaling.js" defer></script>
-  <script src="method.js" defer></script>
+  <script src="method.js?v=2" defer></script>
+  <script src="environment.js" defer></script>
   <script src="agent.js" defer></script>
   <title>Scaling Reinforcement Learning in World Models | Project Page</title>
 </head>
@@ -56,52 +58,94 @@
         <div><p class="eyebrow">Method</p><h2 id="method-heading">From recorded scenes to policy updates</h2></div>
         <p>Construct environments, predict how they respond to actions, then use those interactions to train a policy.</p>
       </div>
-      <article class="method-player" data-method aria-label="Animated method walkthrough">
-        <div class="method-player-nav">
-          <div class="method-chapters" role="group" aria-label="Method chapters" hidden>
-            <button type="button" data-method-chapter>Build environments</button>
-            <button type="button" id="world-model" data-method-chapter>World model</button>
-            <button type="button" id="ppo" data-method-chapter>PPO training</button>
-          </div>
-          <button class="motion-button" type="button" data-method-play hidden><i aria-hidden="true"></i><span>Play walkthrough</span></button>
+      <section class="method-chapter" id="environment-construction" aria-labelledby="env-method-heading">
+        <div class="method-chapter-heading">
+          <h3 id="env-method-heading">Agent-driven environment construction</h3>
+          <p>From recorded robot demonstrations to a pool of training environments.</p>
         </div>
-        <section class="method-panel" data-method-panel data-timing="3600 3700 3400 3600 5200" aria-labelledby="env-method-heading">
-          <h3 id="env-method-heading">Build training environments</h3>
-          <div class="method-track " role="group" aria-label="Environment construction steps" hidden>
-            <button type="button" data-method-step><strong>Select scene</strong></button>
-            <button type="button" data-method-step><strong>Define task</strong></button>
-            <button type="button" data-method-step><strong>Edit scene</strong></button>
-            <button type="button" data-method-step><strong>Align inputs</strong></button>
-            <button type="button" data-method-step><strong>Review rollout</strong></button>
+        <figure class="env-story" data-env-story data-phase="library" aria-labelledby="env-method-heading" aria-describedby="env-caption">
+          <div class="env-stage" aria-hidden="true">
+            <div class="env-stage-title">
+              <span data-env-role>Construction agent</span>
+              <strong data-env-title>Select an initial state</strong>
+            </div>
+            <div class="env-library">
+              <video muted loop playsinline preload="none" poster="assets/env-demonstrations.webp" src="assets/env-demonstrations.mp4" data-mobile-poster="assets/env-demonstrations-mobile.webp" data-mobile-source="assets/env-demonstrations-mobile.mp4"></video>
+            </div>
+            <div class="env-film">
+              <img src="assets/method-source-head.webp" alt="" loading="lazy">
+              <img src="assets/env-demo-037.webp" alt="" loading="lazy">
+              <img src="assets/env-demo-075.webp" alt="" loading="lazy">
+              <img src="assets/env-demo-112.webp" alt="" loading="lazy">
+            </div>
+            <figure class="env-shot env-source">
+              <img src="assets/method-source-head.webp" alt="" loading="lazy">
+              <i class="env-contact"></i>
+              <figcaption>Recorded initial state</figcaption>
+            </figure>
+            <div class="env-spec">
+              <div class="env-note"><span>PE · Task instruction</span><p>Use the left gripper to grasp the middle of the basket’s long rim.</p></div>
+              <div class="env-note"><span>Rubric · Success criterion</span><p>The left gripper establishes a grasp on the specified rim segment.</p></div>
+            </div>
+            <div class="env-edit-route"><i></i><span>Image editor</span></div>
+            <div class="env-edit-options">
+              <figure class="env-shot"><img src="assets/env-appearance-color.webp" alt="" loading="lazy"><figcaption>Appearance</figcaption></figure>
+              <figure class="env-shot"><img src="assets/env-background.webp" alt="" loading="lazy"><figcaption>Background</figcaption></figure>
+            </div>
+            <div class="env-edited-spec env-note">
+              <span>PE + rubric updated</span>
+              <p>Basket shifted right. Same gripper, contact region and success criterion.</p>
+            </div>
+            <figure class="env-shot env-candidate">
+              <img src="assets/method-position-head.webp" alt="" loading="lazy">
+              <img class="env-before-edit" src="assets/method-source-head.webp" alt="" loading="lazy">
+              <i class="env-edit-divider"></i>
+              <figcaption data-env-candidate-label>Position variant</figcaption>
+            </figure>
+            <figure class="env-shot env-evidence">
+              <img src="assets/method-rollout-016-head.webp" alt="" loading="lazy">
+              <img src="assets/method-rollout-048-head.webp" alt="" loading="lazy">
+              <figcaption>Sampled rollout frames</figcaption>
+            </figure>
+            <div class="env-audit">
+              <div><i></i> Scene consistency</div>
+              <div><i></i> Rollout dynamics</div>
+              <div><i></i> Rubric assessment</div>
+            </div>
+            <span class="env-revise">↶ Revise an inconsistent variant</span>
+            <div class="env-pool">
+              <figure class="env-shot"><img src="assets/method-source-head.webp" alt="" loading="lazy"><figcaption>Source scene</figcaption></figure>
+              <figure class="env-shot"><img src="assets/env-appearance-color.webp" alt="" loading="lazy"><figcaption>Appearance</figcaption></figure>
+              <div class="env-pool-slot"></div>
+              <figure class="env-shot"><img src="assets/env-background.webp" alt="" loading="lazy"><figcaption>Background</figcaption></figure>
+              <figure class="env-shot"><img src="assets/env-combined.webp" alt="" loading="lazy"><figcaption>Combined edit</figcaption></figure>
+              <figure class="env-shot"><img src="assets/method-scissors-source.webp" alt="" loading="lazy"><figcaption>Another task</figcaption></figure>
+            </div>
+            <div class="env-pool-note"><i></i> Initial observation <b>+</b> PE <b>+</b> rubric</div>
           </div>
-          <div class="method-strip">
-            <figure>
-              <div class="method-shot"><img src="assets/method-source-head.webp" width="960" height="540" loading="lazy" decoding="async" alt="Open basket across the method stages" data-method-frames="source-head|source-head|position-head|position-head|position-head rollout-016-head rollout-048-head"></div>
-              <figcaption><strong>Open basket</strong><span>Left gripper · middle of the long rim</span></figcaption>
-            </figure>
-            <figure>
-              <div class="method-shot"><img src="assets/method-cloth-source.webp" width="960" height="540" loading="lazy" decoding="async" alt="Deformable cloth across the method stages" data-method-frames="cloth-source|cloth-source|cloth-step-0|cloth-step-0|cloth-step-0 cloth-step-1 cloth-step-2 cloth-step-3"></div>
-              <figcaption><strong>Deformable cloth</strong><span>Left gripper · exposed fabric edge</span></figcaption>
-            </figure>
-            <figure>
-              <div class="method-shot"><img src="assets/method-scissors-source.webp" width="960" height="540" loading="lazy" decoding="async" alt="Scissor handles across the method stages" data-method-frames="scissors-source|scissors-source|scissors-step-0|scissors-step-0|scissors-step-0 scissors-step-1 scissors-step-2 scissors-step-3"></div>
-              <figcaption><strong>Scissor handles</strong><span>Left gripper · opposing handle edges</span></figcaption>
-            </figure>
-            <figure>
-              <div class="method-shot"><img src="assets/method-straw-source.webp" width="960" height="540" loading="lazy" decoding="async" alt="Thin straw across the method stages" data-method-frames="straw-source|straw-source|straw-step-0|straw-step-0|straw-step-0 straw-step-1 straw-step-2 straw-step-3"></div>
-              <figcaption><strong>Thin straw</strong><span>Right gripper · shaft near one end</span></figcaption>
-            </figure>
-          </div>
-          <div class="method-narration">
-            <p data-method-caption>Start from recorded head-camera observations. The agent identifies a usable reset frame and a candidate interaction.</p>
-            <p data-method-caption>Write the instruction and success rubric together. Each specifies the acting gripper, the target and the contact region.</p>
-            <p data-method-caption>The agent proposes changes to the background, object appearance or placement while preserving the intended behavior.</p>
-            <p data-method-caption>Generate consistent auxiliary views and update the instruction and rubric to match the edited initial scene.</p>
-            <p data-method-caption>Review the sampled predictions for physical consistency and score task completion separately. A candidate can be admitted, revised or rejected.</p>
-          </div>
-        </section>
-        <section class="method-panel" data-method-panel data-timing="4200 4700 6100" aria-labelledby="wm-method-heading">
-          <h3 id="wm-method-heading">World-model architecture and inference</h3>
+          <figcaption class="env-footer">
+            <div class="env-transport" data-env-transport hidden>
+              <div class="env-steps" role="group" aria-label="Environment construction stages">
+                <button type="button" data-env-step="library" aria-pressed="true">Select</button>
+                <button type="button" data-env-step="specify" aria-pressed="false">Specify</button>
+                <button type="button" data-env-step="edit" aria-pressed="false">Edit</button>
+                <button type="button" data-env-step="review" aria-pressed="false">Review</button>
+                <button type="button" data-env-step="pool" aria-pressed="false">Pool</button>
+              </div>
+              <button class="motion-button env-play" type="button" data-env-play><i aria-hidden="true"></i><span>Play</span></button>
+            </div>
+            <p id="env-caption" data-env-caption>An agent selects a usable head-camera frame from recorded robot demonstrations.</p>
+            <span class="sr-only" data-env-status role="status"></span>
+          </figcaption>
+        </figure>
+      </section>
+
+      <section class="method-chapter" id="world-model" aria-labelledby="wm-method-heading">
+        <div class="method-chapter-heading">
+          <h3 id="wm-method-heading">World model architecture and inference</h3>
+          <p>The model predicts the next observation from the visual history and robot actions.</p>
+        </div>
+        <div class="method-player method-panel" data-method data-timing="4200 4700 6100">
           <div class="method-track method-pipeline" role="group" aria-label="World-model inference steps" hidden>
             <button type="button" data-method-step><strong>Encode inputs</strong><span>Text · views · actions</span><span class="method-wire" aria-hidden="true"><i></i></span></button>
             <button type="button" data-method-step><strong>Predict observation</strong><span>Omni · multimodal MoE</span><span class="method-wire" aria-hidden="true"><i></i></span></button>
@@ -130,9 +174,17 @@
             <p data-method-caption>The fine-tuned Omni backbone integrates a latent flow to predict one joint camera canvas. The examples below show its head-camera output.</p>
             <p data-method-caption>Return the predicted views to the policy. Append the action and prediction to the bounded history, then use the policy’s next action chunk to predict again.</p>
           </div>
-        </section>
-        <section class="method-panel" data-method-panel data-timing="4000 4600 4900 4400 5200" aria-labelledby="ppo-method-heading">
-          <h3 id="ppo-method-heading">Train the policy with PPO</h3>
+          <button class="motion-button method-play" type="button" data-method-play hidden><i aria-hidden="true"></i><span>Play walkthrough</span></button>
+          <span class="sr-only" data-method-status role="status"></span>
+        </div>
+      </section>
+
+      <section class="method-chapter" id="ppo" aria-labelledby="ppo-method-heading">
+        <div class="method-chapter-heading">
+          <h3 id="ppo-method-heading">Policy training with PPO</h3>
+          <p>Parallel world-model rollouts supply experience for each policy update.</p>
+        </div>
+        <div class="method-player method-panel" data-method data-timing="4000 4600 4900 4400 5200">
           <div class="method-track method-pipeline" role="group" aria-label="PPO training steps" hidden>
             <button type="button" data-method-step><strong>Sample</strong><span>Environment pool</span><span class="method-wire" aria-hidden="true"><i></i></span></button>
             <button type="button" data-method-step><strong>Roll out</strong><span>Policy ↔ frozen world model</span><span class="method-wire" aria-hidden="true"><i></i></span></button>
@@ -152,9 +204,10 @@
             <p data-method-caption>Combine the sparse outcome rewards and value estimates with generalized advantage estimation. The resulting returns supervise the value model.</p>
             <p data-method-caption>Update the policy on executed action tokens using clipped PPO. Train the value model with its own objective and optimizer, then sample the next round.</p>
           </div>
-        </section>
-        <span class="sr-only" data-method-status role="status"></span>
-      </article>
+          <button class="motion-button method-play" type="button" data-method-play hidden><i aria-hidden="true"></i><span>Play walkthrough</span></button>
+          <span class="sr-only" data-method-status role="status"></span>
+        </div>
+      </section>
 
       <details class="framework-details">
         <summary>View the full training framework</summary>

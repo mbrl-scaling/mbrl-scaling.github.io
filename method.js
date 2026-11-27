@@ -1,181 +1,146 @@
-const methodPlayer = document.querySelector("[data-method]");
-const methodChapters = [...methodPlayer.querySelectorAll("[data-method-chapter]")];
-const methodToggle = methodPlayer.querySelector("[data-method-play]");
-const methodStatus = methodPlayer.querySelector("[data-method-status]");
 const methodMotion = matchMedia("(prefers-reduced-motion: reduce)");
-const methodPanels = [...methodPlayer.querySelectorAll("[data-method-panel]")].map(panel => ({
-  panel,
-  steps: [...panel.querySelectorAll("[data-method-step]")],
-  captions: [...panel.querySelectorAll("[data-method-caption]")],
-  timing: panel.dataset.timing.split(" ").map(Number),
-  history: [...panel.querySelectorAll("[data-reveal-phase]")],
-  lanes: [...panel.querySelectorAll(".ppo-lane")],
-  frames: [...panel.querySelectorAll("[data-method-frames]")].map(image => ({
+
+document.querySelectorAll("[data-method]").forEach(panel => {
+  const steps = [...panel.querySelectorAll("[data-method-step]")];
+  const captions = [...panel.querySelectorAll("[data-method-caption]")];
+  const history = [...panel.querySelectorAll("[data-reveal-phase]")];
+  const lanes = [...panel.querySelectorAll(".ppo-lane")];
+  const track = panel.querySelector(".method-track");
+  const toggle = panel.querySelector("[data-method-play]");
+  const status = panel.querySelector("[data-method-status]");
+  const timing = panel.dataset.timing.split(" ").map(Number);
+  const frames = [...panel.querySelectorAll("[data-method-frames]")].map(image => ({
     image,
-    steps: image.dataset.methodFrames.split("|").map(phase => phase.split(" "))
-  }))
-}));
-const methodAssets = new Map();
-let methodChapter = 0;
-let methodPhase = 0;
-let methodFrame;
-let methodElapsed = 0;
-let methodProgress = 0;
-let methodTick;
-let methodPlaying = false;
-let methodComplete = false;
-let methodStarted = false;
+    samples: image.dataset.methodFrames.split("|").map(phase => phase.split(" "))
+  }));
+  const assets = new Map();
+  let phase = 0;
+  let elapsed = 0;
+  let progress = 0;
+  let frame;
+  let previousTick;
+  let playing = false;
+  let finished = false;
+  let started = false;
 
-function renderMethod(progress) {
-  methodProgress = progress;
-  const { steps, frames, lanes } = methodPanels[methodChapter];
-  steps[methodPhase].style.setProperty("--progress", progress);
-  lanes.find(lane => lane.hasAttribute("data-active"))?.style.setProperty("--progress", progress);
-  frames.forEach(({ image, steps: story }) => {
-    const samples = story[methodPhase];
-    const sample = samples[Math.min(samples.length - 1, Math.floor(progress * samples.length))];
-    const url = `assets/method-${sample}.webp`;
-    if (image.getAttribute("src") === url) return;
-    const preload = methodAssets.get(url);
-    if (preload && !preload.naturalWidth) return;
-    if (!methodMotion.matches && image.complete && image.naturalWidth) {
-      image.parentElement.style.backgroundImage = `url("${image.currentSrc}")`;
-    }
-    image.src = url;
-    if (!methodMotion.matches) image.animate([{ opacity: .12 }, { opacity: 1 }], { duration: 310, easing: "cubic-bezier(.2,.72,.25,1)" });
-  });
-}
+  function render(nextProgress) {
+    progress = nextProgress;
+    steps[phase].style.setProperty("--progress", progress);
+    lanes.find(lane => lane.hasAttribute("data-active"))?.style.setProperty("--progress", progress);
 
-function showMethod(chapter, phase, announce = false) {
-  const chapterChanged = methodChapter !== chapter;
-  methodChapter = chapter;
-  methodPhase = phase;
-  methodElapsed = 0;
-  methodPanels.forEach(({ panel, steps }, index) => {
-    panel.hidden = index !== chapter;
-    panel.querySelector(".method-track").hidden = false;
-    methodChapters[index].setAttribute("aria-pressed", String(chapter === index));
-    steps.forEach((step, i) => {
-      step.setAttribute("aria-pressed", String(chapter === index && phase === i));
-      step.style.setProperty("--progress", i < phase && chapter === index ? 1 : 0);
+    frames.forEach(({ image, samples }) => {
+      const sequence = samples[phase];
+      const sample = sequence[Math.min(sequence.length - 1, Math.floor(progress * sequence.length))];
+      const url = `assets/method-${sample}.webp`;
+      if (image.getAttribute("src") === url) return;
+      const preload = assets.get(url);
+      if (preload && !preload.naturalWidth) return;
+      if (!methodMotion.matches && image.complete && image.naturalWidth) {
+        image.parentElement.style.backgroundImage = `url("${image.currentSrc}")`;
+      }
+      image.src = url;
+      if (!methodMotion.matches) {
+        image.animate([{ opacity: .12 }, { opacity: 1 }], { duration: 310, easing: "cubic-bezier(.2,.72,.25,1)" });
+      }
     });
-  });
-  const { panel, captions, history, lanes, steps } = methodPanels[chapter];
-  panel.dataset.phase = phase;
-  captions.forEach((caption, index) => { caption.hidden = index !== phase; });
-  history.forEach(item => item.toggleAttribute("data-revealed", Number(item.dataset.revealPhase) <= phase));
-  const activeLane = phase < 2 ? 0 : phase < 4 ? 1 : 2;
-  lanes.forEach((lane, index) => lane.toggleAttribute("data-active", index === activeLane));
-  renderMethod(methodPlaying ? 0 : 1);
-  if (chapterChanged && !methodMotion.matches) {
-    panel.animate([{ opacity: .35, transform: "translateY(9px)" }, { opacity: 1, transform: "translateY(0)" }],
-      { duration: 420, easing: "cubic-bezier(.2,.72,.25,1)" });
   }
-  if (announce) methodStatus.textContent = `${methodChapters[chapter].textContent}: ${steps[phase].textContent}`;
-}
 
-function prefetchMethod() {
-  if (methodAssets.size) return;
-  methodPanels.flatMap(({ frames }) => frames).forEach(({ steps }) => {
-    steps.flat().forEach(frame => {
-      const url = `assets/method-${frame}.webp`;
-      if (methodAssets.has(url)) return;
+  function show(nextPhase, announce = false) {
+    phase = nextPhase;
+    elapsed = 0;
+    panel.dataset.phase = phase;
+    steps.forEach((step, index) => {
+      step.setAttribute("aria-pressed", String(index === phase));
+      step.style.setProperty("--progress", index < phase ? 1 : 0);
+    });
+    captions.forEach((caption, index) => { caption.hidden = index !== phase; });
+    history.forEach(item => item.toggleAttribute("data-revealed", Number(item.dataset.revealPhase) <= phase));
+    const activeLane = phase < 2 ? 0 : phase < 4 ? 1 : 2;
+    lanes.forEach((lane, index) => lane.toggleAttribute("data-active", index === activeLane));
+    render(playing ? 0 : 1);
+    if (announce) status.textContent = steps[phase].textContent;
+  }
+
+  function prefetch() {
+    frames.flatMap(({ samples }) => samples.flat()).forEach(sample => {
+      const url = `assets/method-${sample}.webp`;
+      if (assets.has(url)) return;
       const image = new Image();
-      methodAssets.set(url, image);
-      image.addEventListener("load", () => renderMethod(methodProgress), { once: true });
+      assets.set(url, image);
+      image.addEventListener("load", () => render(progress), { once: true });
       image.src = url;
     });
-  });
-}
+  }
 
-function updateMethodToggle() {
-  methodToggle.toggleAttribute("data-playing", methodPlaying);
-  methodToggle.querySelector("span").textContent = methodPlaying ? "Pause walkthrough" :
-    methodComplete ? "Replay walkthrough" : "Play walkthrough";
-}
+  function updateToggle() {
+    toggle.toggleAttribute("data-playing", playing);
+    toggle.querySelector("span").textContent = playing ? "Pause walkthrough" : finished ? "Replay walkthrough" : "Play walkthrough";
+  }
 
-function pauseMethod() {
-  methodPlaying = false;
-  cancelAnimationFrame(methodFrame);
-  methodTick = undefined;
-  updateMethodToggle();
-}
+  function pause() {
+    playing = false;
+    cancelAnimationFrame(frame);
+    previousTick = undefined;
+    updateToggle();
+  }
 
-function advanceMethod(now) {
-  if (methodTick !== undefined) methodElapsed += Math.min(now - methodTick, 100);
-  methodTick = now;
-  const panel = methodPanels[methodChapter];
-  const progress = Math.min(methodElapsed / panel.timing[methodPhase], 1);
-  renderMethod(progress);
-  if (progress === 1) {
-    if (methodPhase + 1 < panel.steps.length) {
-      showMethod(methodChapter, methodPhase + 1);
-    } else if (methodChapter + 1 < methodPanels.length) {
-      showMethod(methodChapter + 1, 0);
-    } else {
-      methodComplete = true;
-      pauseMethod();
-      return;
+  function advance(now) {
+    if (previousTick !== undefined) elapsed += Math.min(now - previousTick, 100);
+    previousTick = now;
+    render(Math.min(elapsed / timing[phase], 1));
+    if (progress === 1) {
+      if (phase === steps.length - 1) {
+        finished = true;
+        pause();
+        return;
+      }
+      show(phase + 1);
     }
+    frame = requestAnimationFrame(advance);
   }
-  methodFrame = requestAnimationFrame(advanceMethod);
-}
 
-function playMethod() {
-  methodStarted = true;
-  methodPlaying = true;
-  if (methodComplete) {
-    methodComplete = false;
-    showMethod(0, 0);
+  function play() {
+    started = true;
+    playing = true;
+    if (finished) {
+      finished = false;
+      show(0);
+    }
+    updateToggle();
+    frame = requestAnimationFrame(advance);
   }
-  updateMethodToggle();
-  methodFrame = requestAnimationFrame(advanceMethod);
-}
 
-function selectMethod(chapter, phase) {
-  methodStarted = true;
-  methodComplete = false;
-  pauseMethod();
-  showMethod(chapter, phase, true);
-  prefetchMethod();
-}
+  function select(index) {
+    started = true;
+    finished = false;
+    pause();
+    prefetch();
+    show(index, true);
+  }
 
-function bindMethodButtons(buttons, select) {
-  buttons.forEach((button, index) => {
+  steps.forEach((button, index) => {
     button.addEventListener("click", () => select(index));
     button.addEventListener("keydown", event => {
       const delta = { ArrowLeft: -1, ArrowRight: 1 }[event.key];
       if (!delta) return;
       event.preventDefault();
-      const next = (index + delta + buttons.length) % buttons.length;
-      buttons[next].focus();
+      const next = (index + delta + steps.length) % steps.length;
+      steps[next].focus();
       select(next);
     });
   });
-}
+  toggle.addEventListener("click", () => { if (playing) pause(); else play(); });
+  methodMotion.addEventListener("change", event => { if (event.matches && playing) pause(); });
+  track.hidden = false;
+  toggle.hidden = false;
+  show(0);
 
-methodToggle.addEventListener("click", () => {
-  if (methodPlaying) pauseMethod();
-  else playMethod();
+  new IntersectionObserver(([entry]) => {
+    if (entry.intersectionRatio >= .25) {
+      prefetch();
+      if (!started && !methodMotion.matches && !navigator.connection?.saveData) play();
+    } else if (playing) {
+      pause();
+    }
+  }, { threshold: .25 }).observe(panel);
 });
-bindMethodButtons(methodChapters, index => selectMethod(index, 0));
-methodPanels.forEach(({ steps }, chapter) => bindMethodButtons(steps, index => selectMethod(chapter, index)));
-methodPlayer.querySelector(".method-chapters").hidden = false;
-methodToggle.hidden = false;
-showMethod(0, 0);
-
-function selectLinkedChapter() {
-  const chapter = { "#world-model": 1, "#ppo": 2 }[location.hash];
-  if (chapter !== undefined) selectMethod(chapter, 0);
-}
-selectLinkedChapter();
-window.addEventListener("hashchange", selectLinkedChapter);
-methodMotion.addEventListener("change", event => { if (event.matches) pauseMethod(); });
-new IntersectionObserver(([entry]) => {
-  if (entry.intersectionRatio >= .15) {
-    prefetchMethod();
-    if (!methodStarted && !methodMotion.matches && !navigator.connection?.saveData) playMethod();
-  } else if (methodPlaying) {
-    pauseMethod();
-  }
-}, { threshold: .15 }).observe(methodPlayer);
