@@ -9,14 +9,15 @@
   <meta property="og:description" content="World-model reinforcement learning at scale, evaluated on 242 unseen real-robot tasks.">
   <meta property="og:image" content="https://mbrl-scaling.github.io/assets/hero-rollouts-36.webp">
   <link rel="icon" href="assets/seed-mark.webp" type="image/webp">
-  <link rel="stylesheet" href="style.css?v=3">
+  <link rel="stylesheet" href="style.css?v=4">
   <link rel="stylesheet" href="environment.css?v=7">
   <link rel="stylesheet" href="world-model.css?v=1">
+  <link rel="stylesheet" href="ppo.css?v=1">
   <script src="app.js?v=3" defer></script>
   <script src="scaling.js" defer></script>
-  <script src="method.js?v=2" defer></script>
   <script src="environment.js?v=6" defer></script>
   <script src="world-model.js?v=1" defer></script>
+  <script src="ppo.js?v=1" defer></script>
   <script src="agent.js" defer></script>
   <title>Scaling Reinforcement Learning in World Models | Project Page</title>
 </head>
@@ -289,31 +290,104 @@
       <section class="method-chapter" id="ppo" aria-labelledby="ppo-method-heading">
         <div class="method-chapter-heading">
           <h3 id="ppo-method-heading">Policy training with PPO</h3>
-          <p>Parallel world-model rollouts supply experience for each policy update.</p>
+          <p>Sample environments, roll out the policy in the world model, and learn from rubric rewards.</p>
         </div>
-        <div class="method-player method-panel" data-method data-timing="4000 4600 4900 4400 5200">
-          <div class="method-track method-pipeline" role="group" aria-label="PPO training steps" hidden>
-            <button type="button" data-method-step><strong>Sample</strong><span>Environment pool</span><span class="method-wire" aria-hidden="true"><i></i></span></button>
-            <button type="button" data-method-step><strong>Roll out</strong><span>Policy ↔ frozen world model</span><span class="method-wire" aria-hidden="true"><i></i></span></button>
-            <button type="button" data-method-step><strong>Score</strong><span>Rubric reward + value</span><span class="method-wire" aria-hidden="true"><i></i></span></button>
-            <button type="button" data-method-step><strong>Estimate</strong><span>GAE and return targets</span><span class="method-wire" aria-hidden="true"><i></i></span></button>
-            <button type="button" data-method-step><strong>Update</strong><span>Clipped PPO + value loss</span><span class="method-wire" aria-hidden="true"><i></i></span></button>
+        <figure class="ppo-story" data-ppo-story aria-labelledby="ppo-method-heading" aria-describedby="ppo-caption">
+          <div class="ppo-board" data-ppo-board>
+            <canvas class="ppo-paths" data-ppo-paths aria-hidden="true"></canvas>
+            <section class="ppo-sampling" aria-labelledby="ppo-sample-heading">
+              <header class="ppo-head">
+                <h4 id="ppo-sample-heading">Sample from Env Pool</h4>
+                <p>Task instructions and initial scenes</p>
+              </header>
+              <div class="ppo-pool" aria-hidden="true">
+                <img src="assets/env-basket-edit-1.webp" width="640" height="360" alt="" loading="lazy">
+                <img src="assets/method-cloth-step-0.webp" width="960" height="540" alt="" loading="lazy" data-ppo-pick="cloth">
+                <img src="assets/env-straw-edit-2.webp" width="640" height="360" alt="" loading="lazy">
+                <img src="assets/env-cloth-edit-1.webp" width="640" height="360" alt="" loading="lazy">
+                <img src="assets/env-scissors-edit-2.webp" width="640" height="360" alt="" loading="lazy">
+                <img src="assets/method-scissors-step-0.webp" width="960" height="540" alt="" loading="lazy" data-ppo-pick="scissors">
+                <img src="assets/method-position-head.webp" width="640" height="360" alt="" loading="lazy">
+                <img src="assets/env-scissors-edit-3.webp" width="640" height="360" alt="" loading="lazy">
+                <img src="assets/env-cloth-edit-2.webp" width="640" height="360" alt="" loading="lazy">
+                <img src="assets/method-straw-step-0.webp" width="960" height="540" alt="" loading="lazy" data-ppo-pick="straw">
+                <img src="assets/env-basket-edit-3.webp" width="640" height="360" alt="" loading="lazy">
+                <img src="assets/env-straw-edit-1.webp" width="640" height="360" alt="" loading="lazy">
+              </div>
+            </section>
+            <section class="ppo-rollouts" aria-labelledby="ppo-rollout-heading">
+              <header class="ppo-head">
+                <h4 id="ppo-rollout-heading">Parallel rollouts</h4>
+                <p>Current policy ↔ frozen world model</p>
+              </header>
+              <div class="ppo-tracks" data-ppo-tracks>
+                <div class="ppo-track ppo-cloth" data-ppo-track="cloth">
+                  <h5>Cloth edge</h5>
+                  <div class="ppo-frames">
+                    <img src="assets/method-cloth-step-0.webp" width="960" height="540" alt="Initial scene for the cloth grasp" loading="lazy">
+                    <img src="assets/method-cloth-step-1.webp" width="960" height="540" alt="First shown prediction for the cloth grasp" loading="lazy">
+                    <img src="assets/method-cloth-step-2.webp" width="960" height="540" alt="Later prediction for the cloth grasp" loading="lazy">
+                    <img src="assets/method-cloth-step-3.webp" width="960" height="540" alt="Last shown prediction for the cloth grasp" loading="lazy">
+                  </div>
+                </div>
+                <div class="ppo-track ppo-scissors" data-ppo-track="scissors">
+                  <h5>Scissor handles</h5>
+                  <div class="ppo-frames">
+                    <img src="assets/method-scissors-step-0.webp" width="960" height="540" alt="Initial scene for the scissors grasp" loading="lazy">
+                    <img src="assets/method-scissors-step-1.webp" width="960" height="540" alt="First shown prediction for the scissors grasp" loading="lazy">
+                    <img src="assets/method-scissors-step-2.webp" width="960" height="540" alt="Later prediction for the scissors grasp" loading="lazy">
+                    <img src="assets/method-scissors-step-3.webp" width="960" height="540" alt="Last shown prediction for the scissors grasp" loading="lazy">
+                  </div>
+                </div>
+                <div class="ppo-track ppo-straw" data-ppo-track="straw">
+                  <h5>Thin straw</h5>
+                  <div class="ppo-frames">
+                    <img src="assets/method-straw-step-0.webp" width="960" height="540" alt="Initial scene for the straw grasp" loading="lazy">
+                    <img src="assets/method-straw-step-1.webp" width="960" height="540" alt="First shown prediction for the straw grasp" loading="lazy">
+                    <img src="assets/method-straw-step-2.webp" width="960" height="540" alt="Later prediction for the straw grasp" loading="lazy">
+                    <img src="assets/method-straw-step-3.webp" width="960" height="540" alt="Last shown prediction for the straw grasp" loading="lazy">
+                  </div>
+                </div>
+              </div>
+            </section>
+            <section class="ppo-rewards" aria-labelledby="ppo-rewards-heading">
+              <header class="ppo-head">
+                <h4 id="ppo-rewards-heading">Score each rollout</h4>
+                <p>VLM checks the success rubric</p>
+              </header>
+              <div class="ppo-scores">
+                <div class="ppo-score" data-ppo-score="cloth"><span>Cloth edge</span><b aria-label="Cloth rollout reward"><span>r<sub>1</sub></span></b></div>
+                <div class="ppo-score" data-ppo-score="scissors"><span>Scissors</span><b aria-label="Scissors rollout reward"><span>r<sub>2</sub></span></b></div>
+                <div class="ppo-score" data-ppo-score="straw"><span>Straw</span><b aria-label="Straw rollout reward"><span>r<sub>3</sub></span></b></div>
+              </div>
+            </section>
+            <section class="ppo-optimization" aria-labelledby="ppo-update-heading">
+              <header class="ppo-head">
+                <h4 id="ppo-update-heading">Update the policy</h4>
+                <p>Executed action tokens</p>
+              </header>
+              <div class="ppo-optimizer">
+                <div class="ppo-advantages" data-ppo-advantages>
+                  <span>Rewards + value estimates</span>
+                  <strong>GAE advantages</strong>
+                </div>
+                <div class="ppo-update" data-ppo-update>
+                  <div class="ppo-update-icon" aria-hidden="true"><i></i><i></i><i></i></div>
+                  <strong>Clipped PPO</strong>
+                  <div class="ppo-policy-change" aria-label="Current policy becomes updated policy">
+                    <span>π<sub>old</sub></span><i aria-hidden="true">→</i><span>π<sub>new</sub></span>
+                  </div>
+                </div>
+              </div>
+            </section>
+            <div class="ppo-loop" data-ppo-loop>Updated policy for the next round</div>
+            <div class="ppo-flight-layer" data-ppo-flights aria-hidden="true"></div>
           </div>
-          <div class="ppo-cycle" aria-label="One training round">
-            <div class="ppo-lane"><span>Collect trajectories</span><strong>VLA policy π<sub>old</sub> <span aria-hidden="true">↔</span> Frozen world model</strong></div>
-            <div class="ppo-lane"><span>Assign learning signals</span><strong>Rubric reward + value estimates <span aria-hidden="true">→</span> GAE</strong></div>
-            <div class="ppo-lane"><span>Begin the next round</span><strong>Updated policy π<sub>θ</sub> <span aria-hidden="true">↺</span></strong></div>
-          </div>
-          <div class="method-narration">
-            <p data-method-caption>Initialize the VLA policy from the SFT checkpoint. Each round samples tasks and initial scenes, with a curriculum that prioritizes partially mastered tasks while covering every task.</p>
-            <p data-method-caption>Collect parallel trajectories with the pre-update policy. Each interaction executes a four-action chunk, feeds the resulting predicted views back to the policy and repeats up to 16 interactions.</p>
-            <p data-method-caption>An independent VLM judges task completion against the rubric. A separately trained value model estimates expected return from the current observation and instruction.</p>
-            <p data-method-caption>Combine the sparse outcome rewards and value estimates with generalized advantage estimation. The resulting returns supervise the value model.</p>
-            <p data-method-caption>Update the policy on executed action tokens using clipped PPO. Train the value model with its own objective and optimizer, then sample the next round.</p>
-          </div>
-          <button class="motion-button method-play" type="button" data-method-play hidden><i aria-hidden="true"></i><span>Play walkthrough</span></button>
-          <span class="sr-only" data-method-status role="status"></span>
-        </div>
+          <figcaption class="ppo-footer">
+            <p id="ppo-caption">The rollouts show sampled head-camera views from the world model. The rubric reward and value estimates yield advantages for the PPO update.</p>
+            <button class="motion-button" type="button" data-ppo-play aria-label="Play PPO training animation" hidden><i aria-hidden="true"></i><span>Play</span></button>
+          </figcaption>
+        </figure>
       </section>
 
       <details class="framework-details">
