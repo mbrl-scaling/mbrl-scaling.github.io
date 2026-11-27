@@ -11,10 +11,12 @@
   <link rel="icon" href="assets/seed-mark.webp" type="image/webp">
   <link rel="stylesheet" href="style.css?v=3">
   <link rel="stylesheet" href="environment.css?v=6">
+  <link rel="stylesheet" href="world-model.css?v=1">
   <script src="app.js?v=3" defer></script>
   <script src="scaling.js" defer></script>
   <script src="method.js?v=2" defer></script>
   <script src="environment.js?v=5" defer></script>
+  <script src="world-model.js?v=1" defer></script>
   <script src="agent.js" defer></script>
   <title>Scaling Reinforcement Learning in World Models | Project Page</title>
 </head>
@@ -194,7 +196,7 @@
             </div>
           </div>
           <figcaption class="env-footer">
-            <p id="env-caption">The agent selects initial states, writes the policy instructions and success rubrics, and expands each scene into variants. Approved variants enter a shared environment pool.</p>
+            <p id="env-caption">These examples illustrate how the agent selects initial states, writes instructions and success rubrics, and edits scenes. Variants that pass review enter a shared environment pool.</p>
             <div class="env-actions">
               <button class="motion-button env-overview" type="button" data-env-overview hidden>Overview</button>
               <button class="motion-button env-play" type="button" data-env-play hidden><i aria-hidden="true"></i><span>Play</span></button>
@@ -206,40 +208,88 @@
       <section class="method-chapter" id="world-model" aria-labelledby="wm-method-heading">
         <div class="method-chapter-heading">
           <h3 id="wm-method-heading">World model architecture and inference</h3>
-          <p>The model predicts the next observation from the visual history and robot actions.</p>
+          <p>Fine-tune Omni on three sources of manipulation data, then predict robot observations autoregressively.</p>
         </div>
-        <div class="method-player method-panel" data-method data-timing="4200 4700 6100">
-          <div class="method-track method-pipeline" role="group" aria-label="World-model inference steps" hidden>
-            <button type="button" data-method-step><strong>Encode inputs</strong><span>Text · views · actions</span><span class="method-wire" aria-hidden="true"><i></i></span></button>
-            <button type="button" data-method-step><strong>Predict observation</strong><span>Omni · multimodal MoE</span><span class="method-wire" aria-hidden="true"><i></i></span></button>
-            <button type="button" data-method-step><strong>Append and repeat</strong><span>Closed-loop inference</span><span class="method-wire" aria-hidden="true"><i></i></span></button>
+        <figure class="wm-motion" data-wm-motion aria-labelledby="wm-method-heading" aria-describedby="wm-motion-caption">
+          <div class="wm-layout" data-wm-layout>
+            <canvas class="wm-paths" data-wm-paths aria-hidden="true"></canvas>
+            <div class="wm-training">
+              <h4>Fine-tuning data</h4>
+              <div class="wm-sources">
+                <div class="wm-source wm-ego" data-wm-source>
+                  <strong>Egocentric human video</strong>
+                  <div class="wm-film"><img src="assets/wm-motion-ego.webp" width="972" height="180" loading="lazy" decoding="async" alt="Three first-person frames of human manipulation"></div>
+                </div>
+                <div class="wm-source wm-umi" data-wm-source>
+                  <strong>UMI demonstrations</strong>
+                  <div class="wm-film"><img src="assets/wm-motion-umi.webp" width="972" height="180" loading="lazy" decoding="async" alt="Three frames from a handheld-gripper demonstration"></div>
+                </div>
+                <div class="wm-source wm-robot" data-wm-source>
+                  <strong>Real-robot trajectories</strong>
+                  <div class="wm-film"><img src="assets/wm-motion-robot.webp" width="972" height="180" loading="lazy" decoding="async" alt="Three recorded frames from a real-robot trajectory"></div>
+                </div>
+              </div>
+              <div class="wm-tuning" data-wm-tuning>
+                <span>Pretrained Omni</span>
+                <strong>Supervised fine-tuning</strong>
+              </div>
+            </div>
+            <div class="wm-inference">
+              <div class="wm-inference-heading">
+                <h4>Autoregressive inference</h4>
+                <span>Cloth grasp rollout</span>
+              </div>
+              <div class="wm-live">
+                <div class="wm-policy" data-wm-policy><strong>Policy</strong><span>Action chunk <b data-wm-action>a₀</b></span></div>
+                <div class="wm-context" data-wm-context>
+                  <div class="wm-context-frame wm-frame">
+                    <img src="assets/method-cloth-step-0.webp" width="960" height="540" loading="lazy" decoding="async" alt="Initial scene for the cloth grasp" data-wm-context-image>
+                    <img src="assets/method-cloth-step-1.webp" width="960" height="540" loading="lazy" decoding="async" alt="" data-wm-context-image>
+                    <img src="assets/method-cloth-step-2.webp" width="960" height="540" loading="lazy" decoding="async" alt="" data-wm-context-image>
+                    <img src="assets/method-cloth-step-3.webp" width="960" height="540" loading="lazy" decoding="async" alt="" data-wm-context-image>
+                  </div>
+                  <strong>Recent context</strong>
+                  <span>Text · observations · actions</span>
+                </div>
+                <div class="wm-generator" data-wm-generator>
+                  <div class="wm-core" aria-hidden="true"><i></i><i></i><i></i></div>
+                  <strong>World model</strong>
+                  <span>Omni · Multimodal MoE</span>
+                </div>
+                <div class="wm-output" data-wm-output>
+                  <div class="wm-output-frame wm-frame" data-wm-output-frame>
+                    <img src="assets/method-cloth-step-1.webp" width="960" height="540" loading="lazy" decoding="async" alt="One of the predicted head-camera views in the cloth grasp rollout" data-wm-output-image>
+                    <img src="assets/method-cloth-step-2.webp" width="960" height="540" loading="lazy" decoding="async" alt="" data-wm-output-image>
+                    <img src="assets/method-cloth-step-3.webp" width="960" height="540" loading="lazy" decoding="async" alt="" data-wm-output-image>
+                    <i class="wm-scan" aria-hidden="true"></i>
+                  </div>
+                  <strong>Predicted observation <b data-wm-predicted>ô₁</b></strong>
+                  <span>Head view</span>
+                </div>
+                <p class="wm-feedback" data-wm-feedback>Return to policy and append to history</p>
+              </div>
+              <div class="wm-history">
+                <h5>Interleaved history</h5>
+                <ol class="wm-frames" aria-label="Initial observation, then policy actions interleaved with world-model predictions">
+                  <li class="wm-history-observation" data-wm-history><img src="assets/method-cloth-step-0.webp" width="960" height="540" loading="lazy" decoding="async" alt=""><span><span class="sr-only">Initial observation </span>o₀</span></li>
+                  <li class="wm-history-action" data-wm-history><span><span class="sr-only">Action chunk </span>a₀</span></li>
+                  <li class="wm-history-observation" data-wm-history><img src="assets/method-cloth-step-1.webp" width="960" height="540" loading="lazy" decoding="async" alt=""><span><span class="sr-only">Predicted observation </span>ô₁</span></li>
+                  <li class="wm-history-action" data-wm-history><span><span class="sr-only">Action chunk </span>a₁</span></li>
+                  <li class="wm-history-observation" data-wm-history><img src="assets/method-cloth-step-2.webp" width="960" height="540" loading="lazy" decoding="async" alt=""><span><span class="sr-only">Predicted observation </span>ô₂</span></li>
+                  <li class="wm-history-action" data-wm-history><span><span class="sr-only">Action chunk </span>a₂</span></li>
+                  <li class="wm-history-observation" data-wm-history><img src="assets/method-cloth-step-3.webp" width="960" height="540" loading="lazy" decoding="async" alt=""><span><span class="sr-only">Predicted observation </span>ô₃</span></li>
+                </ol>
+              </div>
+            </div>
+            <div class="wm-flight-layer" aria-hidden="true">
+              <img src="assets/method-cloth-step-1.webp" width="960" height="540" decoding="async" alt="" data-wm-flight hidden>
+            </div>
           </div>
-          <ol class="method-history" aria-label="Illustrative interleaved observation and action history">
-            <li data-reveal-phase="0">Initial view <b>o₀</b></li><li data-reveal-phase="0">Action <b>a₀</b></li>
-            <li data-reveal-phase="1">Prediction <b>ô₁</b></li><li data-reveal-phase="2">Action <b>a₁</b></li><li data-reveal-phase="2">Prediction <b>ô₂</b></li>
-          </ol>
-          <div class="method-strip">
-            <figure>
-              <div class="method-shot"><img src="assets/method-wm-insert-initial.webp" width="960" height="540" loading="lazy" decoding="async" alt="Insert a pen across the method stages" data-method-frames="wm-insert-initial|wm-insert-early|wm-insert-early wm-insert-middle wm-insert-late"></div>
-              <figcaption><strong>Insert a pen</strong><span>Recorded action sequence</span></figcaption>
-            </figure>
-            <figure>
-              <div class="method-shot"><img src="assets/method-wm-unzip-initial.webp" width="960" height="540" loading="lazy" decoding="async" alt="Unzip a pouch across the method stages" data-method-frames="wm-unzip-initial|wm-unzip-early|wm-unzip-early wm-unzip-middle wm-unzip-late"></div>
-              <figcaption><strong>Unzip a pouch</strong><span>Recorded action sequence</span></figcaption>
-            </figure>
-            <figure>
-              <div class="method-shot"><img src="assets/method-wm-handover-initial.webp" width="960" height="540" loading="lazy" decoding="async" alt="Hand over a towel across the method stages" data-method-frames="wm-handover-initial|wm-handover-early|wm-handover-early wm-handover-middle wm-handover-late"></div>
-              <figcaption><strong>Hand over a towel</strong><span>Recorded action sequence</span></figcaption>
-            </figure>
-          </div>
-          <div class="method-narration">
-            <p data-method-caption>Recent observations and task context condition the model. End-effector pose increments and gripper states are quantized into action tokens.</p>
-            <p data-method-caption>The fine-tuned Omni backbone integrates a latent flow to predict one joint camera canvas. The examples below show its head-camera output.</p>
-            <p data-method-caption>Return the predicted views to the policy. Append the action and prediction to the bounded history, then use the policy’s next action chunk to predict again.</p>
-          </div>
-          <button class="motion-button method-play" type="button" data-method-play hidden><i aria-hidden="true"></i><span>Play walkthrough</span></button>
-          <span class="sr-only" data-method-status role="status"></span>
-        </div>
+          <figcaption class="wm-footer" id="wm-motion-caption">
+            <p>Sampled head views from one rollout illustrate the decoding loop. The world model predicts the head and both wrist views jointly.</p>
+            <button class="motion-button" type="button" aria-label="Play world model animation" data-wm-play hidden><i aria-hidden="true"></i><span>Play</span></button>
+          </figcaption>
+        </figure>
       </section>
 
       <section class="method-chapter" id="ppo" aria-labelledby="ppo-method-heading">
