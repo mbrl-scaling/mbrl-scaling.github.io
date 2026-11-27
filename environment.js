@@ -5,6 +5,8 @@ const envLayer = envStory.querySelector("[data-env-flight-layer]");
 const envCanvas = envStory.querySelector("[data-env-paths]");
 const envInk = envCanvas.getContext("2d");
 const envArchive = envStory.querySelector(".env-archive");
+const envRecordings = envStory.querySelector("[data-env-recordings]");
+const envStack = envStory.querySelector(".env-stack");
 const envApproval = envStory.querySelector("[data-env-approval]");
 const envArrow = envApproval.querySelector("i");
 const envWell = envStory.querySelector("[data-env-well]");
@@ -185,6 +187,8 @@ function renderEnv() {
   const scan = envAt(timeline, 170, 1630);
   envArchive.style.setProperty("--env-scan-y", envMix(-58, envLayout.archiveHeight, envEase(scan)));
   envArchive.style.setProperty("--env-scan-alpha", Math.sin(Math.PI * scan).toFixed(3));
+  const stack = envEase(envAt(timeline, 740, 430)) * (1 - envEase(envAt(timeline, 2650, 480)));
+  envStack.style.setProperty("--env-stack-alpha", stack.toFixed(3));
   const approval = envAt(timeline, 7710, 620);
   setEnvAlpha(envApproval, approval);
   envApproval.style.setProperty("--env-approval", envEase(approval));
@@ -230,6 +234,7 @@ function updateEnvPlay() {
 
 function pauseEnv() {
   envPlaying = false;
+  envRecordings.pause();
   cancelAnimationFrame(envFrame);
   envLast = undefined;
   updateEnvPlay();
@@ -250,9 +255,11 @@ function startEnv() {
   if (envPlaying || envMotion.matches) return;
   if (envTime >= envDuration) {
     envTime = 0;
+    if (envRecordings.readyState) envRecordings.currentTime = 0;
     if (!envWide && envFollow) envScroll.scrollLeft = 0;
   }
   envPlaying = true;
+  if (!envRecordings.ended) envRecordings.play().catch(() => {});
   updateEnvPlay();
   envFrame = requestAnimationFrame(stepEnv);
 }

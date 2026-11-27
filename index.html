@@ -10,12 +10,12 @@
   <meta property="og:image" content="https://mbrl-scaling.github.io/assets/hero-rollouts-36.webp">
   <link rel="icon" href="assets/seed-mark.webp" type="image/webp">
   <link rel="stylesheet" href="style.css?v=3">
-  <link rel="stylesheet" href="environment.css?v=6">
+  <link rel="stylesheet" href="environment.css?v=7">
   <link rel="stylesheet" href="world-model.css?v=1">
   <script src="app.js?v=3" defer></script>
   <script src="scaling.js" defer></script>
   <script src="method.js?v=2" defer></script>
-  <script src="environment.js?v=5" defer></script>
+  <script src="environment.js?v=6" defer></script>
   <script src="world-model.js?v=1" defer></script>
   <script src="agent.js" defer></script>
   <title>Scaling Reinforcement Learning in World Models | Project Page</title>
@@ -69,7 +69,7 @@
           <div class="env-scroll" data-env-scroll tabindex="0" aria-label="Environment construction diagram">
             <div class="env-board" data-env-board>
               <div class="env-head">
-                <div>Recorded frames</div>
+                <div>Recorded frames <span>Head-camera clips</span></div>
                 <div>Selected initial states</div>
                 <div>Write PE + rubric</div>
                 <div>Image editing <span>Four variants per task</span></div>
@@ -78,23 +78,17 @@
               </div>
               <canvas class="env-paths" data-env-paths aria-hidden="true"></canvas>
               <div class="env-flow">
-                <div class="env-deck" aria-label="Head-camera samples from recorded robot trajectories">
+                <div class="env-deck" role="group" aria-label="Head-camera clips from recorded robot trajectories">
                   <div class="env-archive" aria-hidden="true">
-                    <img src="assets/env-archive-4.webp" alt="" width="768" height="336" loading="lazy" class="env-contact env-contact-behind-top">
-                    <img src="assets/env-archive-5.webp" alt="" width="768" height="336" loading="lazy" class="env-contact env-contact-behind-center">
-                    <img src="assets/env-archive-6.webp" alt="" width="768" height="336" loading="lazy" class="env-contact env-contact-behind-bottom">
-                    <img src="assets/env-archive-1.webp" alt="" width="768" height="336" loading="lazy" class="env-contact env-contact-top">
-                    <img src="assets/env-archive-2.webp" alt="" width="768" height="336" loading="lazy" class="env-contact env-contact-middle">
-                    <img src="assets/env-archive-3.webp" alt="" width="768" height="336" loading="lazy" class="env-contact env-contact-bottom">
+                    <video class="env-archive-video" data-env-recordings muted playsinline preload="none" width="456" height="1380" poster="assets/env-recorded-trajectories.webp">
+                      <source src="assets/env-recorded-trajectories.mp4" type="video/mp4">
+                    </video>
                     <div class="env-archive-scan"></div>
                   </div>
                   <div class="env-stack" aria-hidden="true">
-                    <img src="assets/env-recorded-187.webp" alt="" width="640" height="360" loading="lazy" style="--sheet:0">
-                    <img src="assets/method-straw-source.webp" alt="" width="640" height="360" loading="lazy" style="--sheet:1" data-env-deck="straw">
-                    <img src="assets/env-recorded-112.webp" alt="" width="640" height="360" loading="lazy" style="--sheet:2">
-                    <img src="assets/method-scissors-source.webp" alt="" width="640" height="360" loading="lazy" style="--sheet:3" data-env-deck="scissors">
-                    <img src="assets/env-recorded-37.webp" alt="" width="640" height="360" loading="lazy" style="--sheet:4">
-                    <img src="assets/method-cloth-source.webp" alt="" width="640" height="360" loading="lazy" style="--sheet:5" data-env-deck="cloth">
+                    <img src="assets/method-straw-source.webp" alt="" width="640" height="360" loading="lazy" style="--sheet:0" data-env-deck="straw">
+                    <img src="assets/method-scissors-source.webp" alt="" width="640" height="360" loading="lazy" style="--sheet:2" data-env-deck="scissors">
+                    <img src="assets/method-cloth-source.webp" alt="" width="640" height="360" loading="lazy" style="--sheet:4" data-env-deck="cloth">
                     <img src="assets/method-source-head.webp" alt="" width="640" height="360" loading="lazy" style="--sheet:6" data-env-deck="basket">
                   </div>
                 </div>
@@ -196,7 +190,7 @@
             </div>
           </div>
           <figcaption class="env-footer">
-            <p id="env-caption">These examples illustrate how the agent selects initial states, writes instructions and success rubrics, and edits scenes. Variants that pass review enter a shared environment pool.</p>
+            <p id="env-caption">Each filmstrip follows one recorded robot trajectory. The selected examples show how the agent writes instructions and success rubrics and edits scenes for a shared environment pool.</p>
             <div class="env-actions">
               <button class="motion-button env-overview" type="button" data-env-overview hidden>Overview</button>
               <button class="motion-button env-play" type="button" data-env-play hidden><i aria-hidden="true"></i><span>Play</span></button>
