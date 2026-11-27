@@ -171,6 +171,11 @@ function prepareMethodMedia(figure, stage) {
 
 const policyBatch = document.querySelector("[data-policy-all]");
 const policyVideos = [...document.querySelectorAll(".policy-case video")];
+const policyHD = document.querySelector("#policy-hd-dialog");
+const policyHDStage = policyHD.querySelector(".policy-hd-stage");
+const policyHDVideo = policyHD.querySelector("video");
+const policyHDStatus = policyHD.querySelector(".policy-hd-status");
+let policyHDSession;
 
 function showPolicyPoster(video) {
   if (!video.poster) video.poster = video.dataset.poster;
@@ -217,6 +222,72 @@ policyBatch.addEventListener("click", () => {
   updatePolicyBatch();
 });
 
+function policyFullscreenPoster(video) {
+  if (video.readyState < HTMLMediaElement.HAVE_CURRENT_DATA || video.seeking) return video.poster;
+  const frame = document.createElement("canvas");
+  frame.width = video.videoWidth;
+  frame.height = video.videoHeight;
+  const context = frame.getContext("2d");
+  if (!context) return video.poster;
+  context.drawImage(video, 0, 0);
+  return frame.toDataURL("image/webp", .85);
+}
+
+function openPolicyFullscreen(video) {
+  if (policyHDSession) return;
+  policyObserver.unobserve(video);
+  showPolicyPoster(video);
+  policyHDSession = {
+    video,
+    time: video.currentTime,
+    playing: !video.paused && !video.ended,
+    native: false,
+  };
+  video.pause();
+
+  policyHDStatus.hidden = true;
+  policyHDVideo.poster = policyFullscreenPoster(video);
+  policyHDVideo.setAttribute("aria-label", video.getAttribute("aria-label"));
+  policyHD.showModal();
+  policyHDVideo.src = video.dataset.fullSource;
+  policyHDVideo.currentTime = policyHDSession.time;
+  if (policyHDSession.playing) policyHDVideo.play().catch(() => {});
+  if (document.fullscreenEnabled && policyHDStage.requestFullscreen) {
+    policyHDStage.requestFullscreen().then(() => {
+      if (!policyHD.open && policyHD.contains(document.fullscreenElement)) {
+        return document.exitFullscreen();
+      }
+    }).catch(() => {});
+  }
+}
+
+policyHD.querySelector("button").addEventListener("click", () => policyHD.close());
+policyHDVideo.addEventListener("error", () => {
+  if (policyHDSession) policyHDStatus.hidden = false;
+});
+document.addEventListener("fullscreenchange", event => {
+  if (!policyHDSession || !policyHD.open) return;
+  if (policyHD.contains(document.fullscreenElement)) policyHDSession.native = true;
+  else if (policyHDSession.native || policyHD.contains(event.target)) policyHD.close();
+});
+policyHD.addEventListener("close", () => {
+  const session = policyHDSession;
+  if (!session) return;
+  policyHDSession = undefined;
+  if (policyHD.contains(document.fullscreenElement)) document.exitFullscreen().catch(() => {});
+
+  const hasPlayback = policyHDVideo.readyState >= HTMLMediaElement.HAVE_METADATA && !policyHDVideo.error;
+  const time = hasPlayback ? policyHDVideo.currentTime : session.time;
+  const playing = hasPlayback ? !policyHDVideo.paused && !policyHDVideo.ended : session.playing;
+  policyHDVideo.pause();
+  policyHDVideo.removeAttribute("src");
+  policyHDVideo.removeAttribute("poster");
+  policyHDVideo.load();
+
+  session.video.currentTime = Math.min(time, session.video.duration || time);
+  if (playing) playPolicyVideo(session.video);
+});
+
 document.querySelectorAll(".policy-case").forEach(card => {
   const video = card.querySelector("video");
   const transport = card.querySelector("[data-policy-transport]");
@@ -250,19 +321,9 @@ document.querySelectorAll(".policy-case").forEach(card => {
   play.addEventListener("click", togglePolicyVideo);
   video.addEventListener("click", () => { if (!video.controls) togglePolicyVideo(); });
   seek.addEventListener("input", () => { video.currentTime = Number(seek.value); });
-  if (document.fullscreenEnabled || video.webkitEnterFullscreen) {
+  if (policyHD.showModal) {
     expand.hidden = false;
-    expand.addEventListener("click", async () => {
-      try {
-        if (document.fullscreenEnabled) await video.requestFullscreen();
-        else video.webkitEnterFullscreen();
-        video.controls = true;
-      } catch {
-        video.controls = false;
-      }
-    });
-    document.addEventListener("fullscreenchange", () => { video.controls = document.fullscreenElement === video; });
-    video.addEventListener("webkitendfullscreen", () => { video.controls = false; });
+    expand.addEventListener("click", () => openPolicyFullscreen(video));
   } else {
     transport.setAttribute("data-no-fullscreen", "");
   }
