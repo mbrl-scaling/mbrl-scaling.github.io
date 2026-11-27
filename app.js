@@ -177,20 +177,20 @@ const policyHDVideo = policyHD.querySelector("video");
 const policyHDStatus = policyHD.querySelector(".policy-hd-status");
 let policyHDSession;
 
-function showPolicyPoster(video) {
+function showVideoPoster(video) {
   if (!video.poster) video.poster = video.dataset.poster;
 }
 
 const policyPosterObserver = new IntersectionObserver(entries => {
   for (const entry of entries) {
     if (!entry.isIntersecting) continue;
-    showPolicyPoster(entry.target);
+    showVideoPoster(entry.target);
     policyPosterObserver.unobserve(entry.target);
   }
 }, { rootMargin: "360px 0px" });
 
-function playPolicyVideo(video) {
-  showPolicyPoster(video);
+function playPreviewVideo(video) {
+  showVideoPoster(video);
   return video.play().catch(() => {});
 }
 
@@ -200,7 +200,7 @@ const policyObserver = new IntersectionObserver(entries => {
     const video = entry.target;
     policyObserver.unobserve(video);
     if (!reducedMotion.matches && !navigator.connection?.saveData && video.paused && video.currentTime === 0) {
-      playPolicyVideo(video);
+      playPreviewVideo(video);
     }
   }
 }, { threshold: .6 });
@@ -216,7 +216,7 @@ policyBatch.addEventListener("click", () => {
   policyObserver.disconnect();
   const shouldPlay = !policyBatch.hasAttribute("data-playing");
   policyVideos.forEach(video => {
-    if (shouldPlay) playPolicyVideo(video);
+    if (shouldPlay) playPreviewVideo(video);
     else video.pause();
   });
   updatePolicyBatch();
@@ -233,10 +233,9 @@ function policyFullscreenPoster(video) {
   return frame.toDataURL("image/webp", .85);
 }
 
-function openPolicyFullscreen(video) {
+function openFullscreenVideo(video) {
   if (policyHDSession) return;
-  policyObserver.unobserve(video);
-  showPolicyPoster(video);
+  showVideoPoster(video);
   policyHDSession = {
     video,
     time: video.currentTime,
@@ -285,7 +284,7 @@ policyHD.addEventListener("close", () => {
   policyHDVideo.load();
 
   session.video.currentTime = Math.min(time, session.video.duration || time);
-  if (playing) playPolicyVideo(session.video);
+  if (playing) playPreviewVideo(session.video);
 });
 
 document.querySelectorAll(".policy-case").forEach(card => {
@@ -298,7 +297,7 @@ document.querySelectorAll(".policy-case").forEach(card => {
 
   function togglePolicyVideo() {
     policyObserver.unobserve(video);
-    if (video.paused) playPolicyVideo(video);
+    if (video.paused) playPreviewVideo(video);
     else video.pause();
   }
 
@@ -323,7 +322,10 @@ document.querySelectorAll(".policy-case").forEach(card => {
   seek.addEventListener("input", () => { video.currentTime = Number(seek.value); });
   if (policyHD.showModal) {
     expand.hidden = false;
-    expand.addEventListener("click", () => openPolicyFullscreen(video));
+    expand.addEventListener("click", () => {
+      policyObserver.unobserve(video);
+      openFullscreenVideo(video);
+    });
   } else {
     transport.setAttribute("data-no-fullscreen", "");
   }

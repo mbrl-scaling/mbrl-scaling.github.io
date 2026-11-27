@@ -9,16 +9,16 @@
   <meta property="og:description" content="World-model reinforcement learning at scale, evaluated on 242 unseen real-robot tasks.">
   <meta property="og:image" content="https://mbrl-scaling.github.io/assets/hero-rollouts-36.webp?v=3">
   <link rel="icon" href="assets/seed-mark.webp" type="image/webp">
-  <link rel="stylesheet" href="style.css?v=15">
+  <link rel="stylesheet" href="style.css?v=16">
   <link rel="stylesheet" href="environment.css?v=10">
   <link rel="stylesheet" href="world-model.css?v=4">
   <link rel="stylesheet" href="ppo.css?v=5">
-  <script src="app.js?v=9" defer></script>
+  <script src="app.js?v=10" defer></script>
   <script src="scaling.js?v=2" defer></script>
   <script src="environment.js?v=9" defer></script>
   <script src="world-model.js?v=2" defer></script>
   <script src="ppo.js?v=2" defer></script>
-  <script src="agent.js?v=2" defer></script>
+  <script src="agent.js?v=3" defer></script>
   <title>Scaling Reinforcement Learning in World Models | Project Page</title>
 </head>
 <body>
@@ -736,98 +736,53 @@
         <div><p class="eyebrow">Agentic experiment</p><h2 id="agent-heading">Planning and execution on real robots</h2></div>
         <p>GPT-Astra chooses a manipulation, the RL-trained policy executes it, and the planner uses the returned observations to continue, retry or revise.</p>
       </div>
-      <article class="agent-player" data-agent aria-label="Real-robot agent trajectory replay">
-        <div class="agent-player-nav">
-          <div class="agent-tasks" role="group" aria-label="Agentic tasks">
-            <button type="button" data-agent-task>Cup exchange</button>
-            <button type="button" data-agent-task>Tabletop organization</button>
-            <button type="button" data-agent-task>Shirt folding</button>
-            <button type="button" data-agent-task>Cooking</button>
+      <article class="agent-player" data-agent data-phase="observe" aria-label="Real-robot agent trial replays">
+        <div class="agent-tasks" role="group" aria-label="Agentic tasks">
+            <button type="button" data-agent-task aria-pressed="true">
+              <img src="assets/agent-cup-exchange-poster.webp" width="240" height="135" alt="" loading="lazy" decoding="async">
+              <span>Cup exchange</span>
+            </button>
+            <button type="button" data-agent-task aria-pressed="false">
+              <img src="assets/agent-tabletop-poster.webp" width="240" height="135" alt="" loading="lazy" decoding="async">
+              <span>Tabletop organization</span>
+            </button>
+            <button type="button" data-agent-task aria-pressed="false">
+              <img src="assets/agent-shirt-fold-poster.webp" width="240" height="135" alt="" loading="lazy" decoding="async">
+              <span>Shirt folding</span>
+            </button>
+            <button type="button" data-agent-task aria-pressed="false">
+              <img src="assets/agent-cooking-poster.webp" width="240" height="135" alt="" loading="lazy" decoding="async">
+              <span>Cooking</span>
+            </button>
+        </div>
+        <div class="agent-console">
+          <div class="agent-live">
+            <div class="agent-camera">
+              <video controls controlslist="nodownload" muted playsinline preload="none" width="960" height="540" data-agent-video
+                data-poster="assets/agent-cup-exchange-poster.webp" data-full-source="assets/agent-cup-exchange-demo.mp4" aria-label="Cup exchange head-camera replay">
+                <source src="assets/agent-cup-exchange-preview.mp4" type="video/mp4">
+              </video>
+              <div class="agent-camera-label" aria-hidden="true"><span>Head camera</span><span>5× playback</span></div>
+            </div>
+            <div class="policy-transport agent-transport" data-agent-transport hidden>
+              <button class="policy-play" type="button" data-agent-play aria-label="Play replay"><span aria-hidden="true"></span></button>
+              <input type="range" min="0" max="0" step="0.01" value="0" aria-label="Replay position" disabled>
+              <output aria-live="off" data-agent-position>0:00</output>
+              <button class="policy-fullscreen" type="button" data-agent-fullscreen aria-label="View replay full screen" hidden><span aria-hidden="true">⛶</span></button>
+            </div>
           </div>
-          <button type="button" class="motion-button" data-agent-play hidden><i aria-hidden="true"></i><span>Play keyframes</span></button>
+          <aside class="agent-rail" aria-label="Synchronized agent instructions">
+            <div class="agent-rail-top"><strong>GPT-Astra</strong><span><time data-agent-time>0:00</time> trial elapsed</span></div>
+            <div class="agent-directive">
+              <span class="agent-phase" data-agent-phase>Observe</span>
+              <h3 data-agent-action>Locate both cups</h3>
+              <p data-agent-note>Yellow cup → blue tray. Green cup → orange tray.</p>
+            </div>
+            <ol class="agent-chapters" data-agent-chapters aria-label="Replay chapters" hidden></ol>
+            <div class="agent-ending"><span data-agent-outcome data-tone="complete">Trial complete</span></div>
+          </aside>
         </div>
-        <div class="agent-screen">
-          <a class="agent-picture" href="assets/agent-swap-000000.webp" target="_blank" rel="noopener" data-zoom="Cup exchange">
-            <img src="assets/agent-swap-000000.webp" data-agent-image alt="Initial head-camera observation for cup exchange" width="1280" height="720" loading="lazy">
-          </a>
-          <div class="agent-overlay">
-            <p class="agent-meta" data-agent-time>Head camera · 0:00 elapsed</p>
-            <h3 data-agent-action>Locate both cups</h3>
-            <p data-agent-note>Move the yellow cup to the blue tray, then move the green cup to the orange tray.</p>
-          </div>
-        </div>
-        <div class="agent-keyframes" data-agent-track data-outcome="Trial complete" role="group" aria-label="Cup exchange keyframes">
-          <button type="button" data-agent-frame data-time="0:00" data-action="Locate both cups" data-note="Move the yellow cup to the blue tray, then move the green cup to the orange tray.">
-            <img src="assets/agent-swap-000000.webp" alt="" width="1280" height="720" loading="lazy"><span>Locate both cups</span>
-          </button>
-          <button type="button" data-agent-frame data-time="3:09" data-action="Place the yellow cup" data-note="The planner proceeds after the yellow cup is held securely. Put it upright on the blue tray.">
-            <img src="assets/agent-swap-000208.webp" alt="" width="1280" height="720" loading="lazy"><span>Place the yellow cup</span>
-          </button>
-          <button type="button" data-agent-frame data-time="3:38" data-action="Grasp the green cup" data-note="The yellow cup is on the blue tray. Grip the green cup without disturbing it.">
-            <img src="assets/agent-swap-000240.webp" alt="" width="1280" height="720" loading="lazy"><span>Grasp the green cup</span>
-          </button>
-          <button type="button" data-agent-frame data-time="4:00" data-action="Place the green cup" data-note="Carry the green cup back to the orange tray and release it upright.">
-            <img src="assets/agent-swap-000272.webp" alt="" width="1280" height="720" loading="lazy"><span>Place the green cup</span>
-          </button>
-          <button type="button" data-agent-frame data-time="4:36" data-action="Check both placements" data-note="The trace later verifies both cups are upright on their destination trays.">
-            <img src="assets/agent-swap-000320.webp" alt="" width="1280" height="720" loading="lazy"><span>Check both placements</span>
-          </button>
-        </div>
-        <div class="agent-keyframes" data-agent-track data-outcome="Final state unverified" role="group" aria-label="Tabletop organization keyframes" hidden>
-          <button type="button" data-agent-frame data-time="0:00" data-action="Upright the striped cup" data-note="Grasp and right the fallen cup before placing either block.">
-            <img src="assets/agent-cup_b-000000.webp" alt="" width="1280" height="720" loading="lazy"><span>Upright the striped cup</span>
-          </button>
-          <button type="button" data-agent-frame data-time="0:47" data-action="Prepare to load the cup" data-note="Continue from the upright cup and pick up the red block.">
-            <img src="assets/agent-cup_b-000048.webp" alt="" width="1280" height="720" loading="lazy"><span>Prepare to load the cup</span>
-          </button>
-          <button type="button" data-agent-frame data-time="1:35" data-action="Seat the red block" data-note="The first block is placed inside. The next instruction targets the blue block.">
-            <img src="assets/agent-cup_b-000112.webp" alt="" width="1280" height="720" loading="lazy"><span>Seat the red block</span>
-          </button>
-          <button type="button" data-agent-frame data-time="2:25" data-action="Load the second block" data-note="The robot works to place the blue block into the same cup.">
-            <img src="assets/agent-cup_b-000176.webp" alt="" width="1280" height="720" loading="lazy"><span>Load the second block</span>
-          </button>
-          <button type="button" data-agent-frame data-time="3:13" data-action="Stack the loaded cup" data-note="The cup is stacked in the mug. The verifier could not confirm both blocks inside from its final view.">
-            <img src="assets/agent-cup_b-000224.webp" alt="" width="1280" height="720" loading="lazy"><span>Stack the loaded cup</span>
-          </button>
-        </div>
-        <div class="agent-keyframes" data-agent-track data-outcome="Trial complete" role="group" aria-label="Shirt folding keyframes" hidden>
-          <button type="button" data-agent-frame data-time="0:00" data-action="Grasp the left cuff" data-note="GPT-Astra requests a grasp near the cuff before attempting the first fold.">
-            <img src="assets/agent-fold-000000.webp" alt="" width="1280" height="720" loading="lazy"><span>Grasp the left cuff</span>
-          </button>
-          <button type="button" data-agent-frame data-time="0:16" data-action="Fold the left sleeve" data-note="The left cuff is held. Fold the sleeve across the body and release it.">
-            <img src="assets/agent-fold-000032.webp" alt="" width="1280" height="720" loading="lazy"><span>Fold the left sleeve</span>
-          </button>
-          <button type="button" data-agent-frame data-time="1:26" data-action="Fold the right sleeve" data-note="With the left sleeve folded and the right cuff held, fold the right sleeve across the body.">
-            <img src="assets/agent-fold-000112.webp" alt="" width="1280" height="720" loading="lazy"><span>Fold the right sleeve</span>
-          </button>
-          <button type="button" data-agent-frame data-time="2:24" data-action="Grasp both lower corners" data-note="Hold both corners before folding upward. The trace records retries when a grip is lost.">
-            <img src="assets/agent-fold-000192.webp" alt="" width="1280" height="720" loading="lazy"><span>Grasp both lower corners</span>
-          </button>
-          <button type="button" data-agent-frame data-time="4:49" data-action="Fold toward the collar" data-note="After recovering the two-corner grasp, fold the lower half toward the collar and release.">
-            <img src="assets/agent-fold-000384.webp" alt="" width="1280" height="720" loading="lazy"><span>Fold toward the collar</span>
-          </button>
-          <button type="button" data-agent-frame data-time="5:20" data-action="Verify the finished fold" data-note="The verifier confirms the sleeves and body are folded and supported on the table.">
-            <img src="assets/agent-fold-000416.webp" alt="" width="1280" height="720" loading="lazy"><span>Verify the finished fold</span>
-          </button>
-        </div>
-        <div class="agent-keyframes" data-agent-track data-outcome="Recording interrupted" role="group" aria-label="Cooking keyframes" hidden>
-          <button type="button" data-agent-frame data-time="0:00" data-action="Grasp the sponge" data-note="Start by picking up the sponge to wipe the plate.">
-            <img src="assets/agent-plate-000000.webp" alt="" width="1280" height="720" loading="lazy"><span>Grasp the sponge</span>
-          </button>
-          <button type="button" data-agent-frame data-time="0:52" data-action="Wipe the plate" data-note="The executor moves the sponge across the plate before handling the food.">
-            <img src="assets/agent-plate-000076.webp" alt="" width="1280" height="720" loading="lazy"><span>Wipe the plate</span>
-          </button>
-          <button type="button" data-agent-frame data-time="2:21" data-action="Place food on the plate" data-note="The planner directs the robot to transfer the food to the cleaned plate.">
-            <img src="assets/agent-plate-000192.webp" alt="" width="1280" height="720" loading="lazy"><span>Place food on the plate</span>
-          </button>
-          <button type="button" data-agent-frame data-time="5:35" data-action="Lift the loaded plate" data-note="The robot grips the plate and prepares to transfer it to the open oven.">
-            <img src="assets/agent-plate-000448.webp" alt="" width="1280" height="720" loading="lazy"><span>Lift the loaded plate</span>
-          </button>
-          <button type="button" data-agent-frame data-time="6:10" data-action="Transfer toward the oven" data-note="The trace ends after a disconnection during this trial.">
-            <img src="assets/agent-plate-000480.webp" alt="" width="1280" height="720" loading="lazy"><span>Transfer toward the oven</span>
-          </button>
-        </div>
-        <div class="agent-player-footer"><span>Recorded keyframes with summaries of the planner's instructions</span><strong data-agent-outcome>Trial complete</strong></div>
+        <script type="application/json" data-agent-trials>[{"slug":"cup-exchange","title":"Cup exchange","brief":"Swap the yellow and green cups between the two trays.","result":"Trial complete","tone":"complete","speed":5,"cues":[{"phase":"Observe","title":"Locate both cups","detail":"Yellow cup → blue tray. Green cup → orange tray.","chapter":"Locate both cups","elapsed":0,"time":0.0},{"phase":"Execute","title":"Grasp the yellow cup","detail":"Use the left gripper to hold the yellow cup by its body.","chapter":null,"elapsed":8.241,"time":1.648},{"phase":"Execute","title":"Move to the blue tray","detail":"Transfer the yellow cup while keeping the green cup in place.","chapter":null,"elapsed":38.234,"time":7.647},{"phase":"Recover","title":"Recover the grasp","detail":"The verification step failed. Regrasp before moving the cup.","chapter":"Recover the grasp","elapsed":53.046,"time":10.609},{"phase":"Execute","title":"Retry the yellow-cup transfer","detail":"Place the cup upright on the free side of the blue tray.","chapter":null,"elapsed":90.828,"time":18.166},{"phase":"Recover","title":"Regrasp the yellow cup","detail":"Check the grip again before transferring the cup.","chapter":null,"elapsed":101.882,"time":20.376},{"phase":"Execute","title":"Retry the placement","detail":"Bring the cup to the free area of the blue tray.","chapter":null,"elapsed":131.925,"time":26.385},{"phase":"Recover","title":"Re-establish the grip","detail":"Hold the yellow cup steadily before trying the transfer again.","chapter":null,"elapsed":138.464,"time":27.693},{"phase":"Execute","title":"Place on the blue tray","detail":"Keep the trays and the green cup in place.","chapter":null,"elapsed":166.24,"time":33.248},{"phase":"Recover","title":"Restore a secure hold","detail":"Regrasp the yellow cup for another placement attempt.","chapter":null,"elapsed":172.928,"time":34.586},{"phase":"Execute","title":"Place the yellow cup","detail":"Set the base flat on the blue tray and release the gripper.","chapter":"Place yellow cup","elapsed":206.97,"time":41.394},{"phase":"Verify","title":"Yellow cup is in place","detail":"Confirm the yellow cup is upright and supported by the blue tray.","chapter":null,"elapsed":223.291,"time":44.658},{"phase":"Execute","title":"Grasp the green cup","detail":"Use the right gripper while leaving the yellow cup undisturbed.","chapter":null,"elapsed":230.374,"time":46.075},{"phase":"Execute","title":"Place the green cup","detail":"Move it to the orange tray and release it upright.","chapter":"Place green cup","elapsed":258.839,"time":51.768},{"phase":"Verify","title":"Verify both placements","detail":"Both cups are upright on their destination trays. Both grippers have released.","chapter":"Verify the swap","elapsed":294.113,"time":58.823}],"duration":61.3,"lastCapture":285.891,"lastFrame":57.167,"terminalReplay":58.823,"terminalElapsed":294.113,"sourceFrames":337,"chapters":[{"phase":"Observe","title":"Locate both cups","detail":"Yellow cup → blue tray. Green cup → orange tray.","chapter":"Locate both cups","elapsed":0,"time":0.0},{"phase":"Recover","title":"Recover the grasp","detail":"The verification step failed. Regrasp before moving the cup.","chapter":"Recover the grasp","elapsed":53.046,"time":10.609},{"phase":"Execute","title":"Place the yellow cup","detail":"Set the base flat on the blue tray and release the gripper.","chapter":"Place yellow cup","elapsed":206.97,"time":41.394},{"phase":"Execute","title":"Place the green cup","detail":"Move it to the orange tray and release it upright.","chapter":"Place green cup","elapsed":258.839,"time":51.768},{"phase":"Verify","title":"Verify both placements","detail":"Both cups are upright on their destination trays. Both grippers have released.","chapter":"Verify the swap","elapsed":294.113,"time":58.823}],"preview":"assets/agent-cup-exchange-preview.mp4","full":"assets/agent-cup-exchange-demo.mp4","poster":"assets/agent-cup-exchange-poster.webp"},{"slug":"tabletop","title":"Tabletop organization","brief":"Upright the striped cup, load two blocks, and stack it inside the mug.","result":"Final state unverified","tone":"unverified","speed":5,"cues":[{"phase":"Observe","title":"Inspect the tabletop","detail":"Identify the fallen cup, the two blocks, and the receiving mug.","chapter":"Inspect the scene","elapsed":0,"time":0.0},{"phase":"Execute","title":"Grasp the striped cup","detail":"Use the right gripper to hold the fallen cup.","chapter":null,"elapsed":5.982,"time":1.196},{"phase":"Execute","title":"Upright the striped cup","detail":"Set its base on the table before opening the gripper.","chapter":"Upright the cup","elapsed":43.956,"time":8.791},{"phase":"Execute","title":"Pick up the red block","detail":"Keep the upright cup stable on the table.","chapter":null,"elapsed":66.406,"time":13.281},{"phase":"Execute","title":"Insert the red block","detail":"Release the red block inside the striped cup.","chapter":"Load the blocks","elapsed":92.729,"time":18.546},{"phase":"Execute","title":"Pick up the blue block","detail":"Leave the red block inside the cup.","chapter":null,"elapsed":116.081,"time":23.216},{"phase":"Execute","title":"Insert the blue block","detail":"Release the blue block into the same cup.","chapter":null,"elapsed":142.56,"time":28.512},{"phase":"Execute","title":"Grasp the loaded cup","detail":"Keep the cup upright as the gripper takes hold.","chapter":null,"elapsed":159.158,"time":31.832},{"phase":"Execute","title":"Stack the striped cup","detail":"Nest the loaded cup in the clear mug and release it.","chapter":"Stack the cup","elapsed":182.288,"time":36.458},{"phase":"Verify","title":"Inspect the stack","detail":"The stack is visible. The cup walls obscure the bottom.","chapter":"Inspect the stack","elapsed":212.962,"time":42.592},{"phase":"Verify","title":"Final state unverified","detail":"The verifier could confirm the stack. It could not confirm both blocks inside.","chapter":null,"elapsed":278.636,"time":43.95}],"duration":46.4333,"lastCapture":208.035,"lastFrame":41.6,"terminalReplay":43.95,"terminalElapsed":278.636,"sourceFrames":257,"chapters":[{"phase":"Observe","title":"Inspect the tabletop","detail":"Identify the fallen cup, the two blocks, and the receiving mug.","chapter":"Inspect the scene","elapsed":0,"time":0.0},{"phase":"Execute","title":"Upright the striped cup","detail":"Set its base on the table before opening the gripper.","chapter":"Upright the cup","elapsed":43.956,"time":8.791},{"phase":"Execute","title":"Insert the red block","detail":"Release the red block inside the striped cup.","chapter":"Load the blocks","elapsed":92.729,"time":18.546},{"phase":"Execute","title":"Stack the striped cup","detail":"Nest the loaded cup in the clear mug and release it.","chapter":"Stack the cup","elapsed":182.288,"time":36.458},{"phase":"Verify","title":"Inspect the stack","detail":"The stack is visible. The cup walls obscure the bottom.","chapter":"Inspect the stack","elapsed":212.962,"time":42.592}],"preview":"assets/agent-tabletop-preview.mp4","full":"assets/agent-tabletop-demo.mp4","poster":"assets/agent-tabletop-poster.webp"},{"slug":"shirt-fold","title":"Shirt folding","brief":"Fold both sleeves inward, then fold the body up toward the collar.","result":"Trial complete","tone":"complete","speed":5,"cues":[{"phase":"Observe","title":"Locate the two cuffs","detail":"Identify the cuffs and lower corners of the shirt.","chapter":"Locate the cuffs","elapsed":0,"time":0.0},{"phase":"Execute","title":"Grasp the left cuff","detail":"Take hold of the fabric near the left cuff.","chapter":null,"elapsed":7.492,"time":1.498},{"phase":"Execute","title":"Fold the left sleeve","detail":"Bring the left sleeve across the shirt and release it.","chapter":"Fold left sleeve","elapsed":38.425,"time":7.685},{"phase":"Execute","title":"Grasp the right cuff","detail":"Leave the folded left sleeve in place.","chapter":null,"elapsed":74.914,"time":14.983},{"phase":"Execute","title":"Fold the right sleeve","detail":"Lay the right sleeve across the shirt body.","chapter":"Fold right sleeve","elapsed":103.581,"time":20.716},{"phase":"Execute","title":"Grip the two lower corners","detail":"Each gripper takes its corresponding corner.","chapter":null,"elapsed":127.467,"time":25.493},{"phase":"Recover","title":"Retry the two-corner grip","detail":"The left corner is unsecured. Keep the right corner held.","chapter":"Recover the grip","elapsed":162.235,"time":32.447},{"phase":"Execute","title":"Recover the left corner","detail":"Try the two-corner grasp again.","chapter":null,"elapsed":166.538,"time":33.308},{"phase":"Execute","title":"Start the upward fold","detail":"Lift the bottom edge toward the collar.","chapter":null,"elapsed":204.99,"time":40.998},{"phase":"Recover","title":"Regrasp the lower-left corner","detail":"Keep the right corner in the right gripper.","chapter":null,"elapsed":231.15,"time":46.23},{"phase":"Recover","title":"Retry the left-corner grip","detail":"The sleeves are folded. Restore the grip before the final fold.","chapter":null,"elapsed":272.232,"time":54.446},{"phase":"Execute","title":"Fold toward the collar","detail":"Bring both corners up together and release the folded fabric.","chapter":"Fold toward collar","elapsed":309.026,"time":61.805},{"phase":"Verify","title":"Verify the finished fold","detail":"The sleeves and body are folded. The table supports the released shirt.","chapter":"Verify the fold","elapsed":329.917,"time":65.983}],"duration":68.4667,"lastCapture":320.681,"lastFrame":64.133,"terminalReplay":65.983,"terminalElapsed":329.917,"sourceFrames":417,"chapters":[{"phase":"Observe","title":"Locate the two cuffs","detail":"Identify the cuffs and lower corners of the shirt.","chapter":"Locate the cuffs","elapsed":0,"time":0.0},{"phase":"Execute","title":"Fold the left sleeve","detail":"Bring the left sleeve across the shirt and release it.","chapter":"Fold left sleeve","elapsed":38.425,"time":7.685},{"phase":"Execute","title":"Fold the right sleeve","detail":"Lay the right sleeve across the shirt body.","chapter":"Fold right sleeve","elapsed":103.581,"time":20.716},{"phase":"Recover","title":"Retry the two-corner grip","detail":"The left corner is unsecured. Keep the right corner held.","chapter":"Recover the grip","elapsed":162.235,"time":32.447},{"phase":"Execute","title":"Fold toward the collar","detail":"Bring both corners up together and release the folded fabric.","chapter":"Fold toward collar","elapsed":309.026,"time":61.805},{"phase":"Verify","title":"Verify the finished fold","detail":"The sleeves and body are folded. The table supports the released shirt.","chapter":"Verify the fold","elapsed":329.917,"time":65.983}],"preview":"assets/agent-shirt-fold-preview.mp4","full":"assets/agent-shirt-fold-demo.mp4","poster":"assets/agent-shirt-fold-poster.webp"},{"slug":"cooking","title":"Cooking","brief":"Wipe the plate, add the rice dumpling, then move the plate into the microwave.","result":"Recording interrupted","tone":"interrupted","speed":5,"cues":[{"phase":"Observe","title":"Locate the sponge","detail":"Identify the sponge, plate, rice dumpling, and open microwave.","chapter":"Locate the sponge","elapsed":0,"time":0.0},{"phase":"Execute","title":"Grasp the sponge","detail":"Pick up the sponge to prepare the plate.","chapter":null,"elapsed":6.695,"time":1.339},{"phase":"Execute","title":"Wipe the plate","detail":"Move the sponge across the inside of the plate.","chapter":"Wipe the plate","elapsed":34.003,"time":6.801},{"phase":"Execute","title":"Set down the sponge","detail":"Clear the plate and release the sponge on the table.","chapter":null,"elapsed":82.899,"time":16.58},{"phase":"Execute","title":"Pick up the rice dumpling","detail":"Use the left gripper to lift the food.","chapter":null,"elapsed":103.997,"time":20.799},{"phase":"Execute","title":"Place the food on the plate","detail":"Release it only after the plate supports it.","chapter":"Plate the food","elapsed":130.609,"time":26.122},{"phase":"Execute","title":"Grip the plate rim","detail":"Keep the food supported as the gripper takes hold.","chapter":null,"elapsed":155.398,"time":31.08},{"phase":"Recover","title":"Restore the food placement","detail":"Put the food back on the plate before lifting again.","chapter":"Recover the placement","elapsed":198.094,"time":39.619},{"phase":"Execute","title":"Grip the plate again","detail":"Use the right gripper and protect the food placement.","chapter":null,"elapsed":223.262,"time":44.652},{"phase":"Execute","title":"Begin the transfer","detail":"Bring the loaded plate toward the open microwave.","chapter":null,"elapsed":270.162,"time":54.032},{"phase":"Recover","title":"Retry the plate-rim grip","detail":"Recover a secure hold before continuing the transfer.","chapter":null,"elapsed":277.511,"time":55.502},{"phase":"Recover","title":"Check the grip again","detail":"The plate is still on the table. Retry the rim grasp.","chapter":null,"elapsed":321.539,"time":64.308},{"phase":"Execute","title":"Transfer toward the microwave","detail":"Carry the loaded plate toward the open microwave.","chapter":"Transfer the plate","elapsed":360.05,"time":72.01},{"phase":"Interrupted","title":"Recording interrupted","detail":"The connection ended during the transfer. Final placement was unverified.","chapter":null,"elapsed":380.327,"time":76.065}],"duration":78.5333,"lastCapture":370.857,"lastFrame":74.167,"terminalReplay":76.065,"terminalElapsed":380.327,"sourceFrames":481,"chapters":[{"phase":"Observe","title":"Locate the sponge","detail":"Identify the sponge, plate, rice dumpling, and open microwave.","chapter":"Locate the sponge","elapsed":0,"time":0.0},{"phase":"Execute","title":"Wipe the plate","detail":"Move the sponge across the inside of the plate.","chapter":"Wipe the plate","elapsed":34.003,"time":6.801},{"phase":"Execute","title":"Place the food on the plate","detail":"Release it only after the plate supports it.","chapter":"Plate the food","elapsed":130.609,"time":26.122},{"phase":"Recover","title":"Restore the food placement","detail":"Put the food back on the plate before lifting again.","chapter":"Recover the placement","elapsed":198.094,"time":39.619},{"phase":"Execute","title":"Transfer toward the microwave","detail":"Carry the loaded plate toward the open microwave.","chapter":"Transfer the plate","elapsed":360.05,"time":72.01}],"preview":"assets/agent-cooking-preview.mp4","full":"assets/agent-cooking-demo.mp4","poster":"assets/agent-cooking-poster.webp"}]</script>
       </article>
       <div class="agent-results">
         <div class="agent-result-summary"><strong>10 / 20</strong><p>complete trials with GPT-Astra and the RL-trained policy. The same planner with the pre-RL policy completed 0 of 20.</p></div>
@@ -843,7 +798,7 @@
 
   <footer class="shell footer"><span>ByteDance Seed</span><a href="#top">Back to top <span aria-hidden="true">↑</span></a></footer>
 
-  <dialog class="policy-hd-dialog" id="policy-hd-dialog" aria-label="Full-screen policy comparison">
+  <dialog class="policy-hd-dialog" id="policy-hd-dialog" aria-label="Full-screen video">
     <div class="policy-hd-stage">
       <button class="policy-hd-close" type="button" aria-label="Exit full screen">×</button>
       <video controls controlslist="nodownload" playsinline muted preload="auto"></video>

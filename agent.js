@@ -1,88 +1,134 @@
 const agentPlayer = document.querySelector("[data-agent]");
-const agentTaskButtons = [...agentPlayer.querySelectorAll("[data-agent-task]")];
-const agentTracks = [...agentPlayer.querySelectorAll("[data-agent-track]")].map(track => ({
-  track,
-  frames: [...track.querySelectorAll("[data-agent-frame]")]
-}));
-const agentPlay = agentPlayer.querySelector("[data-agent-play]");
-const agentImage = agentPlayer.querySelector("[data-agent-image]");
-const agentLink = agentImage.parentElement;
-const agentTime = agentPlayer.querySelector("[data-agent-time]");
+const agentTrials = JSON.parse(agentPlayer.querySelector("[data-agent-trials]").textContent);
+const agentVideo = agentPlayer.querySelector("[data-agent-video]");
+const agentTabs = [...agentPlayer.querySelectorAll("[data-agent-task]")];
+const agentTransport = agentPlayer.querySelector("[data-agent-transport]");
+const agentPlay = agentTransport.querySelector("[data-agent-play]");
+const agentFullscreen = agentTransport.querySelector("[data-agent-fullscreen]");
+const agentScrubber = agentTransport.querySelector("input");
+const agentPosition = agentTransport.querySelector("[data-agent-position]");
+const agentPhase = agentPlayer.querySelector("[data-agent-phase]");
 const agentAction = agentPlayer.querySelector("[data-agent-action]");
 const agentNote = agentPlayer.querySelector("[data-agent-note]");
+const agentTime = agentPlayer.querySelector("[data-agent-time]");
+const agentChapters = agentPlayer.querySelector("[data-agent-chapters]");
 const agentOutcome = agentPlayer.querySelector("[data-agent-outcome]");
-const agentMotion = matchMedia("(prefers-reduced-motion: reduce)");
-let agentTaskIndex = 0;
-let agentFrameIndex = 0;
-let agentTimer;
-let agentFrameRequest = 0;
+let agentTrial = agentTrials[0];
+let agentCue;
+let agentChapter;
 
-async function showAgentFrame(index) {
-  agentFrameIndex = index;
-  const request = ++agentFrameRequest;
-  const { frames } = agentTracks[agentTaskIndex];
-  const button = frames[index];
-  const thumbnail = button.querySelector("img");
-  const url = thumbnail.getAttribute("src");
-  if (agentImage.getAttribute("src") !== url) {
-    thumbnail.loading = "eager";
-    try {
-      await thumbnail.decode();
-    } catch {
-      return;
-    }
-    if (request !== agentFrameRequest) return;
+function agentClock(seconds) {
+  const elapsed = Math.floor(seconds);
+  return `${Math.floor(elapsed / 60)}:${String(elapsed % 60).padStart(2, "0")}`;
+}
+
+function updateAgentReplay() {
+  const time = agentVideo.currentTime;
+  const duration = agentVideo.duration;
+  const playing = !agentVideo.paused && !agentVideo.ended;
+  agentPlay.toggleAttribute("data-playing", playing);
+  agentPlay.setAttribute("aria-label", playing ? "Pause replay" : "Play replay");
+  agentPosition.textContent = agentClock(time);
+  agentScrubber.value = time;
+  agentScrubber.style.setProperty("--played", `${duration ? time / duration * 100 : 0}%`);
+
+  const cue = agentTrial.cues.findLast(item => item.time <= time) || agentTrial.cues[0];
+  if (cue !== agentCue) {
+    agentCue = cue;
+    agentPlayer.dataset.phase = cue.phase.toLowerCase();
+    agentPhase.textContent = cue.phase;
+    agentAction.textContent = cue.title;
+    agentNote.textContent = cue.detail;
   }
-  frames.forEach((frame, i) => frame.setAttribute("aria-pressed", String(i === index)));
-  if (agentImage.getAttribute("src") !== url) {
-    agentImage.src = url;
-    if (!agentMotion.matches) agentImage.animate([{ opacity: .4 }, { opacity: 1 }], { duration: 250 });
+  const elapsed = time >= agentTrial.terminalReplay ? agentTrial.terminalElapsed : Math.min(time * agentTrial.speed, agentTrial.lastCapture);
+  agentTime.textContent = agentClock(elapsed);
+
+  const chapter = [...agentChapters.children].findLast(item => Number(item.firstElementChild.dataset.time) <= time);
+  if (chapter !== agentChapter) {
+    agentChapter?.firstElementChild.removeAttribute("aria-current");
+    chapter?.firstElementChild.setAttribute("aria-current", "step");
+    agentChapter = chapter;
   }
-  agentImage.alt = button.dataset.action + " · head-camera recording";
-  agentLink.href = url;
-  agentLink.dataset.zoom = button.dataset.action;
-  agentTime.textContent = `Head camera · ${button.dataset.time} elapsed`;
-  agentAction.textContent = button.dataset.action;
-  agentNote.textContent = button.dataset.note;
 }
 
-function stopAgentReplay() {
-  clearInterval(agentTimer);
-  agentTimer = undefined;
-  agentPlay.removeAttribute("data-playing");
-  agentPlay.querySelector("span").textContent = "Play keyframes";
+function renderAgentChapters() {
+  agentChapters.replaceChildren(...agentTrial.chapters.map(cue => {
+    const row = document.createElement("li");
+    const button = document.createElement("button");
+    const title = document.createElement("span");
+    const time = document.createElement("time");
+    button.type = "button";
+    button.dataset.time = cue.time;
+    title.textContent = cue.chapter;
+    time.textContent = agentClock(cue.elapsed);
+    button.append(title, time);
+    row.append(button);
+    return row;
+  }));
 }
 
-function selectAgentTask(index) {
-  stopAgentReplay();
-  agentTaskIndex = index;
-  agentTaskButtons.forEach((button, i) => button.setAttribute("aria-pressed", String(i === index)));
-  agentTracks.forEach(({ track }, i) => { track.hidden = i !== index; });
-  agentOutcome.textContent = agentTracks[index].track.dataset.outcome;
-  showAgentFrame(0);
-}
-
-agentPlay.hidden = false;
-agentPlay.addEventListener("click", () => {
-  if (agentTimer) {
-    stopAgentReplay();
+function selectAgentTrial(index) {
+  if (agentTrial === agentTrials[index]) {
+    playPreviewVideo(agentVideo);
     return;
   }
-  const last = agentTracks[agentTaskIndex].frames.length - 1;
-  if (agentFrameIndex === last) showAgentFrame(0);
-  agentPlay.setAttribute("data-playing", "");
-  agentPlay.querySelector("span").textContent = "Pause keyframes";
-  agentTimer = setInterval(() => {
-    if (agentFrameIndex === last) stopAgentReplay();
-    else showAgentFrame(agentFrameIndex + 1);
-  }, 3400);
+  agentVideo.pause();
+  agentTrial = agentTrials[index];
+  agentTabs.forEach((button, i) => button.setAttribute("aria-pressed", String(i === index)));
+  agentVideo.dataset.poster = agentTrial.poster;
+  agentVideo.dataset.fullSource = agentTrial.full;
+  agentVideo.poster = agentTrial.poster;
+  agentVideo.setAttribute("aria-label", `${agentTrial.title} head-camera replay`);
+  agentVideo.src = agentTrial.preview;
+  agentOutcome.textContent = agentTrial.result;
+  agentOutcome.dataset.tone = agentTrial.tone;
+  agentScrubber.disabled = true;
+  renderAgentChapters();
+  updateAgentReplay();
+  playPreviewVideo(agentVideo);
+}
+
+function toggleAgentPlayback() {
+  if (agentVideo.paused) playPreviewVideo(agentVideo);
+  else agentVideo.pause();
+}
+
+agentTabs.forEach((button, index) => button.addEventListener("click", () => selectAgentTrial(index)));
+agentPlay.addEventListener("click", toggleAgentPlayback);
+agentVideo.addEventListener("click", () => { if (!agentVideo.controls) toggleAgentPlayback(); });
+agentScrubber.addEventListener("input", () => { agentVideo.currentTime = Number(agentScrubber.value); });
+agentChapters.addEventListener("click", event => {
+  const button = event.target.closest("button[data-time]");
+  if (!button) return;
+  agentVideo.currentTime = Number(button.dataset.time);
+  playPreviewVideo(agentVideo);
 });
-agentTaskButtons.forEach((button, index) => button.addEventListener("click", () => selectAgentTask(index)));
-agentTracks.forEach(({ frames }) => frames.forEach((frame, index) => frame.addEventListener("click", () => {
-  stopAgentReplay();
-  showAgentFrame(index);
-})));
+agentVideo.addEventListener("loadedmetadata", () => {
+  agentScrubber.disabled = false;
+  agentScrubber.max = agentVideo.duration;
+  updateAgentReplay();
+});
+["timeupdate", "seeking", "play", "pause", "ended"].forEach(event => agentVideo.addEventListener(event, updateAgentReplay));
+
+if (policyHD.showModal) {
+  agentFullscreen.hidden = false;
+  agentFullscreen.addEventListener("click", () => openFullscreenVideo(agentVideo));
+} else {
+  agentTransport.setAttribute("data-no-fullscreen", "");
+}
+agentVideo.controls = false;
+agentTransport.hidden = false;
+agentChapters.hidden = false;
+renderAgentChapters();
+updateAgentReplay();
+
+const agentPosterObserver = new IntersectionObserver(([entry]) => {
+  if (entry.isIntersecting) {
+    showVideoPoster(agentVideo);
+    agentPosterObserver.disconnect();
+  }
+}, {rootMargin: "360px 0px"});
+agentPosterObserver.observe(agentVideo);
 new IntersectionObserver(([entry]) => {
-  if (!entry.isIntersecting) stopAgentReplay();
-}).observe(agentPlayer);
-selectAgentTask(0);
+  if (!entry.isIntersecting) agentVideo.pause();
+}).observe(agentVideo);
