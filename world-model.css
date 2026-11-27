@@ -315,7 +315,6 @@
   border-top: 1px solid #d9e3f0;
 }
 .wm-footer p { max-width: 78ch; color: #46617f; font-size: 12px; line-height: 1.45; }
-.wm-actions { display: flex; flex: 0 0 auto; gap: 7px; }
 .wm-footer .motion-button { flex: 0 0 auto; }
 .wm-footer .motion-button[hidden] { display: none; }
 
@@ -337,8 +336,6 @@
   .wm-generator strong { font-size: 11px; }
   .wm-generator > span { font-size: 9px; }
   .wm-core { width: 36px; }
-  .wm-footer { flex-direction: column; align-items: flex-start; gap: 8px; }
-  .wm-actions { align-self: end; }
   .wm-footer p { font-size: 11px; }
   .wm-footer .motion-button { min-height: 36px; }
 }
