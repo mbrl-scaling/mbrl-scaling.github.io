@@ -1,80 +1,271 @@
 const envStory = document.querySelector("[data-env-story]");
-const envLanes = [...envStory.querySelectorAll("[data-env-lane]")];
+const envScroll = envStory.querySelector("[data-env-scroll]");
+const envBoard = envStory.querySelector("[data-env-board]");
+const envLayer = envStory.querySelector("[data-env-flight-layer]");
+const envCanvas = envStory.querySelector("[data-env-paths]");
+const envInk = envCanvas.getContext("2d");
+const envWell = envStory.querySelector("[data-env-well]");
 const envPlay = envStory.querySelector("[data-env-play]");
+const envOverview = envStory.querySelector("[data-env-overview]");
 const envMotion = matchMedia("(prefers-reduced-motion: reduce)");
-const envStageLength = 2220;
-const envLaneDelay = 190;
-const envTimeline = 5 * envStageLength + (envLanes.length - 1) * envLaneDelay;
-let envElapsed = 0;
-let envTick;
+const envDuration = 12400;
+const envLanes = [...envStory.querySelectorAll("[data-env-lane]")].map(lane => ({
+  lane,
+  color: getComputedStyle(lane).getPropertyValue("--env-lane-color").trim(),
+  card: envStory.querySelector(`[data-env-deck="${lane.dataset.envLane}"]`),
+  selected: lane.querySelector(".env-selected"),
+  spec: lane.querySelector(".env-spec"),
+  edit: [...lane.querySelectorAll("[data-env-variant]")],
+  review: lane.querySelector(".env-review"),
+  sample: lane.querySelector(".env-earlier"),
+  targets: [...lane.querySelectorAll("[data-env-pool]")],
+  name: lane.querySelector(".env-bundle > span")
+}));
+let envLayout;
+let envTime = 0;
+let envLast;
 let envFrame;
 let envPlaying = false;
 let envAutoplay = !envMotion.matches && !navigator.connection?.saveData;
+let envFollow = true;
+let envWide = false;
 
-function renderEnv() {
-  const reduced = envMotion.matches;
-  envLanes.forEach((lane, index) => {
-    const time = Math.max(0, envElapsed - index * envLaneDelay) / envStageLength;
-    const stage = Math.min(Math.floor(time), 5);
-    const part = time - stage;
-    if (lane.dataset.stage !== String(stage)) lane.dataset.stage = stage;
-    lane.style.setProperty("--env-progress", Math.min(time / 5, 1));
-    lane.style.setProperty("--env-rollout", stage === 3 && !reduced ? Math.max(1 - part * 2, 0) : 0);
-    lane.style.setProperty("--env-sweep", reduced ? 1 : part);
-  });
+const envClamp = value => Math.max(0, Math.min(1, value));
+const envEase = value => {
+  const t = envClamp(value);
+  return t * t * (3 - 2 * t);
+};
+const envAt = (time, start, length) => envClamp((time - start) / length);
+const envMix = (start, end, amount) => start + (end - start) * amount;
+
+function makeEnvFlight(frame) {
+  const flight = new Image();
+  flight.src = frame.querySelector("img").getAttribute("src");
+  flight.alt = "";
+  flight.decoding = "async";
+  flight.hidden = true;
+  envLayer.append(flight);
+  return flight;
 }
 
-function setEnvButton() {
-  const label = envPlaying ? "Pause" : envElapsed >= envTimeline ? "Replay" : "Play";
+for (const lane of envLanes) {
+  lane.pickFlight = makeEnvFlight(lane.selected);
+  lane.editFlights = lane.edit.map(makeEnvFlight);
+  lane.poolFlights = lane.targets.map(makeEnvFlight);
+}
+
+function measureEnv() {
+  const width = envBoard.offsetWidth;
+  const height = envBoard.offsetHeight;
+  if (!width || !height) return;
+  const compact = width > envScroll.clientWidth + 1;
+  envStory.toggleAttribute("data-env-compact", compact);
+  envScroll.toggleAttribute("data-env-wide", compact && envWide);
+  const scale = compact && envWide ? envScroll.clientWidth / width : 1;
+  envScroll.style.setProperty("--env-scale", scale);
+  envScroll.style.height = scale < 1 ? `${Math.ceil(height * scale)}px` : "";
+  const board = envBoard.getBoundingClientRect();
+  const box = element => {
+    const rect = element.getBoundingClientRect();
+    const width = element.offsetWidth;
+    const height = element.offsetHeight;
+    return {
+      x: (rect.left + rect.width / 2 - board.left) / scale - width / 2,
+      y: (rect.top + rect.height / 2 - board.top) / scale - height / 2,
+      width, height
+    };
+  };
+  const dpr = Math.min(devicePixelRatio, 2);
+  envCanvas.width = Math.round(width * dpr);
+  envCanvas.height = Math.round(height * dpr);
+  envInk?.setTransform(dpr, 0, 0, dpr, 0, 0);
+  envLayout = { width, height, compact, scale, well: box(envWell) };
+  for (const lane of envLanes) {
+    lane.boxes = {
+      card: box(lane.card), selected: box(lane.selected), edit: lane.edit.map(box),
+      review: box(lane.review.querySelector(".env-frame")), targets: lane.targets.map(box)
+    };
+    lane.pickFlight.style.width = `${lane.boxes.selected.width}px`;
+    lane.editFlights.forEach((flight, index) => { flight.style.width = `${lane.boxes.edit[index].width}px`; });
+    lane.poolFlights.forEach((flight, index) => { flight.style.width = `${lane.boxes.targets[index].width}px`; });
+  }
+  renderEnv();
+}
+
+function setEnvAlpha(element, opacity) {
+  element.style.setProperty("--env-alpha", envEase(opacity).toFixed(3));
+}
+
+function flyEnv(flight, from, to, progress, arc, rotation) {
+  const active = progress > 0 && progress < 1;
+  if (flight.hidden === active) flight.hidden = !active;
+  if (!active) return;
+  const eased = envEase(progress);
+  const width = envMix(from.width, to.width, eased);
+  const x = envMix(from.x + from.width / 2, to.x + to.width / 2, eased) - width / 2;
+  const y = envMix(from.y, to.y, eased) - Math.sin(Math.PI * eased) * arc;
+  const angle = rotation * Math.sin(Math.PI * progress);
+  flight.style.transform = `translate3d(${x}px,${y}px,0) scale(${width / to.width}) rotate(${angle}deg)`;
+}
+
+function routeEnv(from, to, color, progress) {
+  if (!envInk || progress <= 0) return;
+  const x = from.x + from.width;
+  const y = from.y + from.height / 2;
+  const tx = to.x;
+  const ty = to.y + to.height / 2;
+  const dx = (tx - x) * .48;
+  const length = Math.hypot(tx - x, ty - y) * 1.24;
+  envInk.beginPath();
+  envInk.moveTo(x, y);
+  envInk.bezierCurveTo(x + dx, y, tx - dx, ty, tx, ty);
+  envInk.strokeStyle = color;
+  envInk.lineWidth = 1.05;
+  envInk.globalAlpha = .22 + .17 * Math.sin(Math.PI * progress);
+  if (progress < 1) envInk.setLineDash([length * progress, length]);
+  envInk.stroke();
+  envInk.setLineDash([]);
+  envInk.globalAlpha = 1;
+}
+
+function followEnvBoard() {
+  if (!envLayout.compact || !envFollow || envWide || !envPlaying) return;
+  const viewport = envScroll.clientWidth;
+  const { selected, edit, review } = envLanes[0].boxes;
+  const extent = envLayout.width - viewport;
+  const center = box => Math.min(extent, Math.max(0, box.x + box.width / 2 - viewport * .48));
+  const keys = [
+    [0, 0], [950, 0], [2700, center(selected)], [5250, center(edit[1])],
+    [8050, center(review)], [10950, extent]
+  ];
+  const index = keys.findLastIndex(([at]) => at <= envTime);
+  const [at, x] = keys[index];
+  const next = keys[index + 1];
+  const scroll = next ? envMix(x, next[1], envEase(envAt(envTime, at, next[0] - at))) : x;
+  if (Math.abs(envScroll.scrollLeft - scroll) >= 1) envScroll.scrollLeft = scroll;
+}
+
+function renderEnv() {
+  if (!envLayout) return;
+  const reduced = envMotion.matches;
+  const timeline = reduced ? envDuration : envTime;
+  envInk?.clearRect(0, 0, envLayout.width, envLayout.height);
+  envWell.style.setProperty("--env-well", envEase(envAt(timeline, 8050, 1800)));
+  envLanes.forEach((lane, index) => {
+    const time = timeline - index * 235;
+    const { card, selected, edit, review, targets } = lane.boxes;
+    const pick = envAt(time, 1080, 1220);
+    lane.card.style.setProperty("--env-sheet", 1 - envEase(pick) * .86);
+    flyEnv(lane.pickFlight, card, selected, pick, 24 + index * 4, 10 - index * 5);
+    setEnvAlpha(lane.selected, (pick - .79) * 5);
+    setEnvAlpha(lane.spec, envAt(time, 2230, 560));
+    routeEnv(card, selected, lane.color, envEase(pick));
+
+    lane.edit.forEach((frame, variant) => {
+      const spread = envAt(time, 3680 + variant * 275, 1070);
+      flyEnv(lane.editFlights[variant], selected, edit[variant], spread, 20 - variant * 5, (variant - 1.5) * 7);
+      setEnvAlpha(frame, (spread - .83) * 5.9);
+      routeEnv(selected, edit[variant], lane.color, envEase(spread));
+    });
+
+    const check = envAt(time, 6680, 600);
+    setEnvAlpha(lane.review, check);
+    lane.sample.style.setProperty("--env-sample", reduced ? 0 : 1 - envEase(envAt(time, 7280, 1150)));
+    routeEnv(edit[3], review, lane.color, envEase(check));
+
+    lane.targets.forEach((frame, variant) => {
+      const deposit = envAt(time, 9410 + variant * 185, 1060);
+      flyEnv(lane.poolFlights[variant], edit[variant], targets[variant], deposit, 30 + variant * 7, -12 + variant * 4);
+      setEnvAlpha(frame, (deposit - .84) * 6.3);
+      if (variant === 3) {
+        setEnvAlpha(lane.name, envAt(time, 10750, 500));
+        routeEnv(review, targets[variant], lane.color, envEase(deposit));
+      }
+    });
+  });
+  followEnvBoard();
+}
+
+function updateEnvPlay() {
+  const label = envPlaying ? "Pause" : envTime >= envDuration ? "Replay" : "Play";
   envPlay.toggleAttribute("data-playing", envPlaying);
   envPlay.querySelector("span").textContent = label;
-  envPlay.setAttribute("aria-label", `${label} parallel environment construction`);
+  envPlay.setAttribute("aria-label", `${label} environment construction animation`);
 }
 
 function pauseEnv() {
   envPlaying = false;
   cancelAnimationFrame(envFrame);
-  envTick = undefined;
-  setEnvButton();
+  envLast = undefined;
+  updateEnvPlay();
 }
 
-function animateEnv(now) {
-  if (envTick !== undefined) envElapsed = Math.min(envElapsed + Math.min(now - envTick, 100), envTimeline);
-  envTick = now;
+function stepEnv(now) {
+  if (envLast !== undefined) envTime = Math.min(envTime + Math.min(now - envLast, 100), envDuration);
+  envLast = now;
   renderEnv();
-  if (envElapsed < envTimeline) {
-    envFrame = requestAnimationFrame(animateEnv);
-  } else {
+  if (envTime < envDuration) envFrame = requestAnimationFrame(stepEnv);
+  else {
     envAutoplay = false;
     pauseEnv();
   }
 }
 
 function startEnv() {
-  if (envPlaying) return;
-  if (envElapsed >= envTimeline) envElapsed = 0;
+  if (envPlaying || envMotion.matches) return;
+  if (envTime >= envDuration) {
+    envTime = 0;
+    if (!envWide && envFollow) envScroll.scrollLeft = 0;
+  }
   envPlaying = true;
-  setEnvButton();
-  envFrame = requestAnimationFrame(animateEnv);
+  updateEnvPlay();
+  envFrame = requestAnimationFrame(stepEnv);
 }
 
 envPlay.addEventListener("click", () => {
   envAutoplay = !envPlaying;
-  if (envPlaying) pauseEnv();
-  else startEnv();
+  if (envPlaying) {
+    pauseEnv();
+  } else {
+    envFollow = true;
+    if (envScroll.getBoundingClientRect().top < document.querySelector(".site-header").offsetHeight) {
+      envStory.scrollIntoView({ block: "start", behavior: "smooth" });
+    }
+    startEnv();
+  }
 });
+envOverview.addEventListener("click", () => {
+  envWide = !envWide;
+  envFollow = false;
+  envScroll.scrollLeft = 0;
+  envOverview.textContent = envWide ? "Full size" : "Overview";
+  envOverview.setAttribute("aria-pressed", String(envWide));
+  measureEnv();
+});
+envScroll.addEventListener("pointerdown", () => { envFollow = false; }, { passive: true });
+envScroll.addEventListener("wheel", event => {
+  if (Math.abs(event.deltaX) > Math.abs(event.deltaY)) envFollow = false;
+}, { passive: true });
 envMotion.addEventListener("change", event => {
-  if (!event.matches) return;
-  envAutoplay = false;
-  pauseEnv();
-  renderEnv();
+  envPlay.hidden = event.matches;
+  if (event.matches) {
+    envAutoplay = false;
+    envTime = envDuration;
+    pauseEnv();
+    renderEnv();
+  }
 });
+envStory.setAttribute("data-env-enhanced", "");
+envPlay.hidden = envMotion.matches;
+envOverview.hidden = false;
+measureEnv();
+updateEnvPlay();
+new ResizeObserver(measureEnv).observe(envBoard);
+new ResizeObserver(measureEnv).observe(envScroll);
 new IntersectionObserver(([entry]) => {
-  if (entry.intersectionRatio >= .3) {
+  if (entry.intersectionRatio >= .26) {
     if (envAutoplay) startEnv();
   } else if (envPlaying) {
     pauseEnv();
   }
-}, { threshold: .3 }).observe(envStory);
-envPlay.hidden = false;
-setEnvButton();
+}, { threshold: .26 }).observe(envScroll);

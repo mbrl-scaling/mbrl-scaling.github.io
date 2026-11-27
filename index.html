@@ -10,11 +10,11 @@
   <meta property="og:image" content="https://mbrl-scaling.github.io/assets/hero-rollouts-36.webp">
   <link rel="icon" href="assets/seed-mark.webp" type="image/webp">
   <link rel="stylesheet" href="style.css?v=3">
-  <link rel="stylesheet" href="environment.css?v=3">
+  <link rel="stylesheet" href="environment.css?v=4">
   <script src="app.js?v=3" defer></script>
   <script src="scaling.js" defer></script>
   <script src="method.js?v=2" defer></script>
-  <script src="environment.js?v=3" defer></script>
+  <script src="environment.js?v=4" defer></script>
   <script src="agent.js" defer></script>
   <title>Scaling Reinforcement Learning in World Models | Project Page</title>
 </head>
@@ -64,123 +64,175 @@
           <p>From recorded robot demonstrations to a pool of training environments.</p>
         </div>
         <figure class="env-story" data-env-story aria-labelledby="env-method-heading" aria-describedby="env-caption">
-          <div class="env-figure" role="table" aria-label="Parallel environment construction for four robot tasks">
-            <div class="env-grid env-head" role="row">
-              <span class="env-task-head" role="columnheader">Task</span>
-              <div role="columnheader"><strong>Select a frame</strong><span>Recorded video</span></div>
-              <div role="columnheader"><strong>Write PE + rubric</strong><span>Task and success criteria</span></div>
-              <div role="columnheader"><strong>Image editing</strong><span>Edited initial state</span></div>
-              <div role="columnheader"><strong>Review</strong><span>Sampled rollout</span></div>
-              <div class="env-pool-head" role="columnheader"><strong><span class="env-pool-full">Environment pool</span><span class="env-pool-short">Pool</span></strong><span>Observation + PE + rubric</span></div>
-            </div>
-            <div class="env-grid env-lane env-basket" data-env-lane role="row">
-              <span class="env-lane-ink" aria-hidden="true"><i></i></span>
-              <div class="env-task" role="rowheader"><i aria-hidden="true"></i><strong>Basket rim</strong></div>
-              <div class="env-cell env-reset" role="cell">
-                <div class="env-photo"><img src="assets/method-source-head.webp" alt="Basket rim in the recorded head-camera frame" width="640" height="360" loading="lazy"></div>
-                <span>Selected frame</span>
+          <div class="env-scroll" data-env-scroll tabindex="0" aria-label="Environment construction diagram">
+            <div class="env-board" data-env-board>
+              <div class="env-head">
+                <div>Recorded frames</div>
+                <div>Selected initial states</div>
+                <div>Image editing <span>Four variants per task</span></div>
+                <div>Rollout review</div>
+                <div>Env Pool</div>
               </div>
-              <div class="env-cell env-text-cell" role="cell">
-                <div class="env-pe"><b>PE</b><span>Left gripper · long rim midpoint</span></div>
-                <div class="env-rubric"><b>Rubric</b><span>Grip holds that rim</span></div>
-              </div>
-              <div class="env-cell env-edit" role="cell">
-                <div class="env-photo"><img src="assets/method-position-head.webp" alt="Edited initial state for Basket rim" width="640" height="360" loading="lazy"></div>
-                <span>Scene variant</span>
-              </div>
-              <div class="env-cell env-review" role="cell">
-                <div class="env-photo">
-                  <img src="assets/method-rollout-048-head.webp" alt="Sampled world-model rollout for Basket rim" width="640" height="360" loading="lazy">
-                  <img src="assets/method-rollout-016-head.webp" alt="" width="640" height="360" loading="lazy" class="env-earlier" aria-hidden="true">
+              <canvas class="env-paths" data-env-paths aria-hidden="true"></canvas>
+              <div class="env-flow">
+                <div class="env-deck" aria-label="Stacked frames from recorded robot trajectories">
+                  <div class="env-stack" aria-hidden="true">
+                    <img src="assets/env-recorded-187.webp" alt="" width="640" height="360" loading="lazy" style="--sheet:0">
+                    <img src="assets/method-straw-source.webp" alt="" width="640" height="360" loading="lazy" style="--sheet:1" data-env-deck="straw">
+                    <img src="assets/env-recorded-112.webp" alt="" width="640" height="360" loading="lazy" style="--sheet:2">
+                    <img src="assets/method-scissors-source.webp" alt="" width="640" height="360" loading="lazy" style="--sheet:3" data-env-deck="scissors">
+                    <img src="assets/env-recorded-37.webp" alt="" width="640" height="360" loading="lazy" style="--sheet:4">
+                    <img src="assets/method-cloth-source.webp" alt="" width="640" height="360" loading="lazy" style="--sheet:5" data-env-deck="cloth">
+                    <img src="assets/method-source-head.webp" alt="" width="640" height="360" loading="lazy" style="--sheet:6" data-env-deck="basket">
+                  </div>
                 </div>
-                <span class="">Rim held</span>
-              </div>
-              <div class="env-cell env-pool" role="cell">
-                <div class="env-packet"><img src="assets/method-position-head.webp" alt="" width="640" height="360" loading="lazy" aria-hidden="true"><span>Frame + PE + rubric</span></div>
-              </div>
-            </div>
-            <div class="env-grid env-lane env-cloth" data-env-lane role="row">
-              <span class="env-lane-ink" aria-hidden="true"><i></i></span>
-              <div class="env-task" role="rowheader"><i aria-hidden="true"></i><strong>Cloth edge</strong></div>
-              <div class="env-cell env-reset" role="cell">
-                <div class="env-photo"><img src="assets/method-cloth-source.webp" alt="Cloth edge in the recorded head-camera frame" width="640" height="360" loading="lazy"></div>
-                <span>Selected frame</span>
-              </div>
-              <div class="env-cell env-text-cell" role="cell">
-                <div class="env-pe"><b>PE</b><span>Left gripper · exposed fabric edge</span></div>
-                <div class="env-rubric"><b>Rubric</b><span>Fabric edge held</span></div>
-              </div>
-              <div class="env-cell env-edit" role="cell">
-                <div class="env-photo"><img src="assets/method-cloth-step-0.webp" alt="Edited initial state for Cloth edge" width="640" height="360" loading="lazy"></div>
-                <span>Scene variant</span>
-              </div>
-              <div class="env-cell env-review" role="cell">
-                <div class="env-photo">
-                  <img src="assets/method-cloth-step-3.webp" alt="Sampled world-model rollout for Cloth edge" width="640" height="360" loading="lazy">
-                  <img src="assets/method-cloth-step-1.webp" alt="" width="640" height="360" loading="lazy" class="env-earlier" aria-hidden="true">
+                <div class="env-well" data-env-well aria-hidden="true"></div>
+                <div class="env-lane env-basket" style="--lane-row:1" data-env-lane="basket">
+                  <div class="env-initial">
+                    <div class="env-frame env-selected" data-env-reveal>
+                      <img src="assets/method-source-head.webp" alt="Selected head-camera frame for Basket rim" width="640" height="360" loading="lazy">
+                    </div>
+                    <div class="env-spec" data-env-reveal>
+                      <strong>Basket rim</strong>
+                      <div><b>PE</b><span>Left gripper · long rim midpoint</span></div>
+                      <div><b>Rubric</b><span>Grip holds that rim</span></div>
+                    </div>
+                  </div>
+                  <div class="env-variants" aria-label="Four edited starting scenes for Basket rim">
+                    <div class="env-frame env-variant" data-env-variant data-env-reveal><img src="assets/env-basket-edit-0.webp" alt="Basket rim, edited variant 1" width="640" height="360" loading="lazy"></div>
+                    <div class="env-frame env-variant" data-env-variant data-env-reveal><img src="assets/env-basket-edit-1.webp" alt="Basket rim, edited variant 2" width="640" height="360" loading="lazy"></div>
+                    <div class="env-frame env-variant" data-env-variant data-env-reveal><img src="assets/method-position-head.webp" alt="Basket rim, edited variant 3" width="640" height="360" loading="lazy"></div>
+                    <div class="env-frame env-variant" data-env-variant data-env-reveal><img src="assets/env-basket-edit-3.webp" alt="Basket rim, edited variant 4" width="640" height="360" loading="lazy"></div>
+                  </div>
+                  <div class="env-review" data-env-reveal>
+                    <div class="env-frame">
+                      <img src="assets/method-rollout-048-head.webp" alt="Sampled world-model rollout for Basket rim" width="640" height="360" loading="lazy">
+                      <img src="assets/method-rollout-016-head.webp" alt="" width="640" height="360" loading="lazy" class="env-earlier" aria-hidden="true">
+                    </div>
+                    <span>Rim held</span>
+                  </div>
+                  <div class="env-bundle" aria-label="Basket rim environment bundle">
+                    <div class="env-pack">
+                      <div class="env-frame env-pool-card" style="--pack:0" data-env-pool data-env-reveal><img src="assets/env-basket-edit-0.webp" alt="" width="640" height="360" loading="lazy" aria-hidden="true"></div>
+                      <div class="env-frame env-pool-card" style="--pack:1" data-env-pool data-env-reveal><img src="assets/env-basket-edit-1.webp" alt="" width="640" height="360" loading="lazy" aria-hidden="true"></div>
+                      <div class="env-frame env-pool-card" style="--pack:2" data-env-pool data-env-reveal><img src="assets/method-position-head.webp" alt="" width="640" height="360" loading="lazy" aria-hidden="true"></div>
+                      <div class="env-frame env-pool-card" style="--pack:3" data-env-pool data-env-reveal><img src="assets/env-basket-edit-3.webp" alt="" width="640" height="360" loading="lazy" aria-hidden="true"></div>
+                    </div>
+                    <span data-env-reveal>Basket rim</span>
+                  </div>
                 </div>
-                <span class="">Edge held</span>
-              </div>
-              <div class="env-cell env-pool" role="cell">
-                <div class="env-packet"><img src="assets/method-cloth-step-0.webp" alt="" width="640" height="360" loading="lazy" aria-hidden="true"><span>Frame + PE + rubric</span></div>
-              </div>
-            </div>
-            <div class="env-grid env-lane env-scissors" data-env-lane role="row">
-              <span class="env-lane-ink" aria-hidden="true"><i></i></span>
-              <div class="env-task" role="rowheader"><i aria-hidden="true"></i><strong>Scissor handles</strong></div>
-              <div class="env-cell env-reset" role="cell">
-                <div class="env-photo"><img src="assets/method-scissors-source.webp" alt="Scissor handles in the recorded head-camera frame" width="640" height="360" loading="lazy"></div>
-                <span>Selected frame</span>
-              </div>
-              <div class="env-cell env-text-cell" role="cell">
-                <div class="env-pe"><b>PE</b><span>Left gripper · outer handle edges</span></div>
-                <div class="env-rubric"><b>Rubric</b><span>Both outer edges held</span></div>
-              </div>
-              <div class="env-cell env-edit" role="cell">
-                <div class="env-photo"><img src="assets/method-scissors-step-0.webp" alt="Edited initial state for Scissor handles" width="640" height="360" loading="lazy"></div>
-                <span>Scene variant</span>
-              </div>
-              <div class="env-cell env-review" role="cell">
-                <div class="env-photo">
-                  <img src="assets/method-scissors-step-3.webp" alt="Sampled world-model rollout for Scissor handles" width="640" height="360" loading="lazy">
-                  <img src="assets/method-scissors-step-1.webp" alt="" width="640" height="360" loading="lazy" class="env-earlier" aria-hidden="true">
+                <div class="env-lane env-cloth" style="--lane-row:2" data-env-lane="cloth">
+                  <div class="env-initial">
+                    <div class="env-frame env-selected" data-env-reveal>
+                      <img src="assets/method-cloth-source.webp" alt="Selected head-camera frame for Cloth edge" width="640" height="360" loading="lazy">
+                    </div>
+                    <div class="env-spec" data-env-reveal>
+                      <strong>Cloth edge</strong>
+                      <div><b>PE</b><span>Left gripper · exposed fabric edge</span></div>
+                      <div><b>Rubric</b><span>Fabric edge held</span></div>
+                    </div>
+                  </div>
+                  <div class="env-variants" aria-label="Four edited starting scenes for Cloth edge">
+                    <div class="env-frame env-variant" data-env-variant data-env-reveal><img src="assets/env-cloth-edit-0.webp" alt="Cloth edge, edited variant 1" width="640" height="360" loading="lazy"></div>
+                    <div class="env-frame env-variant" data-env-variant data-env-reveal><img src="assets/env-cloth-edit-1.webp" alt="Cloth edge, edited variant 2" width="640" height="360" loading="lazy"></div>
+                    <div class="env-frame env-variant" data-env-variant data-env-reveal><img src="assets/env-cloth-edit-2.webp" alt="Cloth edge, edited variant 3" width="640" height="360" loading="lazy"></div>
+                    <div class="env-frame env-variant" data-env-variant data-env-reveal><img src="assets/method-cloth-step-0.webp" alt="Cloth edge, edited variant 4" width="640" height="360" loading="lazy"></div>
+                  </div>
+                  <div class="env-review" data-env-reveal>
+                    <div class="env-frame">
+                      <img src="assets/method-cloth-step-3.webp" alt="Sampled world-model rollout for Cloth edge" width="640" height="360" loading="lazy">
+                      <img src="assets/method-cloth-step-1.webp" alt="" width="640" height="360" loading="lazy" class="env-earlier" aria-hidden="true">
+                    </div>
+                    <span>Edge held</span>
+                  </div>
+                  <div class="env-bundle" aria-label="Cloth edge environment bundle">
+                    <div class="env-pack">
+                      <div class="env-frame env-pool-card" style="--pack:0" data-env-pool data-env-reveal><img src="assets/env-cloth-edit-0.webp" alt="" width="640" height="360" loading="lazy" aria-hidden="true"></div>
+                      <div class="env-frame env-pool-card" style="--pack:1" data-env-pool data-env-reveal><img src="assets/env-cloth-edit-1.webp" alt="" width="640" height="360" loading="lazy" aria-hidden="true"></div>
+                      <div class="env-frame env-pool-card" style="--pack:2" data-env-pool data-env-reveal><img src="assets/env-cloth-edit-2.webp" alt="" width="640" height="360" loading="lazy" aria-hidden="true"></div>
+                      <div class="env-frame env-pool-card" style="--pack:3" data-env-pool data-env-reveal><img src="assets/method-cloth-step-0.webp" alt="" width="640" height="360" loading="lazy" aria-hidden="true"></div>
+                    </div>
+                    <span data-env-reveal>Cloth edge</span>
+                  </div>
                 </div>
-                <span class="env-unconfirmed">Grip unconfirmed</span>
-              </div>
-              <div class="env-cell env-pool" role="cell">
-                <div class="env-packet"><img src="assets/method-scissors-step-0.webp" alt="" width="640" height="360" loading="lazy" aria-hidden="true"><span>Frame + PE + rubric</span></div>
-              </div>
-            </div>
-            <div class="env-grid env-lane env-straw" data-env-lane role="row">
-              <span class="env-lane-ink" aria-hidden="true"><i></i></span>
-              <div class="env-task" role="rowheader"><i aria-hidden="true"></i><strong>Thin straw</strong></div>
-              <div class="env-cell env-reset" role="cell">
-                <div class="env-photo"><img src="assets/method-straw-source.webp" alt="Thin straw in the recorded head-camera frame" width="640" height="360" loading="lazy"></div>
-                <span>Selected frame</span>
-              </div>
-              <div class="env-cell env-text-cell" role="cell">
-                <div class="env-pe"><b>PE</b><span>Right gripper · shaft near one end</span></div>
-                <div class="env-rubric"><b>Rubric</b><span>Target segment held</span></div>
-              </div>
-              <div class="env-cell env-edit" role="cell">
-                <div class="env-photo"><img src="assets/method-straw-step-0.webp" alt="Edited initial state for Thin straw" width="640" height="360" loading="lazy"></div>
-                <span>Scene variant</span>
-              </div>
-              <div class="env-cell env-review" role="cell">
-                <div class="env-photo">
-                  <img src="assets/method-straw-step-3.webp" alt="Sampled world-model rollout for Thin straw" width="640" height="360" loading="lazy">
-                  <img src="assets/method-straw-step-1.webp" alt="" width="640" height="360" loading="lazy" class="env-earlier" aria-hidden="true">
+                <div class="env-lane env-scissors" style="--lane-row:3" data-env-lane="scissors">
+                  <div class="env-initial">
+                    <div class="env-frame env-selected" data-env-reveal>
+                      <img src="assets/method-scissors-source.webp" alt="Selected head-camera frame for Scissor handles" width="640" height="360" loading="lazy">
+                    </div>
+                    <div class="env-spec" data-env-reveal>
+                      <strong>Scissor handles</strong>
+                      <div><b>PE</b><span>Left gripper · outer handle edges</span></div>
+                      <div><b>Rubric</b><span>Both outer edges held</span></div>
+                    </div>
+                  </div>
+                  <div class="env-variants" aria-label="Four edited starting scenes for Scissor handles">
+                    <div class="env-frame env-variant" data-env-variant data-env-reveal><img src="assets/env-scissors-edit-0.webp" alt="Scissor handles, edited variant 1" width="640" height="360" loading="lazy"></div>
+                    <div class="env-frame env-variant" data-env-variant data-env-reveal><img src="assets/method-scissors-step-0.webp" alt="Scissor handles, edited variant 2" width="640" height="360" loading="lazy"></div>
+                    <div class="env-frame env-variant" data-env-variant data-env-reveal><img src="assets/env-scissors-edit-2.webp" alt="Scissor handles, edited variant 3" width="640" height="360" loading="lazy"></div>
+                    <div class="env-frame env-variant" data-env-variant data-env-reveal><img src="assets/env-scissors-edit-3.webp" alt="Scissor handles, edited variant 4" width="640" height="360" loading="lazy"></div>
+                  </div>
+                  <div class="env-review" data-env-reveal>
+                    <div class="env-frame">
+                      <img src="assets/method-scissors-step-3.webp" alt="Sampled world-model rollout for Scissor handles" width="640" height="360" loading="lazy">
+                      <img src="assets/method-scissors-step-1.webp" alt="" width="640" height="360" loading="lazy" class="env-earlier" aria-hidden="true">
+                    </div>
+                    <span class="env-unconfirmed">Grip unconfirmed</span>
+                  </div>
+                  <div class="env-bundle" aria-label="Scissor handles environment bundle">
+                    <div class="env-pack">
+                      <div class="env-frame env-pool-card" style="--pack:0" data-env-pool data-env-reveal><img src="assets/env-scissors-edit-0.webp" alt="" width="640" height="360" loading="lazy" aria-hidden="true"></div>
+                      <div class="env-frame env-pool-card" style="--pack:1" data-env-pool data-env-reveal><img src="assets/method-scissors-step-0.webp" alt="" width="640" height="360" loading="lazy" aria-hidden="true"></div>
+                      <div class="env-frame env-pool-card" style="--pack:2" data-env-pool data-env-reveal><img src="assets/env-scissors-edit-2.webp" alt="" width="640" height="360" loading="lazy" aria-hidden="true"></div>
+                      <div class="env-frame env-pool-card" style="--pack:3" data-env-pool data-env-reveal><img src="assets/env-scissors-edit-3.webp" alt="" width="640" height="360" loading="lazy" aria-hidden="true"></div>
+                    </div>
+                    <span data-env-reveal>Scissor handles</span>
+                  </div>
                 </div>
-                <span class="">Shaft held</span>
+                <div class="env-lane env-straw" style="--lane-row:4" data-env-lane="straw">
+                  <div class="env-initial">
+                    <div class="env-frame env-selected" data-env-reveal>
+                      <img src="assets/method-straw-source.webp" alt="Selected head-camera frame for Thin straw" width="640" height="360" loading="lazy">
+                    </div>
+                    <div class="env-spec" data-env-reveal>
+                      <strong>Thin straw</strong>
+                      <div><b>PE</b><span>Right gripper · shaft near one end</span></div>
+                      <div><b>Rubric</b><span>Target segment held</span></div>
+                    </div>
+                  </div>
+                  <div class="env-variants" aria-label="Four edited starting scenes for Thin straw">
+                    <div class="env-frame env-variant" data-env-variant data-env-reveal><img src="assets/env-straw-edit-0.webp" alt="Thin straw, edited variant 1" width="640" height="360" loading="lazy"></div>
+                    <div class="env-frame env-variant" data-env-variant data-env-reveal><img src="assets/env-straw-edit-1.webp" alt="Thin straw, edited variant 2" width="640" height="360" loading="lazy"></div>
+                    <div class="env-frame env-variant" data-env-variant data-env-reveal><img src="assets/env-straw-edit-2.webp" alt="Thin straw, edited variant 3" width="640" height="360" loading="lazy"></div>
+                    <div class="env-frame env-variant" data-env-variant data-env-reveal><img src="assets/method-straw-step-0.webp" alt="Thin straw, edited variant 4" width="640" height="360" loading="lazy"></div>
+                  </div>
+                  <div class="env-review" data-env-reveal>
+                    <div class="env-frame">
+                      <img src="assets/method-straw-step-3.webp" alt="Sampled world-model rollout for Thin straw" width="640" height="360" loading="lazy">
+                      <img src="assets/method-straw-step-1.webp" alt="" width="640" height="360" loading="lazy" class="env-earlier" aria-hidden="true">
+                    </div>
+                    <span>Shaft held</span>
+                  </div>
+                  <div class="env-bundle" aria-label="Thin straw environment bundle">
+                    <div class="env-pack">
+                      <div class="env-frame env-pool-card" style="--pack:0" data-env-pool data-env-reveal><img src="assets/env-straw-edit-0.webp" alt="" width="640" height="360" loading="lazy" aria-hidden="true"></div>
+                      <div class="env-frame env-pool-card" style="--pack:1" data-env-pool data-env-reveal><img src="assets/env-straw-edit-1.webp" alt="" width="640" height="360" loading="lazy" aria-hidden="true"></div>
+                      <div class="env-frame env-pool-card" style="--pack:2" data-env-pool data-env-reveal><img src="assets/env-straw-edit-2.webp" alt="" width="640" height="360" loading="lazy" aria-hidden="true"></div>
+                      <div class="env-frame env-pool-card" style="--pack:3" data-env-pool data-env-reveal><img src="assets/method-straw-step-0.webp" alt="" width="640" height="360" loading="lazy" aria-hidden="true"></div>
+                    </div>
+                    <span data-env-reveal>Thin straw</span>
+                  </div>
+                </div>
               </div>
-              <div class="env-cell env-pool" role="cell">
-                <div class="env-packet"><img src="assets/method-straw-step-0.webp" alt="" width="640" height="360" loading="lazy" aria-hidden="true"><span>Frame + PE + rubric</span></div>
-              </div>
+              <div class="env-flight-layer" data-env-flight-layer aria-hidden="true"></div>
             </div>
           </div>
           <figcaption class="env-footer">
-            <p id="env-caption">Four tasks follow the same construction workflow. Sampled rollout frames illustrate the review evidence. The pool column shows how candidate environments are packaged for admission.</p>
-            <button class="motion-button env-play" type="button" data-env-play hidden><i aria-hidden="true"></i><span>Play</span></button>
+            <p id="env-caption">Recorded frames, scene edits and sampled rollouts. Entry into the environment pool is shown schematically.</p>
+            <div class="env-actions">
+              <button class="motion-button env-overview" type="button" data-env-overview hidden>Overview</button>
+              <button class="motion-button env-play" type="button" data-env-play hidden><i aria-hidden="true"></i><span>Play</span></button>
+            </div>
           </figcaption>
         </figure>
       </section>
