@@ -9,12 +9,12 @@
   <meta property="og:description" content="World-model reinforcement learning at scale, evaluated on 242 unseen real-robot tasks.">
   <meta property="og:image" content="https://mbrl-scaling.github.io/assets/hero-rollouts-36.webp">
   <link rel="icon" href="assets/seed-mark.webp" type="image/webp">
-  <link rel="stylesheet" href="style.css?v=7">
+  <link rel="stylesheet" href="style.css?v=8">
   <link rel="stylesheet" href="environment.css?v=10">
   <link rel="stylesheet" href="world-model.css?v=4">
   <link rel="stylesheet" href="ppo.css?v=4">
   <script src="app.js?v=3" defer></script>
-  <script src="scaling.js" defer></script>
+  <script src="scaling.js?v=2" defer></script>
   <script src="environment.js?v=8" defer></script>
   <script src="world-model.js?v=1" defer></script>
   <script src="ppo.js?v=1" defer></script>
@@ -393,23 +393,40 @@
       <div class="shell section">
         <div class="section-heading">
           <div><p class="eyebrow">Scaling results</p><h2 id="results-heading">Real-robot success across training scales</h2></div>
-          <p>From 38.02% before RL to 62.23% at the largest scale. Each policy faces the same 242 unseen real-robot tasks, with five trials per task.</p>
+          <div class="results-count">
+            <strong>1,210</strong>
+            <p>Real-robot trials per policy</p>
+            <p>242 tasks across 17 skills · 5 trials per task</p>
+          </div>
         </div>
         <div class="results-grid">
           <figure class="chart">
             <div class="chart-heading">
               <h3>Success on unseen real-robot tasks</h3>
-              <button type="button" class="chart-replay" aria-label="Replay animation" hidden>Replay <span aria-hidden="true">↻</span></button>
+              <button type="button" class="chart-replay" aria-label="Replay success rate animation" hidden>Replay <span aria-hidden="true">↻</span></button>
             </div>
             <canvas id="scaling-curve" role="img" aria-label="Success rates: pre-RL SFT 38.02%; 16 RL training tasks 45.70%; 64 tasks 53.72%; 256 tasks 62.23%. Shading shows the 95% bootstrap confidence interval for each RL point." hidden></canvas>
             <img id="scaling-still" src="assets/scaling-curve.png" alt="Success rates rise from 38.02% for SFT to 45.70%, 53.72%, and 62.23% at 16, 64, and 256 RL training tasks." width="1584" height="720" loading="lazy">
             <p class="chart-note">Training task count and rollout budget scale together. The 16-, 64-, and 256-task pools use 256, 1,024, and 4,096 rollouts per training round, respectively.</p>
             <figcaption><span><i></i> 95% bootstrap confidence interval</span><a href="assets/scaling-curve.gif" download>Download GIF <span aria-hidden="true">↓</span></a></figcaption>
           </figure>
-          <div class="result-notes">
-            <div><strong>16 of 17</strong><span>skill categories with a higher success rate than SFT at the largest training scale.</span></div>
-            <div><strong>12.78 s <span aria-hidden="true">→</span> 7.54 s</strong><span>mean duration of each policy’s successful trials.</span></div>
-          </div>
+          <figure class="chart">
+            <div class="chart-heading">
+              <h3>Real-robot execution time</h3>
+              <button type="button" class="chart-replay" aria-label="Replay execution time animation" hidden>Replay <span aria-hidden="true">↻</span></button>
+            </div>
+            <canvas id="execution-time-curve" role="img" aria-label="Mean duration of successful trials: pre-RL SFT 12.78 seconds; 16 RL training tasks 9.32 seconds; 64 tasks 8.44 seconds; 256 tasks 7.54 seconds." hidden></canvas>
+            <table class="chart-values" id="execution-time-still">
+              <thead><tr><th scope="col">RL training tasks</th><th scope="col">Mean time</th></tr></thead>
+              <tbody>
+                <tr><th scope="row">SFT</th><td>12.78 s</td></tr>
+                <tr><th scope="row">16</th><td>9.32 s</td></tr>
+                <tr><th scope="row">64</th><td>8.44 s</td></tr>
+                <tr><th scope="row">256</th><td>7.54 s</td></tr>
+              </tbody>
+            </table>
+            <figcaption>Mean recorded duration of successful trials at each training scale.</figcaption>
+          </figure>
         </div>
       </div>
     </section>
