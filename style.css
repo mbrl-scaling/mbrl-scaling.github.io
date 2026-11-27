@@ -209,11 +209,18 @@ figure, h1, h2, h3, p { margin: 0; }
 .result-notes strong > span { font-weight: 450; color: var(--accent); font-size: .78em; }
 .result-notes > div > span { color: var(--muted); font-size: 13px; line-height: 1.55; }
 
-.method-section { padding-top: clamp(37px, 5.5vw, 77px); }
+.method-section { padding-top: clamp(28px, 4.6vw, 66px); }
 .method-chapter + .method-chapter { margin-top: clamp(43px, 6vw, 88px); }
 .method-chapter-heading { margin-bottom: clamp(13px, 2.05vw, 25px); }
-.method-chapter-heading h3 { font-family: ByteSans, system-ui, sans-serif; font-size: clamp(23px, 3.2vw, 43px); font-weight: 500; line-height: 1.13; letter-spacing: -.036em; text-wrap: balance; }
-.method-chapter-heading p { margin-top: 8px; color: var(--muted); font-size: clamp(13px, 1.35vw, 16px); }
+.method-chapter-heading > h3 {
+  font-family: ByteSans, system-ui, sans-serif;
+  font-size: clamp(24px, 3.2vw, 43px);
+  font-weight: 500;
+  line-height: 1.13;
+  letter-spacing: -.036em;
+  text-wrap: balance;
+}
+.method-chapter-heading > p { margin-top: 8px; color: var(--muted); font-size: clamp(13px, 1.35vw, 16px); }
 .motion-button { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 0 12px; color: #244b98; background: var(--white); border: 1px solid #ccdaeb; border-radius: 23px; white-space: nowrap; font-size: 12px; font-weight: 650; }
 .motion-button:hover { background: #e9f1fd; }
 .motion-button i { border-block: 5px solid transparent; border-left: 8px solid currentColor; }
