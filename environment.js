@@ -19,7 +19,6 @@ const envLanes = [...envStory.querySelectorAll("[data-env-lane]")].map(lane => (
   color: getComputedStyle(lane).getPropertyValue("--env-lane-color").trim(),
   card: envStory.querySelector(`[data-env-deck="${lane.dataset.envLane}"]`),
   selected: lane.querySelector(".env-selected"),
-  title: lane.querySelector(".env-initial > strong"),
   spec: lane.querySelector(".env-spec"),
   draft: [...lane.querySelectorAll("[data-env-write]")].map(prepareEnvDraft),
   edit: [...lane.querySelectorAll("[data-env-variant]")],
@@ -200,7 +199,6 @@ function renderEnv() {
     lane.card.style.setProperty("--env-sheet", 1 - envEase(pick) * .86);
     flyEnv(lane.pickFlight, card, selected, pick, 24 + index * 4, 10 - index * 5);
     setEnvAlpha(lane.selected, (pick - .79) * 5);
-    setEnvAlpha(lane.title, (pick - .79) * 5);
     const draft = envAt(time, 2300, 420);
     setEnvAlpha(lane.spec, draft);
     writeEnvDraft(lane.draft[0], envAt(time, 2640, 1210));

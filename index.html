@@ -10,12 +10,12 @@
   <meta property="og:image" content="https://mbrl-scaling.github.io/assets/hero-rollouts-36.webp">
   <link rel="icon" href="assets/seed-mark.webp" type="image/webp">
   <link rel="stylesheet" href="style.css?v=5">
-  <link rel="stylesheet" href="environment.css?v=7">
-  <link rel="stylesheet" href="world-model.css?v=1">
-  <link rel="stylesheet" href="ppo.css?v=1">
+  <link rel="stylesheet" href="environment.css?v=8">
+  <link rel="stylesheet" href="world-model.css?v=2">
+  <link rel="stylesheet" href="ppo.css?v=2">
   <script src="app.js?v=3" defer></script>
   <script src="scaling.js" defer></script>
-  <script src="environment.js?v=6" defer></script>
+  <script src="environment.js?v=7" defer></script>
   <script src="world-model.js?v=1" defer></script>
   <script src="ppo.js?v=1" defer></script>
   <script src="agent.js" defer></script>
@@ -95,7 +95,6 @@
                     <div class="env-frame env-selected" data-env-reveal>
                       <img src="assets/method-source-head.webp" alt="Selected head-camera frame for Basket rim" width="640" height="360" loading="lazy">
                     </div>
-                    <strong data-env-reveal>Basket rim</strong>
                   </div>
                   <div class="env-spec" data-env-reveal>
                     <div data-env-pe><b>PE</b><span data-env-write>Grasp the long rim midpoint with the left gripper.</span></div>
@@ -113,7 +112,6 @@
                     <div class="env-frame env-selected" data-env-reveal>
                       <img src="assets/method-cloth-source.webp" alt="Selected head-camera frame for Cloth edge" width="640" height="360" loading="lazy">
                     </div>
-                    <strong data-env-reveal>Cloth edge</strong>
                   </div>
                   <div class="env-spec" data-env-reveal>
                     <div data-env-pe><b>PE</b><span data-env-write>Grasp the exposed fabric edge with the left gripper.</span></div>
@@ -131,7 +129,6 @@
                     <div class="env-frame env-selected" data-env-reveal>
                       <img src="assets/method-scissors-source.webp" alt="Selected head-camera frame for Scissor handles" width="640" height="360" loading="lazy">
                     </div>
-                    <strong data-env-reveal>Scissor handles</strong>
                   </div>
                   <div class="env-spec" data-env-reveal>
                     <div data-env-pe><b>PE</b><span data-env-write>Grasp both outer handle edges with the left gripper.</span></div>
@@ -149,7 +146,6 @@
                     <div class="env-frame env-selected" data-env-reveal>
                       <img src="assets/method-straw-source.webp" alt="Selected head-camera frame for Thin straw" width="640" height="360" loading="lazy">
                     </div>
-                    <strong data-env-reveal>Thin straw</strong>
                   </div>
                   <div class="env-spec" data-env-reveal>
                     <div data-env-pe><b>PE</b><span data-env-write>Grasp near one end of the shaft with the right gripper.</span></div>
@@ -222,64 +218,67 @@
                 </div>
               </div>
               <div class="wm-tuning" data-wm-tuning>
-                <span>Pretrained Omni</span>
+                <span class="wm-tuning-brand"><img src="assets/omni-mark.webp" width="192" height="192" alt="" loading="lazy">Pretrained Omni</span>
                 <strong>Supervised fine-tuning</strong>
               </div>
             </div>
             <div class="wm-inference">
               <div class="wm-inference-heading">
                 <h4>Autoregressive inference</h4>
-                <span>Cloth grasp rollout</span>
+                <span>Blue towel fold · Real robot</span>
               </div>
               <div class="wm-live">
                 <div class="wm-policy" data-wm-policy><strong>Policy</strong><span>Action chunk <b data-wm-action>a₀</b></span></div>
                 <div class="wm-context" data-wm-context>
                   <div class="wm-context-frame wm-frame">
-                    <img src="assets/method-cloth-step-0.webp" width="960" height="540" loading="lazy" decoding="async" alt="Initial scene for the cloth grasp" data-wm-context-image>
-                    <img src="assets/method-cloth-step-1.webp" width="960" height="540" loading="lazy" decoding="async" alt="" data-wm-context-image>
-                    <img src="assets/method-cloth-step-2.webp" width="960" height="540" loading="lazy" decoding="async" alt="" data-wm-context-image>
-                    <img src="assets/method-cloth-step-3.webp" width="960" height="540" loading="lazy" decoding="async" alt="" data-wm-context-image>
+                    <img src="assets/eval242-fold-0.webp" width="960" height="540" loading="lazy" decoding="async" alt="Blue towel lying flat before the fold" data-wm-context-image>
+                    <img src="assets/eval242-fold-1.webp" width="960" height="540" loading="lazy" decoding="async" alt="" data-wm-context-image>
+                    <img src="assets/eval242-fold-2.webp" width="960" height="540" loading="lazy" decoding="async" alt="" data-wm-context-image>
+                    <img src="assets/eval242-fold-3.webp" width="960" height="540" loading="lazy" decoding="async" alt="" data-wm-context-image>
                   </div>
                   <strong>Recent context</strong>
                   <span>Text · observations · actions</span>
                 </div>
                 <div class="wm-generator" data-wm-generator>
-                  <div class="wm-core" aria-hidden="true"><i></i><i></i><i></i></div>
+                  <div class="wm-core" aria-hidden="true"><img src="assets/omni-mark.webp" width="192" height="192" alt="" loading="lazy"></div>
                   <strong>World model</strong>
                   <span>Omni · Multimodal MoE</span>
                 </div>
                 <div class="wm-output" data-wm-output>
                   <div class="wm-output-frame wm-frame" data-wm-output-frame>
-                    <img src="assets/method-cloth-step-1.webp" width="960" height="540" loading="lazy" decoding="async" alt="One of the predicted head-camera views in the cloth grasp rollout" data-wm-output-image>
-                    <img src="assets/method-cloth-step-2.webp" width="960" height="540" loading="lazy" decoding="async" alt="" data-wm-output-image>
-                    <img src="assets/method-cloth-step-3.webp" width="960" height="540" loading="lazy" decoding="async" alt="" data-wm-output-image>
+                    <img src="assets/eval242-fold-1.webp" width="960" height="540" loading="lazy" decoding="async" alt="Head-camera view of the grippers taking hold of the towel" data-wm-output-image>
+                    <img src="assets/eval242-fold-2.webp" width="960" height="540" loading="lazy" decoding="async" alt="Head-camera view of the towel during the fold" data-wm-output-image>
+                    <img src="assets/eval242-fold-3.webp" width="960" height="540" loading="lazy" decoding="async" alt="Head-camera view of the completed towel fold" data-wm-output-image>
                     <i class="wm-scan" aria-hidden="true"></i>
                   </div>
-                  <strong>Predicted observation <b data-wm-predicted>ô₁</b></strong>
-                  <span>Head view</span>
+                  <strong>Next observation <b data-wm-predicted>ô₁</b></strong>
+                  <span>Real-robot replay frame</span>
                 </div>
                 <p class="wm-feedback" data-wm-feedback>Return to policy and append to history</p>
               </div>
               <div class="wm-history">
                 <h5>Interleaved history</h5>
-                <ol class="wm-frames" aria-label="Initial observation, then policy actions interleaved with world-model predictions">
-                  <li class="wm-history-observation" data-wm-history><img src="assets/method-cloth-step-0.webp" width="960" height="540" loading="lazy" decoding="async" alt=""><span><span class="sr-only">Initial observation </span>o₀</span></li>
+                <ol class="wm-frames" aria-label="Schematic action and observation history illustrated with real-robot frames">
+                  <li class="wm-history-observation" data-wm-history><img src="assets/eval242-fold-0.webp" width="960" height="540" loading="lazy" decoding="async" alt=""><span><span class="sr-only">Initial observation </span>o₀</span></li>
                   <li class="wm-history-action" data-wm-history><span><span class="sr-only">Action chunk </span>a₀</span></li>
-                  <li class="wm-history-observation" data-wm-history><img src="assets/method-cloth-step-1.webp" width="960" height="540" loading="lazy" decoding="async" alt=""><span><span class="sr-only">Predicted observation </span>ô₁</span></li>
+                  <li class="wm-history-observation" data-wm-history><img src="assets/eval242-fold-1.webp" width="960" height="540" loading="lazy" decoding="async" alt=""><span><span class="sr-only">Next observation </span>ô₁</span></li>
                   <li class="wm-history-action" data-wm-history><span><span class="sr-only">Action chunk </span>a₁</span></li>
-                  <li class="wm-history-observation" data-wm-history><img src="assets/method-cloth-step-2.webp" width="960" height="540" loading="lazy" decoding="async" alt=""><span><span class="sr-only">Predicted observation </span>ô₂</span></li>
+                  <li class="wm-history-observation" data-wm-history><img src="assets/eval242-fold-2.webp" width="960" height="540" loading="lazy" decoding="async" alt=""><span><span class="sr-only">Next observation </span>ô₂</span></li>
                   <li class="wm-history-action" data-wm-history><span><span class="sr-only">Action chunk </span>a₂</span></li>
-                  <li class="wm-history-observation" data-wm-history><img src="assets/method-cloth-step-3.webp" width="960" height="540" loading="lazy" decoding="async" alt=""><span><span class="sr-only">Predicted observation </span>ô₃</span></li>
+                  <li class="wm-history-observation" data-wm-history><img src="assets/eval242-fold-3.webp" width="960" height="540" loading="lazy" decoding="async" alt=""><span><span class="sr-only">Next observation </span>ô₃</span></li>
                 </ol>
               </div>
             </div>
             <div class="wm-flight-layer" aria-hidden="true">
-              <img src="assets/method-cloth-step-1.webp" width="960" height="540" decoding="async" alt="" data-wm-flight hidden>
+              <img src="assets/eval242-fold-1.webp" width="960" height="540" decoding="async" alt="" data-wm-flight hidden>
             </div>
           </div>
           <figcaption class="wm-footer" id="wm-motion-caption">
-            <p>Sampled head views from one rollout illustrate the decoding loop. The world model predicts the head and both wrist views jointly.</p>
-            <button class="motion-button" type="button" aria-label="Play world model animation" data-wm-play hidden><i aria-hidden="true"></i><span>Play</span></button>
+            <p>A successful trial from the 242-task real-robot evaluation illustrates the loop. The world model predicts all three camera views jointly.</p>
+            <div class="wm-actions">
+              <a class="motion-button" href="assets/eval242-fold-trajectory.mp4" target="_blank" rel="noopener" aria-label="Watch the full blue towel folding trial">Full trial <span aria-hidden="true">↗</span></a>
+              <button class="motion-button" type="button" aria-label="Play world model animation" data-wm-play hidden><i aria-hidden="true"></i><span>Play</span></button>
+            </div>
           </figcaption>
         </figure>
       </section>
@@ -298,18 +297,18 @@
                 <p>Task instructions and initial scenes</p>
               </header>
               <div class="ppo-pool" aria-hidden="true">
-                <img src="assets/env-basket-edit-1.webp" width="640" height="360" alt="" loading="lazy">
-                <img src="assets/method-cloth-step-0.webp" width="960" height="540" alt="" loading="lazy" data-ppo-pick="cloth">
-                <img src="assets/env-straw-edit-2.webp" width="640" height="360" alt="" loading="lazy">
-                <img src="assets/env-cloth-edit-1.webp" width="640" height="360" alt="" loading="lazy">
-                <img src="assets/env-scissors-edit-2.webp" width="640" height="360" alt="" loading="lazy">
-                <img src="assets/method-scissors-step-0.webp" width="960" height="540" alt="" loading="lazy" data-ppo-pick="scissors">
-                <img src="assets/method-position-head.webp" width="640" height="360" alt="" loading="lazy">
-                <img src="assets/env-scissors-edit-3.webp" width="640" height="360" alt="" loading="lazy">
-                <img src="assets/env-cloth-edit-2.webp" width="640" height="360" alt="" loading="lazy">
-                <img src="assets/method-straw-step-0.webp" width="960" height="540" alt="" loading="lazy" data-ppo-pick="straw">
-                <img src="assets/env-basket-edit-3.webp" width="640" height="360" alt="" loading="lazy">
-                <img src="assets/env-straw-edit-1.webp" width="640" height="360" alt="" loading="lazy">
+                <img src="assets/eval242-pool-grasp.webp" width="384" height="216" alt="" loading="lazy">
+                <img src="assets/eval242-wipe-0.webp" width="960" height="540" alt="" loading="lazy" data-ppo-pick="wipe">
+                <img src="assets/eval242-pool-insert.webp" width="384" height="216" alt="" loading="lazy">
+                <img src="assets/eval242-pool-place.webp" width="384" height="216" alt="" loading="lazy">
+                <img src="assets/eval242-pool-stack.webp" width="384" height="216" alt="" loading="lazy">
+                <img src="assets/eval242-drag-0.webp" width="960" height="540" alt="" loading="lazy" data-ppo-pick="drag">
+                <img src="assets/eval242-pool-handover.webp" width="384" height="216" alt="" loading="lazy">
+                <img src="assets/eval242-pool-push.webp" width="384" height="216" alt="" loading="lazy">
+                <img src="assets/eval242-pool-rotate.webp" width="384" height="216" alt="" loading="lazy">
+                <img src="assets/eval242-flip-0.webp" width="960" height="540" alt="" loading="lazy" data-ppo-pick="flip">
+                <img src="assets/eval242-pool-close.webp" width="384" height="216" alt="" loading="lazy">
+                <img src="assets/eval242-pool-topple.webp" width="384" height="216" alt="" loading="lazy">
               </div>
             </section>
             <section class="ppo-rollouts" aria-labelledby="ppo-rollout-heading">
@@ -318,31 +317,31 @@
                 <p>Current policy ↔ frozen world model</p>
               </header>
               <div class="ppo-tracks" data-ppo-tracks>
-                <div class="ppo-track ppo-cloth" data-ppo-track="cloth">
-                  <h5>Cloth edge</h5>
+                <div class="ppo-track" data-ppo-track="wipe">
+                  <h5>Wipe the plate</h5>
                   <div class="ppo-frames">
-                    <img src="assets/method-cloth-step-0.webp" width="960" height="540" alt="Initial scene for the cloth grasp" loading="lazy">
-                    <img src="assets/method-cloth-step-1.webp" width="960" height="540" alt="First shown prediction for the cloth grasp" loading="lazy">
-                    <img src="assets/method-cloth-step-2.webp" width="960" height="540" alt="Later prediction for the cloth grasp" loading="lazy">
-                    <img src="assets/method-cloth-step-3.webp" width="960" height="540" alt="Last shown prediction for the cloth grasp" loading="lazy">
+                    <img src="assets/eval242-wipe-0.webp" width="960" height="540" alt="Plate before wiping" loading="lazy">
+                    <img src="assets/eval242-wipe-1.webp" width="960" height="540" alt="Robot holding the sponge and stabilizing the plate" loading="lazy">
+                    <img src="assets/eval242-wipe-2.webp" width="960" height="540" alt="Sponge wiping the plate" loading="lazy">
+                    <img src="assets/eval242-wipe-3.webp" width="960" height="540" alt="Cleaned plate at the end of the trial" loading="lazy">
                   </div>
                 </div>
-                <div class="ppo-track ppo-scissors" data-ppo-track="scissors">
-                  <h5>Scissor handles</h5>
+                <div class="ppo-track" data-ppo-track="drag">
+                  <h5>Drag the pencil case</h5>
                   <div class="ppo-frames">
-                    <img src="assets/method-scissors-step-0.webp" width="960" height="540" alt="Initial scene for the scissors grasp" loading="lazy">
-                    <img src="assets/method-scissors-step-1.webp" width="960" height="540" alt="First shown prediction for the scissors grasp" loading="lazy">
-                    <img src="assets/method-scissors-step-2.webp" width="960" height="540" alt="Later prediction for the scissors grasp" loading="lazy">
-                    <img src="assets/method-scissors-step-3.webp" width="960" height="540" alt="Last shown prediction for the scissors grasp" loading="lazy">
+                    <img src="assets/eval242-drag-0.webp" width="960" height="540" alt="Pencil case before dragging" loading="lazy">
+                    <img src="assets/eval242-drag-1.webp" width="960" height="540" alt="Gripper approaching the pencil case" loading="lazy">
+                    <img src="assets/eval242-drag-2.webp" width="960" height="540" alt="Robot dragging the pencil case toward the coaster" loading="lazy">
+                    <img src="assets/eval242-drag-3.webp" width="960" height="540" alt="Pencil case in front of and to the left of the coaster" loading="lazy">
                   </div>
                 </div>
-                <div class="ppo-track ppo-straw" data-ppo-track="straw">
-                  <h5>Thin straw</h5>
+                <div class="ppo-track" data-ppo-track="flip">
+                  <h5>Flip the paper box</h5>
                   <div class="ppo-frames">
-                    <img src="assets/method-straw-step-0.webp" width="960" height="540" alt="Initial scene for the straw grasp" loading="lazy">
-                    <img src="assets/method-straw-step-1.webp" width="960" height="540" alt="First shown prediction for the straw grasp" loading="lazy">
-                    <img src="assets/method-straw-step-2.webp" width="960" height="540" alt="Later prediction for the straw grasp" loading="lazy">
-                    <img src="assets/method-straw-step-3.webp" width="960" height="540" alt="Last shown prediction for the straw grasp" loading="lazy">
+                    <img src="assets/eval242-flip-0.webp" width="960" height="540" alt="Printed paper box before flipping" loading="lazy">
+                    <img src="assets/eval242-flip-1.webp" width="960" height="540" alt="Gripper grasping the paper box" loading="lazy">
+                    <img src="assets/eval242-flip-2.webp" width="960" height="540" alt="Robot turning the paper box over" loading="lazy">
+                    <img src="assets/eval242-flip-3.webp" width="960" height="540" alt="Paper box resting on its opposite broad face" loading="lazy">
                   </div>
                 </div>
               </div>
@@ -353,9 +352,9 @@
                 <p>VLM checks the success rubric</p>
               </header>
               <div class="ppo-scores">
-                <div class="ppo-score" data-ppo-score="cloth"><span>Cloth edge</span><b aria-label="Cloth rollout reward"><span>r<sub>1</sub></span></b></div>
-                <div class="ppo-score" data-ppo-score="scissors"><span>Scissors</span><b aria-label="Scissors rollout reward"><span>r<sub>2</sub></span></b></div>
-                <div class="ppo-score" data-ppo-score="straw"><span>Straw</span><b aria-label="Straw rollout reward"><span>r<sub>3</sub></span></b></div>
+                <div class="ppo-score" data-ppo-score="wipe"><span>Plate wipe</span><b aria-label="Plate wiping rollout reward"><span>r<sub>1</sub></span></b></div>
+                <div class="ppo-score" data-ppo-score="drag"><span>Pencil case</span><b aria-label="Pencil case dragging rollout reward"><span>r<sub>2</sub></span></b></div>
+                <div class="ppo-score" data-ppo-score="flip"><span>Box flip</span><b aria-label="Box flipping rollout reward"><span>r<sub>3</sub></span></b></div>
               </div>
             </section>
             <section class="ppo-optimization" aria-labelledby="ppo-update-heading">
@@ -381,7 +380,7 @@
             <div class="ppo-flight-layer" data-ppo-flights aria-hidden="true"></div>
           </div>
           <figcaption class="ppo-footer">
-            <p id="ppo-caption">The rollouts show sampled head-camera views from the world model. The rubric reward and value estimates yield advantages for the PPO update.</p>
+            <p id="ppo-caption">Successful trials from the 242-task real-robot evaluation illustrate the rollout stage. PPO training collects its trajectories in the frozen world model.</p>
             <button class="motion-button" type="button" data-ppo-play aria-label="Play PPO training animation" hidden><i aria-hidden="true"></i><span>Play</span></button>
           </figcaption>
         </figure>

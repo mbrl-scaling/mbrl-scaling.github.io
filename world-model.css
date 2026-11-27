@@ -123,6 +123,8 @@
   box-shadow: 0 4px 12px #3e628012;
 }
 .wm-tuning span { color: var(--wm-muted); font-size: 10px; }
+.wm-tuning-brand { display: flex; align-items: center; justify-content: end; gap: 5px; }
+.wm-tuning-brand img { width: 17px; height: 17px; object-fit: contain; }
 .wm-tuning strong { font-size: 12px; font-weight: 700; }
 .wm-tuning[data-converged] {
   background: #e5eefe;
@@ -219,27 +221,16 @@
 
 .wm-core {
   --wm-core-glow: 0;
-  position: relative;
-  isolation: isolate;
-  display: grid;
-  place-items: center;
   width: 44px;
   aspect-ratio: 1;
   margin: 0 auto 5px;
 }
-.wm-core i {
-  position: absolute;
-  width: 23px;
-  aspect-ratio: 1;
-  border: 1px solid #8398d5;
-  border-radius: 5px;
-  transform: translateY(var(--wm-depth)) rotate(-34deg) skewX(19deg);
-  background: #8eade540;
-  box-shadow: 0 0 calc(13px * var(--wm-core-glow)) #5e81e9;
+.wm-core img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 0 calc(8px * var(--wm-core-glow)) #e19f4a);
 }
-.wm-core i:nth-child(1) { --wm-depth: 6px; }
-.wm-core i:nth-child(2) { --wm-depth: 0; }
-.wm-core i:nth-child(3) { --wm-depth: -6px; background: #a7baf578; }
 
 .wm-scan {
   position: absolute;
@@ -324,6 +315,7 @@
   border-top: 1px solid #d9e3f0;
 }
 .wm-footer p { max-width: 78ch; color: #46617f; font-size: 12px; line-height: 1.45; }
+.wm-actions { display: flex; flex: 0 0 auto; gap: 7px; }
 .wm-footer .motion-button { flex: 0 0 auto; }
 .wm-footer .motion-button[hidden] { display: none; }
 
@@ -345,6 +337,8 @@
   .wm-generator strong { font-size: 11px; }
   .wm-generator > span { font-size: 9px; }
   .wm-core { width: 36px; }
+  .wm-footer { flex-direction: column; align-items: flex-start; gap: 8px; }
+  .wm-actions { align-self: end; }
   .wm-footer p { font-size: 11px; }
   .wm-footer .motion-button { min-height: 36px; }
 }
