@@ -4,6 +4,9 @@ const envBoard = envStory.querySelector("[data-env-board]");
 const envLayer = envStory.querySelector("[data-env-flight-layer]");
 const envCanvas = envStory.querySelector("[data-env-paths]");
 const envInk = envCanvas.getContext("2d");
+const envArchive = envStory.querySelector(".env-archive");
+const envApproval = envStory.querySelector("[data-env-approval]");
+const envArrow = envApproval.querySelector("i");
 const envWell = envStory.querySelector("[data-env-well]");
 const envPlay = envStory.querySelector("[data-env-play]");
 const envOverview = envStory.querySelector("[data-env-overview]");
@@ -14,12 +17,11 @@ const envLanes = [...envStory.querySelectorAll("[data-env-lane]")].map(lane => (
   color: getComputedStyle(lane).getPropertyValue("--env-lane-color").trim(),
   card: envStory.querySelector(`[data-env-deck="${lane.dataset.envLane}"]`),
   selected: lane.querySelector(".env-selected"),
+  title: lane.querySelector(".env-initial > strong"),
   spec: lane.querySelector(".env-spec"),
+  draft: [...lane.querySelectorAll("[data-env-write]")].map(prepareEnvDraft),
   edit: [...lane.querySelectorAll("[data-env-variant]")],
-  review: lane.querySelector(".env-review"),
-  sample: lane.querySelector(".env-earlier"),
-  targets: [...lane.querySelectorAll("[data-env-pool]")],
-  name: lane.querySelector(".env-bundle > span")
+  targets: [...envWell.querySelectorAll(`[data-env-pool="${lane.dataset.envLane}"]`)]
 }));
 let envLayout;
 let envTime = 0;
@@ -37,6 +39,24 @@ const envEase = value => {
 };
 const envAt = (time, start, length) => envClamp((time - start) / length);
 const envMix = (start, end, amount) => start + (end - start) * amount;
+
+function prepareEnvDraft(line) {
+  const text = line.textContent.trim();
+  const full = document.createElement("span");
+  full.className = "env-writing-full";
+  full.textContent = text;
+  const ink = document.createElement("span");
+  ink.className = "env-writing-ink";
+  ink.setAttribute("aria-hidden", "true");
+  line.replaceChildren(full, ink);
+  return { line, ink, text };
+}
+
+function writeEnvDraft({ line, ink, text }, progress) {
+  const excerpt = text.slice(0, Math.floor(text.length * progress));
+  if (ink.textContent !== excerpt) ink.textContent = excerpt;
+  line.toggleAttribute("data-env-writing", progress > 0 && progress < 1);
+}
 
 function makeEnvFlight(frame) {
   const flight = new Image();
@@ -79,11 +99,13 @@ function measureEnv() {
   envCanvas.width = Math.round(width * dpr);
   envCanvas.height = Math.round(height * dpr);
   envInk?.setTransform(dpr, 0, 0, dpr, 0, 0);
-  envLayout = { width, height, compact, scale, well: box(envWell) };
+  const approval = box(envApproval);
+  const arrow = box(envArrow);
+  envLayout = { width, height, compact, approval, gate: { ...arrow, x: approval.x, width: approval.width }, archiveHeight: envArchive.offsetHeight };
   for (const lane of envLanes) {
     lane.boxes = {
-      card: box(lane.card), selected: box(lane.selected), edit: lane.edit.map(box),
-      review: box(lane.review.querySelector(".env-frame")), targets: lane.targets.map(box)
+      card: box(lane.card), selected: box(lane.selected), spec: box(lane.spec),
+      edit: lane.edit.map(box), targets: lane.targets.map(box)
     };
     lane.pickFlight.style.width = `${lane.boxes.selected.width}px`;
     lane.editFlights.forEach((flight, index) => { flight.style.width = `${lane.boxes.edit[index].width}px`; });
@@ -96,14 +118,24 @@ function setEnvAlpha(element, opacity) {
   element.style.setProperty("--env-alpha", envEase(opacity).toFixed(3));
 }
 
-function flyEnv(flight, from, to, progress, arc, rotation) {
+function flyEnv(flight, from, to, progress, arc, rotation, via) {
   const active = progress > 0 && progress < 1;
   if (flight.hidden === active) flight.hidden = !active;
   if (!active) return;
   const eased = envEase(progress);
   const width = envMix(from.width, to.width, eased);
-  const x = envMix(from.x + from.width / 2, to.x + to.width / 2, eased) - width / 2;
-  const y = envMix(from.y, to.y, eased) - Math.sin(Math.PI * eased) * arc;
+  const fromCenter = from.x + from.width / 2;
+  const toCenter = to.x + to.width / 2;
+  const center = envMix(fromCenter, toCenter, eased);
+  const x = center - width / 2;
+  let y = envMix(from.y, to.y, eased) - Math.sin(Math.PI * eased) * arc;
+  if (via) {
+    const gate = via.x + via.width / 2;
+    const top = via.y + via.height - width * 9 / 32;
+    y = center < gate
+      ? envMix(from.y, top, envEase(envAt(center, fromCenter, gate - fromCenter)))
+      : envMix(top, to.y, envEase(envAt(center, gate, toCenter - gate)));
+  }
   const angle = rotation * Math.sin(Math.PI * progress);
   flight.style.transform = `translate3d(${x}px,${y}px,0) scale(${width / to.width}) rotate(${angle}deg)`;
 }
@@ -131,12 +163,12 @@ function routeEnv(from, to, color, progress) {
 function followEnvBoard() {
   if (!envLayout.compact || !envFollow || envWide || !envPlaying) return;
   const viewport = envScroll.clientWidth;
-  const { selected, edit, review } = envLanes[0].boxes;
+  const { selected, spec, edit } = envLanes[0].boxes;
   const extent = envLayout.width - viewport;
   const center = box => Math.min(extent, Math.max(0, box.x + box.width / 2 - viewport * .48));
   const keys = [
-    [0, 0], [950, 0], [2700, center(selected)], [5250, center(edit[1])],
-    [8050, center(review)], [10950, extent]
+    [0, 0], [950, 0], [2590, center(selected)], [3200, center(spec)],
+    [4870, center(spec)], [6570, center(edit[1])], [8290, center(envLayout.approval)], [10150, extent]
   ];
   const index = keys.findLastIndex(([at]) => at <= envTime);
   const [at, x] = keys[index];
@@ -150,37 +182,40 @@ function renderEnv() {
   const reduced = envMotion.matches;
   const timeline = reduced ? envDuration : envTime;
   envInk?.clearRect(0, 0, envLayout.width, envLayout.height);
-  envWell.style.setProperty("--env-well", envEase(envAt(timeline, 8050, 1800)));
+  const scan = envAt(timeline, 170, 1630);
+  envArchive.style.setProperty("--env-scan-y", envMix(-58, envLayout.archiveHeight, envEase(scan)));
+  envArchive.style.setProperty("--env-scan-alpha", Math.sin(Math.PI * scan).toFixed(3));
+  const approval = envAt(timeline, 7710, 620);
+  setEnvAlpha(envApproval, approval);
+  envApproval.style.setProperty("--env-approval", envEase(approval));
+  envWell.style.setProperty("--env-well", envEase(envAt(timeline, 8650, 1760)));
   envLanes.forEach((lane, index) => {
     const time = timeline - index * 235;
-    const { card, selected, edit, review, targets } = lane.boxes;
+    const { card, selected, spec, edit, targets } = lane.boxes;
     const pick = envAt(time, 1080, 1220);
     lane.card.style.setProperty("--env-sheet", 1 - envEase(pick) * .86);
     flyEnv(lane.pickFlight, card, selected, pick, 24 + index * 4, 10 - index * 5);
     setEnvAlpha(lane.selected, (pick - .79) * 5);
-    setEnvAlpha(lane.spec, envAt(time, 2230, 560));
+    setEnvAlpha(lane.title, (pick - .79) * 5);
+    const draft = envAt(time, 2300, 420);
+    setEnvAlpha(lane.spec, draft);
+    writeEnvDraft(lane.draft[0], envAt(time, 2640, 1210));
+    writeEnvDraft(lane.draft[1], envAt(time, 3860, 950));
     routeEnv(card, selected, lane.color, envEase(pick));
+    routeEnv(selected, spec, lane.color, envEase(draft));
 
     lane.edit.forEach((frame, variant) => {
-      const spread = envAt(time, 3680 + variant * 275, 1070);
-      flyEnv(lane.editFlights[variant], selected, edit[variant], spread, 20 - variant * 5, (variant - 1.5) * 7);
+      const spread = envAt(time, 4890 + variant * 260, 1070);
+      flyEnv(lane.editFlights[variant], spec, edit[variant], spread, 20 - variant * 5, (variant - 1.5) * 7);
       setEnvAlpha(frame, (spread - .83) * 5.9);
-      routeEnv(selected, edit[variant], lane.color, envEase(spread));
+      routeEnv(spec, edit[variant], lane.color, envEase(spread));
     });
 
-    const check = envAt(time, 6680, 600);
-    setEnvAlpha(lane.review, check);
-    lane.sample.style.setProperty("--env-sample", reduced ? 0 : 1 - envEase(envAt(time, 7280, 1150)));
-    routeEnv(edit[3], review, lane.color, envEase(check));
-
+    routeEnv(edit[3], envLayout.gate, lane.color, envEase(approval));
     lane.targets.forEach((frame, variant) => {
-      const deposit = envAt(time, 9410 + variant * 185, 1060);
-      flyEnv(lane.poolFlights[variant], edit[variant], targets[variant], deposit, 30 + variant * 7, -12 + variant * 4);
+      const deposit = envAt(timeline, 8460 + (variant * envLanes.length + index) * 175, 1000);
+      flyEnv(lane.poolFlights[variant], edit[variant], targets[variant], deposit, 0, -12 + variant * 4, envLayout.gate);
       setEnvAlpha(frame, (deposit - .84) * 6.3);
-      if (variant === 3) {
-        setEnvAlpha(lane.name, envAt(time, 10750, 500));
-        routeEnv(review, targets[variant], lane.color, envEase(deposit));
-      }
     });
   });
   followEnvBoard();
@@ -222,15 +257,19 @@ function startEnv() {
   envFrame = requestAnimationFrame(stepEnv);
 }
 
+function showEnvBoard() {
+  if (envScroll.getBoundingClientRect().top < document.querySelector(".site-header").offsetHeight) {
+    envStory.scrollIntoView({ block: "start", behavior: envMotion.matches ? "instant" : "smooth" });
+  }
+}
+
 envPlay.addEventListener("click", () => {
   envAutoplay = !envPlaying;
   if (envPlaying) {
     pauseEnv();
   } else {
     envFollow = true;
-    if (envScroll.getBoundingClientRect().top < document.querySelector(".site-header").offsetHeight) {
-      envStory.scrollIntoView({ block: "start", behavior: "smooth" });
-    }
+    showEnvBoard();
     startEnv();
   }
 });
@@ -241,6 +280,7 @@ envOverview.addEventListener("click", () => {
   envOverview.textContent = envWide ? "Full size" : "Overview";
   envOverview.setAttribute("aria-pressed", String(envWide));
   measureEnv();
+  showEnvBoard();
 });
 envScroll.addEventListener("pointerdown", () => { envFollow = false; }, { passive: true });
 envScroll.addEventListener("wheel", event => {
