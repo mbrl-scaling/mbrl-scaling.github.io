@@ -10,11 +10,11 @@
   <meta property="og:image" content="https://mbrl-scaling.github.io/assets/hero-rollouts-36.webp">
   <link rel="icon" href="assets/seed-mark.webp" type="image/webp">
   <link rel="stylesheet" href="style.css?v=3">
-  <link rel="stylesheet" href="environment.css">
+  <link rel="stylesheet" href="environment.css?v=2">
   <script src="app.js?v=3" defer></script>
   <script src="scaling.js" defer></script>
   <script src="method.js?v=2" defer></script>
-  <script src="environment.js" defer></script>
+  <script src="environment.js?v=2" defer></script>
   <script src="agent.js" defer></script>
   <title>Scaling Reinforcement Learning in World Models | Project Page</title>
 </head>
@@ -63,78 +63,29 @@
           <h3 id="env-method-heading">Agent-driven environment construction</h3>
           <p>From recorded robot demonstrations to a pool of training environments.</p>
         </div>
-        <figure class="env-story" data-env-story data-phase="library" aria-labelledby="env-method-heading" aria-describedby="env-caption">
-          <div class="env-stage" aria-hidden="true">
-            <div class="env-stage-title">
-              <span data-env-role>Construction agent</span>
-              <strong data-env-title>Select an initial state</strong>
+        <figure class="env-story" data-env-story data-phase="0" aria-labelledby="env-method-heading" aria-describedby="env-caption">
+          <div class="env-flow">
+            <canvas class="env-route-ink" aria-hidden="true"></canvas>
+            <div class="env-sample" aria-hidden="true">
+              <div class="env-sample-image">
+                <img data-env-base src="assets/method-source-head.webp" alt="" width="640" height="360" loading="lazy">
+                <img data-env-overlay alt="" width="640" height="360" hidden>
+                <video data-env-preview src="assets/env-candidate-sequence.mp4" poster="assets/env-candidate-poster.webp" muted playsinline preload="none"></video>
+                <i class="env-contact"></i>
+              </div>
+              <span data-env-media-label>Recorded robot videos</span>
             </div>
-            <div class="env-library">
-              <video muted loop playsinline preload="none" poster="assets/env-demonstrations.webp" src="assets/env-demonstrations.mp4" data-mobile-poster="assets/env-demonstrations-mobile.webp" data-mobile-source="assets/env-demonstrations-mobile.mp4"></video>
-            </div>
-            <div class="env-film">
-              <img src="assets/method-source-head.webp" alt="" loading="lazy">
-              <img src="assets/env-demo-037.webp" alt="" loading="lazy">
-              <img src="assets/env-demo-075.webp" alt="" loading="lazy">
-              <img src="assets/env-demo-112.webp" alt="" loading="lazy">
-            </div>
-            <figure class="env-shot env-source">
-              <img src="assets/method-source-head.webp" alt="" loading="lazy">
-              <i class="env-contact"></i>
-              <figcaption>Recorded initial state</figcaption>
-            </figure>
-            <div class="env-spec">
-              <div class="env-note"><span>PE · Task instruction</span><p>Use the left gripper to grasp the middle of the basket’s long rim.</p></div>
-              <div class="env-note"><span>Rubric · Success criterion</span><p>The left gripper establishes a grasp on the specified rim segment.</p></div>
-            </div>
-            <div class="env-edit-route"><i></i><span>Image editor</span></div>
-            <div class="env-edit-options">
-              <figure class="env-shot"><img src="assets/env-appearance-color.webp" alt="" loading="lazy"><figcaption>Appearance</figcaption></figure>
-              <figure class="env-shot"><img src="assets/env-background.webp" alt="" loading="lazy"><figcaption>Background</figcaption></figure>
-            </div>
-            <div class="env-edited-spec env-note">
-              <span>PE + rubric updated</span>
-              <p>Basket shifted right. Same gripper, contact region and success criterion.</p>
-            </div>
-            <figure class="env-shot env-candidate">
-              <img src="assets/method-position-head.webp" alt="" loading="lazy">
-              <img class="env-before-edit" src="assets/method-source-head.webp" alt="" loading="lazy">
-              <i class="env-edit-divider"></i>
-              <figcaption data-env-candidate-label>Position variant</figcaption>
-            </figure>
-            <figure class="env-shot env-evidence">
-              <img src="assets/method-rollout-016-head.webp" alt="" loading="lazy">
-              <img src="assets/method-rollout-048-head.webp" alt="" loading="lazy">
-              <figcaption>Sampled rollout frames</figcaption>
-            </figure>
-            <div class="env-audit">
-              <div><i></i> Scene consistency</div>
-              <div><i></i> Rollout dynamics</div>
-              <div><i></i> Rubric assessment</div>
-            </div>
-            <span class="env-revise">↶ Revise an inconsistent variant</span>
-            <div class="env-pool">
-              <figure class="env-shot"><img src="assets/method-source-head.webp" alt="" loading="lazy"><figcaption>Source scene</figcaption></figure>
-              <figure class="env-shot"><img src="assets/env-appearance-color.webp" alt="" loading="lazy"><figcaption>Appearance</figcaption></figure>
-              <div class="env-pool-slot"></div>
-              <figure class="env-shot"><img src="assets/env-background.webp" alt="" loading="lazy"><figcaption>Background</figcaption></figure>
-              <figure class="env-shot"><img src="assets/env-combined.webp" alt="" loading="lazy"><figcaption>Combined edit</figcaption></figure>
-              <figure class="env-shot"><img src="assets/method-scissors-source.webp" alt="" loading="lazy"><figcaption>Another task</figcaption></figure>
-            </div>
-            <div class="env-pool-note"><i></i> Initial observation <b>+</b> PE <b>+</b> rubric</div>
+            <ol class="env-route" aria-label="Environment construction workflow">
+              <li><button type="button" data-env-step aria-current="step"><i aria-hidden="true"></i><strong>Select a frame</strong><span>Recorded videos</span></button></li>
+              <li><button type="button" data-env-step><i aria-hidden="true"></i><strong>Write PE &amp; rubric</strong><span>Instruction + success criteria</span></button></li>
+              <li><button type="button" data-env-step><i aria-hidden="true"></i><strong>Edit the scene</strong><span>Image editing</span></button></li>
+              <li><button type="button" data-env-step><i aria-hidden="true"></i><strong>Review</strong><span>Scene + rollout</span></button></li>
+              <li><button type="button" data-env-step><i aria-hidden="true"></i><strong>Environment pool</strong><span>Reviewed environments</span></button></li>
+            </ol>
           </div>
           <figcaption class="env-footer">
-            <div class="env-transport" data-env-transport hidden>
-              <div class="env-steps" role="group" aria-label="Environment construction stages">
-                <button type="button" data-env-step="library" aria-pressed="true">Select</button>
-                <button type="button" data-env-step="specify" aria-pressed="false">Specify</button>
-                <button type="button" data-env-step="edit" aria-pressed="false">Edit</button>
-                <button type="button" data-env-step="review" aria-pressed="false">Review</button>
-                <button type="button" data-env-step="pool" aria-pressed="false">Pool</button>
-              </div>
-              <button class="motion-button env-play" type="button" data-env-play><i aria-hidden="true"></i><span>Play</span></button>
-            </div>
-            <p id="env-caption" data-env-caption>An agent selects a usable head-camera frame from recorded robot demonstrations.</p>
+            <p id="env-caption" data-env-caption>The construction agent selects a usable starting observation from recorded robot videos.</p>
+            <button class="motion-button env-play" type="button" data-env-play hidden><i aria-hidden="true"></i><span>Play</span></button>
             <span class="sr-only" data-env-status role="status"></span>
           </figcaption>
         </figure>
