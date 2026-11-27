@@ -80,7 +80,7 @@ function measureEnv() {
   const height = envBoard.offsetHeight;
   if (!width || !height) return;
   const compact = width > envScroll.clientWidth + 1;
-  envStory.toggleAttribute("data-env-compact", compact);
+  envOverview.hidden = !compact;
   envScroll.toggleAttribute("data-env-wide", compact && envWide);
   const scale = compact && envWide ? envScroll.clientWidth / width : 1;
   envScroll.style.setProperty("--env-scale", scale);
@@ -302,7 +302,6 @@ envMotion.addEventListener("change", event => {
 });
 envStory.setAttribute("data-env-enhanced", "");
 envPlay.hidden = envMotion.matches;
-envOverview.hidden = false;
 measureEnv();
 updateEnvPlay();
 new ResizeObserver(measureEnv).observe(envBoard);

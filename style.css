@@ -225,6 +225,18 @@ figure, h1, h2, h3, p { margin: 0; }
 .motion-button:hover { background: #e9f1fd; }
 .motion-button i { border-block: 5px solid transparent; border-left: 8px solid currentColor; }
 .motion-button[data-playing] i { width: 8px; height: 10px; border-block: 0; border-inline: 2px solid currentColor; }
+.method-controls {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 6px;
+  padding: 5px clamp(10px, 2.4vw, 26px);
+  border-top: 1px solid #d9e3f0;
+}
+.method-controls:not(:has(> button:not([hidden]))) { display: none; }
+.method-controls .motion-button { gap: 6px; min-height: 34px; padding: 0 10px; font-size: 11px; }
+.method-controls .motion-button i { border-block-width: 4px; border-left-width: 6px; }
+.method-controls .motion-button[data-playing] i { height: 8px; border-block: 0; border-inline: 2px solid currentColor; }
 
 .agent-player { overflow: hidden; border: 1px solid #d7e0eb; border-radius: 18px; background: var(--white); }
 .agent-player-nav, .agent-player-footer { display: flex; align-items: center; justify-content: space-between; gap: 9px 15px; padding: 12px clamp(12px, 2vw, 25px); background: #f1f5fa; }

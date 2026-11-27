@@ -9,13 +9,13 @@
   <meta property="og:description" content="World-model reinforcement learning at scale, evaluated on 242 unseen real-robot tasks.">
   <meta property="og:image" content="https://mbrl-scaling.github.io/assets/hero-rollouts-36.webp">
   <link rel="icon" href="assets/seed-mark.webp" type="image/webp">
-  <link rel="stylesheet" href="style.css?v=6">
-  <link rel="stylesheet" href="environment.css?v=8">
-  <link rel="stylesheet" href="world-model.css?v=3">
-  <link rel="stylesheet" href="ppo.css?v=3">
+  <link rel="stylesheet" href="style.css?v=7">
+  <link rel="stylesheet" href="environment.css?v=9">
+  <link rel="stylesheet" href="world-model.css?v=4">
+  <link rel="stylesheet" href="ppo.css?v=4">
   <script src="app.js?v=3" defer></script>
   <script src="scaling.js" defer></script>
-  <script src="environment.js?v=7" defer></script>
+  <script src="environment.js?v=8" defer></script>
   <script src="world-model.js?v=1" defer></script>
   <script src="ppo.js?v=1" defer></script>
   <script src="agent.js" defer></script>
@@ -63,7 +63,7 @@
           <h3 id="env-method-heading">Agent-driven environment construction</h3>
           <p>From recorded robot demonstrations to a pool of training environments.</p>
         </div>
-        <figure class="env-story" data-env-story aria-labelledby="env-method-heading" aria-describedby="env-caption">
+        <figure class="env-story" data-env-story aria-labelledby="env-method-heading">
           <div class="env-scroll" data-env-scroll tabindex="0" aria-label="Environment construction diagram">
             <div class="env-board" data-env-board>
               <div class="env-head">
@@ -183,13 +183,10 @@
               <div class="env-flight-layer" data-env-flight-layer aria-hidden="true"></div>
             </div>
           </div>
-          <figcaption class="env-footer">
-            <p id="env-caption">Each filmstrip follows one recorded robot trajectory. The selected examples show how the agent writes instructions and success rubrics and edits scenes for a shared environment pool.</p>
-            <div class="env-actions">
-              <button class="motion-button env-overview" type="button" data-env-overview hidden>Overview</button>
-              <button class="motion-button env-play" type="button" data-env-play hidden><i aria-hidden="true"></i><span>Play</span></button>
-            </div>
-          </figcaption>
+          <div class="method-controls">
+            <button class="motion-button" type="button" data-env-overview hidden>Overview</button>
+            <button class="motion-button" type="button" data-env-play hidden><i aria-hidden="true"></i><span>Play</span></button>
+          </div>
         </figure>
       </section>
 
@@ -198,7 +195,7 @@
           <h3 id="wm-method-heading">World model architecture and inference</h3>
           <p>Fine-tune Omni on three sources of manipulation data, then predict robot observations autoregressively.</p>
         </div>
-        <figure class="wm-motion" data-wm-motion aria-labelledby="wm-method-heading" aria-describedby="wm-motion-caption">
+        <figure class="wm-motion" data-wm-motion aria-labelledby="wm-method-heading">
           <div class="wm-layout" data-wm-layout>
             <canvas class="wm-paths" data-wm-paths aria-hidden="true"></canvas>
             <div class="wm-training">
@@ -273,19 +270,18 @@
               <img src="assets/eval242-fold-1.webp" width="960" height="540" decoding="async" alt="" data-wm-flight hidden>
             </div>
           </div>
-          <figcaption class="wm-footer" id="wm-motion-caption">
-            <p>A successful trial from the 242-task real-robot evaluation illustrates the loop. The world model predicts all three camera views jointly.</p>
+          <div class="method-controls">
             <button class="motion-button" type="button" aria-label="Play world model animation" data-wm-play hidden><i aria-hidden="true"></i><span>Play</span></button>
-          </figcaption>
+          </div>
         </figure>
       </section>
 
       <section class="method-chapter" id="ppo" aria-labelledby="ppo-method-heading">
         <div class="method-chapter-heading">
           <h3 id="ppo-method-heading">Policy training with PPO</h3>
-          <p>Sample environments, roll out the policy in the world model, and learn from rubric rewards.</p>
+          <p>PPO trains on world-model rollouts with rubric rewards. The example clips come from the 242-task real-robot evaluation.</p>
         </div>
-        <figure class="ppo-story" data-ppo-story aria-labelledby="ppo-method-heading" aria-describedby="ppo-caption">
+        <figure class="ppo-story" data-ppo-story aria-labelledby="ppo-method-heading">
           <div class="ppo-board" data-ppo-board>
             <canvas class="ppo-paths" data-ppo-paths aria-hidden="true"></canvas>
             <section class="ppo-sampling" aria-labelledby="ppo-sample-heading">
@@ -345,13 +341,22 @@
             </section>
             <section class="ppo-rewards" aria-labelledby="ppo-rewards-heading">
               <header class="ppo-head">
-                <h4 id="ppo-rewards-heading">Score each rollout</h4>
-                <p>VLM checks the success rubric</p>
+                <h4 id="ppo-rewards-heading">VLM rubric check</h4>
+                <p class="ppo-verdict-key"><span>Yes → success</span><span>No → failure</span></p>
               </header>
               <div class="ppo-scores">
-                <div class="ppo-score" data-ppo-score="wipe"><span>Plate wipe</span><b aria-label="Plate wiping rollout reward"><span>r<sub>1</sub></span></b></div>
-                <div class="ppo-score" data-ppo-score="drag"><span>Pencil case</span><b aria-label="Pencil case dragging rollout reward"><span>r<sub>2</sub></span></b></div>
-                <div class="ppo-score" data-ppo-score="rotate"><span>Fork rotation</span><b aria-label="Fork rotation rollout reward"><span>r<sub>3</sub></span></b></div>
+                <div class="ppo-score" data-ppo-score="wipe">
+                  <span>Ink gone and plate held steady?</span>
+                  <b role="img" aria-label="Outcome reward for wiping"><span>r<sub>1</sub></span></b>
+                </div>
+                <div class="ppo-score" data-ppo-score="drag">
+                  <span>Case dragged to the front left of the coaster?</span>
+                  <b role="img" aria-label="Outcome reward for dragging"><span>r<sub>2</sub></span></b>
+                </div>
+                <div class="ppo-score" data-ppo-score="rotate">
+                  <span>Fork parallel to the table edge, tines toward bananas?</span>
+                  <b role="img" aria-label="Outcome reward for rotating"><span>r<sub>3</sub></span></b>
+                </div>
               </div>
             </section>
             <section class="ppo-optimization" aria-labelledby="ppo-update-heading">
@@ -376,10 +381,9 @@
             <div class="ppo-loop" data-ppo-loop>Updated policy for the next round</div>
             <div class="ppo-flight-layer" data-ppo-flights aria-hidden="true"></div>
           </div>
-          <figcaption class="ppo-footer">
-            <p id="ppo-caption">Successful trials from the 242-task real-robot evaluation illustrate the rollout stage. PPO training collects its trajectories in the frozen world model.</p>
+          <div class="method-controls">
             <button class="motion-button" type="button" data-ppo-play aria-label="Play PPO training animation" hidden><i aria-hidden="true"></i><span>Play</span></button>
-          </figcaption>
+          </div>
         </figure>
       </section>
 
