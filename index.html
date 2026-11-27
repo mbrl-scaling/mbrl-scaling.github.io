@@ -9,8 +9,8 @@
   <meta property="og:description" content="World-model reinforcement learning at scale, evaluated on 242 unseen real-robot tasks.">
   <meta property="og:image" content="https://mbrl-scaling.github.io/assets/hero-rollouts-36.webp">
   <link rel="icon" href="assets/seed-mark.webp" type="image/webp">
-  <link rel="stylesheet" href="style.css">
-  <script src="app.js" defer></script>
+  <link rel="stylesheet" href="style.css?v=2">
+  <script src="app.js?v=2" defer></script>
   <script src="scaling.js" defer></script>
   <script src="method.js" defer></script>
   <script src="agent.js" defer></script>
@@ -37,22 +37,11 @@
         <canvas id="hero-carousel" aria-hidden="true" hidden></canvas>
       </div>
       <div class="cover-copy shell">
-        <p class="eyebrow">Technical report <span aria-hidden="true">/</span> <time datetime="2026-11">November 2026</time></p>
+        <p class="eyebrow">Technical paper <span aria-hidden="true">/</span> <time datetime="2026-11">November 2026</time></p>
         <h1 id="title">Scaling Reinforcement Learning in <em>World Models</em> <span>for Generalist Embodied Agents</span></h1>
         <div class="hero-actions">
           <span class="button paper-status">Paper · Upcoming</span>
           <a class="button primary" href="#overview">Explore the research <span aria-hidden="true">↓</span></a>
-        </div>
-      </div>
-      <div class="hero-caption shell">
-        <div><strong>36 world-model rollouts</strong><span>Head-camera predictions from recorded robot actions</span></div>
-        <div class="hero-scrubber" hidden>
-          <output for="hero-step" id="hero-step-label">Prediction 4 of 8</output>
-          <input id="hero-step" type="range" min="0" max="8" value="4" step="1" aria-label="Rollout prediction step" aria-valuetext="Prediction 4 of 8">
-        </div>
-        <div class="hero-controls">
-          <button class="hero-fullscreen" type="button" aria-label="View rollouts full screen" hidden><span aria-hidden="true">⛶</span></button>
-          <button class="hero-toggle" type="button" aria-label="Play the rollouts"><span aria-hidden="true"></span></button>
         </div>
       </div>
     </section>

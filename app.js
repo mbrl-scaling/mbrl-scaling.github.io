@@ -1,8 +1,4 @@
 const hero = document.querySelector("#hero-video");
-const toggle = document.querySelector(".hero-toggle");
-const fullscreen = document.querySelector(".hero-fullscreen");
-const heroStep = document.querySelector("#hero-step");
-const heroStepLabel = document.querySelector("#hero-step-label");
 const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
 const compactHero = matchMedia("(max-aspect-ratio: 4/5)");
 const heroSource = hero.querySelector("source");
@@ -18,21 +14,19 @@ const heroFrameStarts = [0, 10, 17, 24, 31, 38, 45, 52, 59];
 // Row bounds in the two encoded 36-rollout videos, including caption strips.
 const landscapeRows = { width: 3840, height: 2376, count: 6, top: 16, inset: 12, rowHeight: 384, pitch: 392, speed: 32 };
 const portraitRows = { width: 1440, height: 3464, count: 12, top: 12, inset: 6, rowHeight: 283, pitch: 287, speed: 19 };
-let pendingSeek;
-let shouldPlayHero = !reducedMotion.matches && !navigator.connection?.saveData;
 let heroVisible = false;
 let cachedCarouselFrame;
 let carouselAnimation = 0;
 let carouselTime = 0;
 let previousCarouselTick;
 
-function getHeroStep() {
+function getCarouselFrame() {
   const frame = Math.floor(hero.currentTime * 12);
   return heroFrameStarts.reduce((step, start, index) => frame >= start ? index : step, 0);
 }
 
 function paintCarousel() {
-  if (!carouselContext || !carouselFrameContext || document.fullscreenElement === hero) return;
+  if (!carouselContext || !carouselFrameContext) return;
   const hasVideoFrame = !hero.seeking && hero.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA;
   const frame = hasVideoFrame ? hero : carouselPoster;
   const sourceWidth = hasVideoFrame ? hero.videoWidth : carouselPoster.naturalWidth;
@@ -48,7 +42,7 @@ function paintCarousel() {
     carousel.height = carouselFrame.height = pixelHeight;
     cachedCarouselFrame = undefined;
   }
-  const frameKey = hasVideoFrame ? getHeroStep() : carouselPoster.src;
+  const frameKey = hasVideoFrame ? getCarouselFrame() : carouselPoster.src;
   if (frameKey !== cachedCarouselFrame) {
     carouselFrameContext.drawImage(frame, 0, 0, pixelWidth, pixelHeight);
     cachedCarouselFrame = frameKey;
@@ -74,7 +68,7 @@ function paintCarousel() {
 
 function animateCarousel(now) {
   carouselAnimation = 0;
-  if (hero.paused || reducedMotion.matches || document.fullscreenElement === hero || hero.webkitDisplayingFullscreen) return;
+  if (hero.paused || reducedMotion.matches) return;
   const elapsed = previousCarouselTick === undefined ? 0 : now - previousCarouselTick;
   if (!elapsed || elapsed >= 1000 / 30 - 1) {
     carouselTime += Math.min(elapsed, 100) / 1000;
@@ -96,51 +90,28 @@ function stopCarousel() {
   previousCarouselTick = undefined;
 }
 
-function showHeroStep(step) {
-  const label = step === 0 ? "Initial observation" : `Prediction ${step} of 8`;
-  heroStep.value = step;
-  heroStep.setAttribute("aria-valuetext", label);
-  heroStepLabel.textContent = label;
-}
-
-function seekHero(step) {
-  pendingSeek = step;
-  showHeroStep(step);
-  if (hero.readyState < HTMLMediaElement.HAVE_METADATA) {
-    if (hero.preload === "none") {
-      hero.preload = "metadata";
-      hero.load();
-    }
-    return;
+function syncHeroPlayback() {
+  if (heroVisible && !reducedMotion.matches && !navigator.connection?.saveData) {
+    hero.play().catch(() => {});
+  } else {
+    hero.pause();
   }
-  hero.currentTime = (heroFrameStarts[step] + 1) / 12;
-  pendingSeek = undefined;
 }
 
 function syncHeroMedia() {
   const poster = compactHero.matches ? hero.dataset.mobilePoster : desktopHero.poster;
   const video = compactHero.matches ? hero.dataset.mobileSource : desktopHero.video;
   if (video === heroSource.getAttribute("src")) return;
-  const playing = !hero.paused;
-  const preserveStep = pendingSeek !== undefined || hero.readyState >= HTMLMediaElement.HAVE_METADATA;
-  const step = Number(heroStep.value);
+  carousel.hidden = true;
   hero.poster = poster;
   carouselPoster.src = poster;
   heroSource.src = video;
   hero.load();
-  if (preserveStep || hero.preload !== "none") seekHero(step);
-  if (playing) hero.play().catch(syncHeroButton);
+  syncHeroPlayback();
 }
 
-function syncHeroButton() {
-  toggle.toggleAttribute("data-playing", !hero.paused);
-  toggle.setAttribute("aria-label", hero.paused ? "Play the rollouts" : "Pause the rollouts");
-}
-
-hero.addEventListener("play", syncHeroButton);
 hero.addEventListener("playing", startCarousel);
 hero.addEventListener("pause", () => {
-  syncHeroButton();
   stopCarousel();
   paintCarousel();
 });
@@ -159,64 +130,12 @@ new IntersectionObserver(([entry]) => {
   header.toggleAttribute("data-on-hero", entry.isIntersecting);
 }, { rootMargin: `-${header.offsetHeight}px 0px 0px 0px` }).observe(heroScreen);
 
-toggle.addEventListener("click", () => {
-  shouldPlayHero = hero.paused;
-  if (shouldPlayHero) hero.play().catch(syncHeroButton);
-  else hero.pause();
-});
-reducedMotion.addEventListener("change", event => {
-  if (event.matches) {
-    shouldPlayHero = false;
-    hero.pause();
-  }
-});
-new IntersectionObserver(entries => {
-  heroVisible = entries[0].intersectionRatio >= .25;
-  if (heroVisible && shouldPlayHero) hero.play().catch(syncHeroButton);
-  else if (!document.fullscreenElement && !hero.webkitDisplayingFullscreen) hero.pause();
+reducedMotion.addEventListener("change", syncHeroPlayback);
+navigator.connection?.addEventListener("change", syncHeroPlayback);
+new IntersectionObserver(([entry]) => {
+  heroVisible = entry.intersectionRatio >= .25;
+  syncHeroPlayback();
 }, { threshold: .25 }).observe(heroScreen);
-
-heroStep.parentElement.hidden = false;
-heroStep.addEventListener("input", () => {
-  shouldPlayHero = false;
-  hero.pause();
-  seekHero(Number(heroStep.value));
-});
-hero.addEventListener("loadedmetadata", () => {
-  if (pendingSeek !== undefined) seekHero(pendingSeek);
-});
-hero.addEventListener("timeupdate", () => {
-  if (pendingSeek !== undefined || hero.seeking || hero.readyState < HTMLMediaElement.HAVE_CURRENT_DATA) return;
-  showHeroStep(getHeroStep());
-  if (reducedMotion.matches) paintCarousel();
-});
-
-if (document.fullscreenEnabled || hero.webkitEnterFullscreen) {
-  fullscreen.hidden = false;
-  fullscreen.addEventListener("click", async () => {
-    try {
-      if (document.fullscreenEnabled) {
-        await hero.requestFullscreen();
-        hero.controls = true;
-      } else {
-        await hero.play();
-        hero.webkitEnterFullscreen();
-      }
-    } catch {
-      syncHeroButton();
-    }
-  });
-  document.addEventListener("fullscreenchange", () => {
-    if (document.fullscreenElement === hero) {
-      stopCarousel();
-      return;
-    }
-    hero.controls = false;
-    if (heroVisible) startCarousel();
-    else hero.pause();
-  });
-  hero.addEventListener("webkitendfullscreen", startCarousel);
-}
 
 document.querySelectorAll(".policy-case").forEach(card => {
   const video = card.querySelector("video");
