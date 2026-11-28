@@ -298,7 +298,7 @@ html:has(.policy-hd-dialog[open]) { overflow: hidden; }
 .agent-player[data-phase="recover"] { --agent-state: #815027; --agent-tint: #f7e8db; }
 .agent-player[data-phase="verify"] { --agent-state: #246254; --agent-tint: #dcefe7; }
 .agent-player[data-phase="interrupted"] { --agent-state: #8d4e3a; --agent-tint: #fae7e0; }
-.agent-tasks { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; padding: 12px clamp(11px, 2vw, 23px); border-bottom: 1px solid #d6e0ee; background: #edf3fa; }
+.agent-tasks { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; padding: 12px clamp(11px, 2vw, 23px); border-bottom: 1px solid #d6e0ee; background: #edf3fa; }
 .agent-tasks button {
   display: flex;
   align-items: center;
@@ -360,13 +360,6 @@ html:has(.policy-hd-dialog[open]) { overflow: hidden; }
 .agent-ending span::before { content: ""; width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
 .agent-ending [data-tone="complete"] { color: #256456; }
 .agent-ending [data-tone="interrupted"] { color: #8d4e3a; }
-.agent-results { margin-top: 22px; display: grid; grid-template-columns: minmax(170px, 1fr) minmax(0, 2fr); gap: 22px; align-items: stretch; border-block: 1px solid var(--line); padding-block: 14px; }
-.agent-result-summary strong { color: #264c9b; font-size: 32px; font-weight: 620; letter-spacing: -.052em; }
-.agent-result-summary p { color: var(--muted); font-size: 13px; line-height: 1.5; }
-.agent-task-counts { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); margin: 0; }
-.agent-task-counts div { padding: 5px 10px; border-left: 1px solid var(--line); }
-.agent-task-counts dt { color: var(--muted); font-size: 12px; }
-.agent-task-counts dd { margin: 5px 0 0; color: #244998; font-size: 20px; font-weight: 650; }
 
 .dialog-head button { border: 1px solid var(--line); background: var(--white); color: var(--ink); padding: 4px 9px; border-radius: 4px; font-size: 12px; }
 .dialog-head button:hover { background: var(--wash); }
@@ -424,10 +417,6 @@ dialog img { max-width: 100%; margin-inline: auto; }
   .agent-console { gap: 9px; padding: 8px; }
   .agent-camera-label { inset: 6px 6px auto; }
   .agent-camera-label span { font-size: 9px; }
-  .agent-results { grid-template-columns: 1fr; gap: 11px; }
-  .agent-task-counts div { padding-inline: 6px; }
-  .agent-task-counts dt { font-size: 10px; }
-  .agent-task-counts dd { font-size: 16px; }
 }
 @media (max-height: 520px) and (orientation: landscape) {
   .hero { padding-block: 66px max(12px, env(safe-area-inset-bottom)); }
